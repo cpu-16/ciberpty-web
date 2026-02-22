@@ -1,0 +1,52 @@
+---
+import type { ProfileContent } from '../utils/i18n';
+
+interface Props {
+  profile: ProfileContent;
+}
+
+const { profile } = Astro.props;
+const serviceEmail = 'gilberto@ciberpty.com';
+const whatsappLink = 'https://wa.me/50768573845';
+const mailSubject =
+  profile.locale === 'es' ? 'Consulta de servicios CiberPTY' : 'CiberPTY service inquiry';
+const mailtoHref = `mailto:${serviceEmail}?subject=${encodeURIComponent(mailSubject)}`;
+---
+
+<section id="contact" class="container section card contact-card" data-reveal>
+  <h2>{profile.contactTitle}</h2>
+  <p>{profile.contactBody}</p>
+
+  <ul class="contact-list">
+    {profile.contactDetails.map((item) => (
+      <li>{item}</li>
+    ))}
+  </ul>
+
+  <div class="contact-actions">
+    <a class="btn btn-primary" href={mailtoHref}>
+      {profile.contactCta}
+    </a>
+    <a class="btn btn-secondary" href={whatsappLink} target="_blank" rel="noreferrer">
+      WhatsApp
+    </a>
+    <a class="btn btn-secondary" href={profile.github} target="_blank" rel="noreferrer">
+      {profile.labels.githubProfile}
+    </a>
+    <button id="reveal-email" class="btn btn-secondary" type="button">
+      {profile.labels.revealEmail}
+    </button>
+    <span id="email-output" class="email-output" aria-live="polite"></span>
+  </div>
+</section>
+
+<script is:inline>
+  const button = document.getElementById('reveal-email');
+  const output = document.getElementById('email-output');
+  const address = 'gilberto@ciberpty.com';
+
+  button?.addEventListener('click', () => {
+    if (!output) return;
+    output.innerHTML = `<a href="mailto:${address}">${address}</a>`;
+  });
+</script>

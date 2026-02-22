@@ -1,0 +1,14 @@
+---
+import type { ProfileContent } from '../utils/i18n';
+
+interface Props {
+  profile: ProfileContent;
+}
+
+const { profile } = Astro.props;
+---
+
+<section id="about" class="container section card" data-reveal>
+  <h2>{profile.aboutTitle}</h2>
+  {profile.aboutParagraphs.map((paragraph) => <p>{paragraph}</p>)}
+</section>

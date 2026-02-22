@@ -1,0 +1,78 @@
+---
+import type { ProfileContent } from '../utils/i18n';
+
+interface Props {
+  profile: ProfileContent;
+}
+
+const { profile } = Astro.props;
+
+type ToolMeta = {
+  icon: string;
+  site: string;
+};
+
+const toolMeta: Record<string, ToolMeta> = {
+  Linux: {
+    icon: 'https://cdn.simpleicons.org/linux/FCC624',
+    site: 'https://www.kernel.org/'
+  },
+  Python: {
+    icon: 'https://cdn.simpleicons.org/python/3776AB',
+    site: 'https://www.python.org/'
+  },
+  Docker: {
+    icon: 'https://cdn.simpleicons.org/docker/2496ED',
+    site: 'https://www.docker.com/'
+  },
+  Ansible: {
+    icon: 'https://cdn.simpleicons.org/ansible/EE0000',
+    site: 'https://www.ansible.com/'
+  },
+  MariaDB: {
+    icon: 'https://cdn.simpleicons.org/mariadb/003545',
+    site: 'https://mariadb.org/'
+  },
+  n8n: {
+    icon: 'https://cdn.simpleicons.org/n8n/EA4B71',
+    site: 'https://n8n.io/'
+  },
+  Proxmox: {
+    icon: 'https://cdn.simpleicons.org/proxmox/E57000',
+    site: 'https://www.proxmox.com/'
+  },
+  Wazuh: {
+    icon: '/icons/wazuh.svg',
+    site: 'https://wazuh.com/'
+  }
+};
+---
+
+<section class="container section" data-reveal>
+  <h2>{profile.skillsTitle}</h2>
+  <div class="tool-marquee" aria-label={profile.skillsTitle}>
+    <div class="tool-marquee-inner">
+      {[0, 1].map((loopIndex) => (
+        <ul class="tool-grid tool-track" role="list" aria-hidden={loopIndex === 1 ? 'true' : 'false'}>
+          {profile.skills.map((skill) => {
+            const meta = toolMeta[skill] || { icon: '/icons/tool.svg', site: '#' };
+            return (
+              <li class="tool-card card">
+                <a
+                  href={meta.site}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={`${skill} official website`}
+                  tabindex={loopIndex === 1 ? '-1' : undefined}
+                >
+                  <img src={meta.icon} alt="" width="42" height="42" loading="lazy" />
+                  <span>{skill}</span>
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      ))}
+    </div>
+  </div>
+</section>

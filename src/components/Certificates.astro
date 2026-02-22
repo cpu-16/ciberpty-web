@@ -1,0 +1,29 @@
+---
+import type { ProfileContent } from '../utils/i18n';
+
+interface Props {
+  profile: ProfileContent;
+}
+
+const { profile } = Astro.props;
+---
+
+<section class="container section timeline-grid" data-reveal>
+  <article class="card method-card">
+    <h2>{profile.certsTitle}</h2>
+    <ul class="method-list numbered-list">
+      {profile.certifications.map((item, index) => (
+        <li style={`--step:${index + 1}`}>{item}</li>
+      ))}
+    </ul>
+  </article>
+
+  <article class="card method-card">
+    <h2>{profile.interestsTitle}</h2>
+    <ul class="method-list numbered-list">
+      {profile.interests.map((item, index) => (
+        <li style={`--step:${index + 1}`}>{item}</li>
+      ))}
+    </ul>
+  </article>
+</section>

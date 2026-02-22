@@ -1,0 +1,32 @@
+---
+import LanguageToggle from './LanguageToggle.astro';
+import ThemeToggle from './ThemeToggle.astro';
+import type { ProfileContent } from '../utils/i18n';
+
+interface Props {
+  profile: ProfileContent;
+}
+
+const { profile } = Astro.props;
+---
+
+<header class="site-header">
+  <div class="container nav-wrap">
+    <a href={profile.locale === 'es' ? '/es/' : '/en/'} class="brand">{profile.name}</a>
+
+    <nav aria-label="Primary" class="main-nav">
+      {profile.nav.map((item) => (
+        <a href={item.href}>{item.label}</a>
+      ))}
+    </nav>
+
+    <div class="actions">
+      <LanguageToggle locale={profile.locale} label={profile.labels.language} />
+      <ThemeToggle
+        label={profile.labels.theme}
+        dark={profile.labels.dark}
+        light={profile.labels.light}
+      />
+    </div>
+  </div>
+</header>

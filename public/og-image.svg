@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#07111a"/>
+      <stop offset="100%" stop-color="#0f2739"/>
+    </linearGradient>
+    <linearGradient id="a" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#3be2d4"/>
+      <stop offset="100%" stop-color="#64ffa2"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <g opacity="0.2" stroke="#8bc4e1">
+    <path d="M0 100h1200M0 180h1200M0 260h1200M0 340h1200M0 420h1200M0 500h1200"/>
+    <path d="M120 0v630M280 0v630M440 0v630M600 0v630M760 0v630M920 0v630M1080 0v630"/>
+  </g>
+  <text x="90" y="285" fill="#d8ecff" font-size="74" font-family="Space Grotesk, Arial, sans-serif" font-weight="700">CiberPTY</text>
+  <text x="90" y="360" fill="url(#a)" font-size="38" font-family="JetBrains Mono, monospace">Cybersecurity & Automation</text>
+  <text x="90" y="420" fill="#8eb4cf" font-size="30" font-family="IBM Plex Sans, Arial, sans-serif">ciberpty.com</text>
+</svg>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="CyberPTY">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#3be2d4"/>
+      <stop offset="100%" stop-color="#64ffa2"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="56" height="56" rx="14" fill="#07111a"/>
+  <path d="M19 24h18v6H25v4h10v6H25v8h-6V24Zm22 0h6v24h-6V24Z" fill="url(#g)"/>
+</svg>

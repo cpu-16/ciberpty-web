@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import About from '../../components/About.astro';
+import Skills from '../../components/Skills.astro';
+import Projects from '../../components/Projects.astro';
+import Timeline from '../../components/Timeline.astro';
+import Certificates from '../../components/Certificates.astro';
+import Contact from '../../components/Contact.astro';
+import { profileEs } from '../../content/profile.es';
+import { projectsEs } from '../../content/projects.es';
+---
+
+<BaseLayout profile={profileEs}>
+  <Hero profile={profileEs} />
+  <About profile={profileEs} />
+  <Skills profile={profileEs} />
+  <Projects profile={profileEs} projects={projectsEs} />
+  <Timeline profile={profileEs} />
+  <Certificates profile={profileEs} />
+  <Contact profile={profileEs} />
+</BaseLayout>

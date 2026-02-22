@@ -1,0 +1,94 @@
+---
+import type { ProfileContent } from '../utils/i18n';
+
+interface Props {
+  profile: ProfileContent;
+}
+
+const { profile } = Astro.props;
+---
+
+<section class="hero container" data-reveal>
+  <p class="kicker">
+    {profile.locale === 'es' ? 'Ciberseguridad por diseño' : 'Cybersecurity by design'}
+  </p>
+  <div class="hero-title-wrap">
+    <h1 class="hero-title">{profile.name}</h1>
+    <span class="hero-orbit" aria-hidden="true"></span>
+  </div>
+  <p class="role">{profile.role}</p>
+  <p class="tagline">{profile.heroTagline}</p>
+  <div class="terminal" aria-live="polite">
+    <p class="terminal-header">soc-console@ciberpty:~$</p>
+    <p class="terminal-line">
+      <span id="terminal-typed">
+        {profile.locale === 'es'
+          ? 'Blue Team activo | Respuesta coordinada'
+          : 'Blue Team active | Coordinated response'}
+      </span>
+      <span class="terminal-cursor" aria-hidden="true"></span>
+    </p>
+  </div>
+  <div class="hero-cta">
+    <a class="btn btn-primary" href="#contact">{profile.contactCta}</a>
+    <a class="btn btn-secondary" href={profile.github} target="_blank" rel="noreferrer">
+      {profile.labels.githubProfile}
+    </a>
+  </div>
+  <div class="hero-meta">
+    <span>{profile.location}</span>
+    <span class="status">
+      {profile.locale === 'es'
+        ? 'Blue Team | Red Team | Forense | IA aplicada'
+        : 'Blue Team | Red Team | Forensics | AI Ops'}
+    </span>
+  </div>
+</section>
+
+<script is:inline>
+  const typedNode = document.getElementById('terminal-typed');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isSpanish = document.documentElement.lang === 'es';
+  const messages = isSpanish
+    ? [
+        'Blue Team activo | Respuesta coordinada',
+        'Red Team ético | Validación de controles',
+        'Forense digital | Preservación de evidencia',
+        'IA aplicada | Automatización segura'
+      ]
+    : [
+        'Blue Team active | Coordinated response',
+        'Ethical Red Team | Control validation',
+        'Digital forensics | Evidence preservation',
+        'Applied AI | Secure automation'
+      ];
+
+  if (typedNode && !reducedMotion) {
+    let messageIndex = 0;
+    let charIndex = 0;
+    let deleting = false;
+
+    const tick = () => {
+      const current = messages[messageIndex];
+      if (!deleting) {
+        charIndex += 1;
+        typedNode.textContent = current.slice(0, charIndex);
+        if (charIndex >= current.length) {
+          deleting = true;
+          window.setTimeout(tick, 1500);
+          return;
+        }
+      } else {
+        charIndex -= 1;
+        typedNode.textContent = current.slice(0, charIndex);
+        if (charIndex <= 0) {
+          deleting = false;
+          messageIndex = (messageIndex + 1) % messages.length;
+        }
+      }
+      window.setTimeout(tick, deleting ? 20 : 45);
+    };
+
+    tick();
+  }
+</script>

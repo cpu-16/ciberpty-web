@@ -1,0 +1,45 @@
+---
+interface Props {
+  label: string;
+  light: string;
+  dark: string;
+}
+
+const { label, light, dark } = Astro.props;
+---
+
+<button
+  class="theme-toggle"
+  type="button"
+  id="theme-toggle"
+  aria-label={label}
+  data-light={light}
+  data-dark={dark}
+>
+  <span class="theme-dot" aria-hidden="true"></span>
+  <span class="theme-text" id="theme-text">{dark}</span>
+</button>
+
+<script is:inline>
+  const root = document.documentElement;
+  const button = document.getElementById('theme-toggle');
+  const text = document.getElementById('theme-text');
+  const lightLabel = button?.getAttribute('data-light') || 'Light';
+  const darkLabel = button?.getAttribute('data-dark') || 'Dark';
+
+  const update = (theme) => {
+    root.setAttribute('data-theme', theme);
+    if (text) text.textContent = theme === 'dark' ? lightLabel : darkLabel;
+  };
+
+  const stored = localStorage.getItem('theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  update(stored || (prefersDark ? 'dark' : 'light'));
+
+  button?.addEventListener('click', () => {
+    const current = root.getAttribute('data-theme') || 'dark';
+    const next = current === 'dark' ? 'light' : 'dark';
+    localStorage.setItem('theme', next);
+    update(next);
+  });
+</script>

@@ -1,0 +1,52 @@
+html[data-theme='dark'] {
+  --bg: #07111a;
+  --bg-soft: #0b1926;
+  --bg-deep: #040a10;
+  --panel: rgba(11, 25, 38, 0.72);
+  --text: #d8ecff;
+  --muted: #8eb4cf;
+  --accent: #3be2d4;
+  --accent-2: #64ffa2;
+  --accent-3: #53a7ff;
+  --line: rgba(139, 196, 225, 0.22);
+  --card-border: rgba(113, 186, 224, 0.25);
+  --grad-a: rgba(59, 226, 212, 0.2);
+  --grad-b: rgba(83, 167, 255, 0.18);
+  --grad-c: rgba(100, 255, 162, 0.14);
+  --email-bg: rgba(6, 20, 33, 0.85);
+  --email-text: #b8ddff;
+  --ghost-btn-bg: rgba(8, 24, 37, 0.4);
+  --ghost-btn-text: #d8ecff;
+}
+
+html[data-theme='light'] {
+  --bg: #ecf4fb;
+  --bg-soft: #dbe9f5;
+  --bg-deep: #cbdfee;
+  --panel: rgba(255, 255, 255, 0.78);
+  --text: #0e2438;
+  --muted: #456179;
+  --accent: #00b7a8;
+  --accent-2: #0fdd74;
+  --accent-3: #3c7dff;
+  --line: rgba(14, 36, 56, 0.16);
+  --card-border: rgba(29, 79, 113, 0.2);
+  --grad-a: rgba(60, 125, 255, 0.16);
+  --grad-b: rgba(0, 183, 168, 0.14);
+  --grad-c: rgba(15, 221, 116, 0.12);
+  --email-bg: rgba(255, 255, 255, 0.96);
+  --email-text: #1f4f84;
+  --ghost-btn-bg: rgba(255, 255, 255, 0.84);
+  --ghost-btn-text: #173552;
+}
+
+body {
+  color: var(--text);
+  background: linear-gradient(180deg, var(--bg), var(--bg-soft), var(--bg-deep));
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--card-border);
+  backdrop-filter: blur(8px);
+}
