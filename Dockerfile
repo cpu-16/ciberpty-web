@@ -1,21 +1,16 @@
-FROM node:20-alpine AS build
+# Build stage
+FROM node:20-alpine AS builder
 WORKDIR /app
 
-COPY package.json ./
-RUN npm install
+COPY package*.json ./
+RUN npm ci
 
 COPY . .
 RUN npm run build
 
-FROM node:20-alpine AS runtime
-WORKDIR /app
+# Runtime stage (serve static files with nginx)
+FROM nginx:alpine
+COPY --from=builder /app/dist /usr/share/nginx/html
 
-COPY --from=build /app/package.json ./
-COPY --from=build /app/node_modules ./node_modules
-COPY --from=build /app/dist ./dist
-
-ENV NODE_ENV=production
-ENV PORT=3000
-EXPOSE 3000
-
-CMD ["npm", "run", "start"]
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

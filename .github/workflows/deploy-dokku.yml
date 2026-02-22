@@ -1,0 +1,50 @@
+name: Deploy to Dokku (Dry Run)
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - develop
+      - staging
+      - main
+
+concurrency:
+  group: deploy-${{ github.event.pull_request.base.ref }}
+  cancel-in-progress: false
+
+jobs:
+  deploy-develop:
+    if: >
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.base.ref == 'develop'
+    runs-on: ubuntu-latest
+    environment: develop
+    steps:
+      - name: Simulate deploy develop
+        run: |
+          echo "PR merged to develop"
+          echo "Aquí irá el deploy a Dokku (develop) más adelante"
+
+  deploy-staging:
+    if: >
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.base.ref == 'staging'
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - name: Simulate deploy staging
+        run: |
+          echo "PR merged to staging"
+          echo "Aquí irá el deploy a Dokku (staging) más adelante"
+
+  deploy-production:
+    if: >
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.base.ref == 'main'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Simulate deploy production
+        run: |
+          echo "PR merged to main"
+          echo "Aquí irá el deploy a Dokku (producción) más adelante"
