@@ -1,0 +1,2978 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CiberPTY · Cybersecurity & Automation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050608;
+    --bg-soft: #0a0d12;
+    --bg-elev: #0e1218;
+    --panel: #0c1117;
+    --panel-line: #1a2230;
+    --line: #1c2532;
+    --text: #e6edf3;
+    --muted: #7d8a9a;
+    --dim: #4a5568;
+    --accent: #00ff9c;       /* primary green */
+    --accent-glow: #00ff9c;
+    --warn: #ffb547;
+    --crit: #ff4d6d;
+    --info: #4cc9ff;
+    --magenta: #d946ef;
+    --grid-line: rgba(0, 255, 156, 0.06);
+    --scanline: rgba(0, 255, 156, 0.025);
+    --shadow-soft: 0 30px 80px rgba(0,0,0,0.4);
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+    --display: 'Space Grotesk', system-ui, sans-serif;
+    --serif: 'Instrument Serif', Georgia, serif;
+  }
+
+  html[data-theme='light'] {
+    --bg: #f4f6f8;
+    --bg-soft: #eaeef2;
+    --bg-elev: #ffffff;
+    --panel: #ffffff;
+    --panel-line: #d8dee6;
+    --line: #cfd6e0;
+    --text: #0a0d12;
+    --muted: #4a5568;
+    --dim: #94a3b8;
+    --accent: #00875c;
+    --accent-glow: #00b377;
+    --warn: #c97a00;
+    --crit: #d6336c;
+    --info: #0070d2;
+    --magenta: #a21caf;
+    --grid-line: rgba(0,135,92,0.07);
+    --scanline: rgba(0,0,0,0.015);
+    --shadow-soft: 0 30px 80px rgba(10,13,18,0.08);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--mono);
+    color: var(--text);
+    background: var(--bg);
+    line-height: 1.55;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* ---------- crosshair cursor ---------- */
+  .crosshair {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    mix-blend-mode: difference;
+    transition: opacity 0.2s ease;
+  }
+  .crosshair-ring {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 1px solid var(--accent);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 9999;
+    transition: width 0.18s ease, height 0.18s ease, border-color 0.18s ease, background 0.18s ease, opacity 0.2s ease;
+    box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 40%, transparent);
+  }
+  .crosshair-dot {
+    position: fixed;
+    width: 4px; height: 4px;
+    background: var(--accent);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 9999;
+    box-shadow: 0 0 8px var(--accent);
+  }
+  .crosshair-tick {
+    position: fixed;
+    width: 1px;
+    background: var(--accent);
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+  body.is-hovering .crosshair-ring {
+    width: 56px; height: 56px;
+    background: color-mix(in srgb, var(--accent) 8%, transparent);
+  }
+  @media (max-width: 800px), (pointer: coarse) {
+    body { cursor: auto; }
+    .crosshair-ring, .crosshair-dot, .crosshair-tick { display: none !important; }
+  }
+
+  /* ---------- canvas backgrounds ---------- */
+  #matrix-canvas {
+    position: fixed; inset: 0;
+    z-index: 0; pointer-events: none;
+    opacity: 0.35;
+  }
+  html[data-theme='light'] #matrix-canvas { opacity: 0.18; }
+
+  .grid-bg {
+    position: fixed; inset: 0;
+    z-index: 0; pointer-events: none;
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(ellipse at 50% 30%, black 30%, transparent 80%);
+  }
+  .scanlines {
+    position: fixed; inset: 0;
+    z-index: 1; pointer-events: none;
+    background: repeating-linear-gradient(0deg, transparent 0, transparent 2px, var(--scanline) 2px, var(--scanline) 3px);
+    mix-blend-mode: overlay;
+  }
+  .vignette {
+    position: fixed; inset: 0;
+    z-index: 1; pointer-events: none;
+    background: radial-gradient(ellipse at 50% 50%, transparent 40%, rgba(0,0,0,0.6) 100%);
+  }
+  html[data-theme='light'] .vignette { background: radial-gradient(ellipse at 50% 50%, transparent 50%, rgba(0,0,0,0.06) 100%); }
+
+  /* ---------- layout ---------- */
+  .container {
+    width: min(1280px, 92vw);
+    margin-inline: auto;
+  }
+
+  .site {
+    position: relative;
+    z-index: 2;
+  }
+
+  /* ---------- header ---------- */
+  .site-header {
+    position: sticky; top: 0;
+    z-index: 50;
+    backdrop-filter: blur(16px);
+    background: color-mix(in srgb, var(--bg) 75%, transparent);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+    gap: 1rem;
+  }
+  .brand {
+    display: flex; align-items: center; gap: 0.6rem;
+    font-family: var(--display);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    font-size: 1.05rem;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .brand-mark {
+    width: 28px; height: 28px;
+    display: grid; place-items: center;
+  }
+  .brand-mark svg { width: 100%; height: 100%; }
+  .brand-name { display: flex; align-items: baseline; gap: 0.35rem; }
+  .brand-suffix { color: var(--accent); font-family: var(--mono); font-weight: 500; font-size: 0.75rem; }
+  .nav-links {
+    display: none; gap: 1.5rem;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+  }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    position: relative;
+    padding: 0.4rem 0;
+    transition: color 0.18s;
+  }
+  .nav-links a::before {
+    content: '> ';
+    color: var(--accent);
+    opacity: 0;
+    transition: opacity 0.18s;
+  }
+  .nav-links a:hover { color: var(--text); }
+  .nav-links a:hover::before { opacity: 1; }
+  .nav-actions { display: flex; align-items: center; gap: 0.5rem; }
+  .pill-btn {
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    padding: 0.4rem 0.7rem;
+    border-radius: 999px;
+    cursor: none;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    transition: border-color 0.18s, background 0.18s;
+    display: inline-flex; align-items: center; gap: 0.4rem;
+  }
+  .pill-btn:hover {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+  }
+  .status-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.35; }
+  }
+  @media (min-width: 900px) {
+    .nav-links { display: inline-flex; }
+  }
+
+  /* ---------- hero ---------- */
+  .hero {
+    padding: clamp(2rem, 6vw, 4rem) 0 clamp(3rem, 8vw, 6rem);
+    position: relative;
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    align-items: center;
+  }
+  @media (min-width: 1024px) {
+    .hero-grid { grid-template-columns: 1.1fr 0.9fr; gap: 3rem; }
+  }
+
+  .hero-meta-line {
+    display: flex; align-items: center; gap: 0.75rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 1.5rem;
+  }
+  .hero-meta-line .bracket { color: var(--accent); }
+  .hero-meta-line .sep { color: var(--dim); }
+
+  .hero-title {
+    font-family: var(--display);
+    font-size: clamp(2.5rem, 7vw, 5.6rem);
+    font-weight: 700;
+    line-height: 0.95;
+    letter-spacing: -0.035em;
+    margin: 0;
+    color: var(--text);
+  }
+  .hero-title .glitch {
+    color: var(--accent);
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 400;
+  }
+  .hero-title .strike {
+    position: relative;
+    display: inline-block;
+  }
+  .hero-title .strike::after {
+    content: '';
+    position: absolute; left: 0; right: 0;
+    top: 52%;
+    height: 3px;
+    background: var(--crit);
+    transform: scaleX(0);
+    transform-origin: left;
+    animation: strikeIn 1.2s ease-out 0.6s forwards;
+  }
+  @keyframes strikeIn {
+    to { transform: scaleX(1); }
+  }
+
+  .hero-tagline {
+    margin-top: 1.5rem;
+    font-family: var(--mono);
+    font-size: clamp(0.95rem, 1.4vw, 1.05rem);
+    color: var(--muted);
+    max-width: 56ch;
+    line-height: 1.65;
+  }
+
+  .hero-cta {
+    margin-top: 2rem;
+    display: flex; flex-wrap: wrap;
+    gap: 0.8rem;
+  }
+
+  .btn {
+    border-radius: 4px;
+    padding: 0.85rem 1.3rem;
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border: 1px solid var(--line);
+    cursor: none;
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    transition: all 0.18s ease;
+    background: transparent;
+    color: var(--text);
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #050608;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 30%, transparent),
+                0 8px 24px color-mix(in srgb, var(--accent) 25%, transparent);
+  }
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 40%, transparent),
+                0 12px 32px color-mix(in srgb, var(--accent) 35%, transparent);
+  }
+  .btn-secondary:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .btn-arrow {
+    transition: transform 0.18s ease;
+  }
+  .btn:hover .btn-arrow { transform: translateX(3px); }
+
+  .hero-stats {
+    margin-top: 2.5rem;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    padding: 1.25rem 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .stat-num {
+    font-family: var(--display);
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat-label {
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 0.2rem;
+  }
+
+  /* ---------- terminal ---------- */
+  .terminal {
+    background: var(--panel);
+    border: 1px solid var(--panel-line);
+    border-radius: 8px;
+    overflow: hidden;
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    box-shadow: var(--shadow-soft);
+    position: relative;
+  }
+  .terminal-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.55rem 0.85rem;
+    background: var(--bg-soft);
+    border-bottom: 1px solid var(--panel-line);
+  }
+  .terminal-dots { display: flex; gap: 0.4rem; }
+  .terminal-dot { width: 11px; height: 11px; border-radius: 50%; }
+  .terminal-dot.r { background: #ff5f56; }
+  .terminal-dot.y { background: #ffbd2e; }
+  .terminal-dot.g { background: #27c93f; }
+  .terminal-title {
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+  .terminal-status {
+    font-size: 0.65rem;
+    color: var(--accent);
+    display: flex; align-items: center; gap: 0.35rem;
+  }
+  .terminal-body {
+    padding: 1rem 1.1rem 1.2rem;
+    min-height: 380px;
+    background:
+      linear-gradient(180deg, transparent 0%, rgba(0,255,156,0.02) 100%),
+      var(--panel);
+  }
+  .terminal-line { margin: 0.15rem 0; line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
+  .term-prompt { color: var(--accent); }
+  .term-host { color: var(--info); }
+  .term-cmd { color: var(--text); }
+  .term-out { color: var(--muted); }
+  .term-warn { color: var(--warn); }
+  .term-ok { color: var(--accent); }
+  .term-crit { color: var(--crit); }
+  .term-dim { color: var(--dim); }
+  .blink-cursor {
+    display: inline-block;
+    width: 8px; height: 1em;
+    background: var(--accent);
+    vertical-align: text-bottom;
+    margin-left: 2px;
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .terminal-input {
+    display: flex; align-items: center; gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+  .terminal-input input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    cursor: none;
+  }
+
+  /* ---------- section heading ---------- */
+  .section { padding: clamp(3rem, 6vw, 5rem) 0; }
+  .section-head {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    flex-wrap: wrap; gap: 1rem;
+    margin-bottom: 2.5rem;
+    border-bottom: 1px dashed var(--line);
+    padding-bottom: 1.25rem;
+  }
+  .section-eyebrow {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .section-eyebrow::before {
+    content: '';
+    width: 24px; height: 1px;
+    background: var(--accent);
+  }
+  .section-title {
+    font-family: var(--display);
+    font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+    margin: 0.5rem 0 0;
+    max-width: 24ch;
+  }
+  .section-title em {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--accent);
+  }
+  .section-meta {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* ---------- about + ops grid ---------- */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  @media (min-width: 900px) {
+    .about-grid { grid-template-columns: 0.9fr 1.1fr; gap: 3rem; }
+  }
+  .about-text p {
+    font-size: 1.05rem;
+    color: var(--text);
+    margin: 0 0 1rem;
+    line-height: 1.65;
+    font-family: var(--mono);
+  }
+  .about-text p:first-of-type {
+    font-family: var(--display);
+    font-size: clamp(1.2rem, 1.8vw, 1.5rem);
+    line-height: 1.35;
+    color: var(--text);
+  }
+  .about-text p:first-of-type::first-letter {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 3.2rem;
+    line-height: 0.85;
+    float: left;
+    margin: 0.2rem 0.5rem 0 -0.05rem;
+    color: var(--accent);
+  }
+
+  /* ---------- shield panel ---------- */
+  .shield-panel {
+    background: var(--panel);
+    border: 1px solid var(--panel-line);
+    border-radius: 12px;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    min-height: 480px;
+    display: flex; flex-direction: column;
+  }
+  .shield-panel-head {
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--panel-line);
+    padding-bottom: 0.85rem;
+    margin-bottom: 1rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .shield-panel-stage {
+    flex: 1;
+    position: relative;
+    display: grid; place-items: center;
+    min-height: 320px;
+  }
+  .shield-svg-wrap {
+    width: 100%;
+    max-width: 380px;
+    aspect-ratio: 1;
+    position: relative;
+  }
+  .shield-svg {
+    width: 100%; height: 100%;
+    filter: drop-shadow(0 0 30px color-mix(in srgb, var(--accent) 40%, transparent));
+    animation: shieldFloat 6s ease-in-out infinite;
+  }
+  @keyframes shieldFloat {
+    0%, 100% { transform: translateY(0) rotate(0); }
+    50% { transform: translateY(-8px) rotate(0.5deg); }
+  }
+  .shield-rotate-1 { animation: rotateSlow 22s linear infinite; transform-origin: center; }
+  .shield-rotate-2 { animation: rotateSlow 16s linear infinite reverse; transform-origin: center; }
+  @keyframes rotateSlow { to { transform: rotate(360deg); } }
+  .shield-pulse-ring {
+    position: absolute; inset: 0;
+    border: 1px solid var(--accent);
+    border-radius: 50%;
+    opacity: 0;
+    animation: pulseRing 3s ease-out infinite;
+  }
+  .shield-pulse-ring:nth-child(2) { animation-delay: 1s; }
+  .shield-pulse-ring:nth-child(3) { animation-delay: 2s; }
+  @keyframes pulseRing {
+    0% { transform: scale(0.85); opacity: 0.7; }
+    100% { transform: scale(1.4); opacity: 0; }
+  }
+
+  .shield-readout {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--panel-line);
+  }
+  .readout-cell {
+    font-family: var(--mono);
+  }
+  .readout-label {
+    font-size: 0.64rem;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .readout-value {
+    font-size: 0.95rem;
+    color: var(--text);
+    margin-top: 0.15rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .readout-value.ok { color: var(--accent); }
+  .readout-value.warn { color: var(--warn); }
+
+  /* ---------- services ---------- */
+  .services-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+  @media (min-width: 700px) {
+    .services-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (min-width: 1100px) {
+    .services-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  .service-card {
+    background: var(--bg);
+    padding: 2rem 1.75rem;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s ease;
+    cursor: none;
+  }
+  .service-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s ease;
+  }
+  .service-card:hover::before { transform: scaleX(1); }
+  .service-card:hover { background: var(--bg-soft); }
+  .service-card:hover .service-glitch {
+    animation: glitch 0.4s steps(2) 1;
+  }
+  @keyframes glitch {
+    0%, 100% { transform: translate(0); }
+    20% { transform: translate(-2px, 1px); }
+    40% { transform: translate(2px, -1px); }
+    60% { transform: translate(-1px, 2px); }
+    80% { transform: translate(1px, -2px); }
+  }
+  .service-num {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    margin-bottom: 1rem;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .service-icon {
+    width: 36px; height: 36px;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+  .service-icon svg { width: 100%; height: 100%; }
+  .service-title {
+    font-family: var(--display);
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin: 0 0 0.6rem;
+    letter-spacing: -0.015em;
+    line-height: 1.15;
+  }
+  .service-desc {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.6;
+    margin: 0 0 1.25rem;
+  }
+  .service-stack {
+    display: flex; flex-wrap: wrap; gap: 0.4rem;
+    margin-bottom: 1.25rem;
+  }
+  .stack-tag {
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    color: var(--muted);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 0.2rem 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .service-link {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--accent);
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 0.45rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    transition: gap 0.2s ease;
+  }
+  .service-link:hover { gap: 0.7rem; }
+  .service-link::before { content: '→'; }
+
+  /* ---------- ops dashboard / globe ---------- */
+  .ops-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  @media (min-width: 900px) {
+    .ops-grid { grid-template-columns: 1.4fr 1fr; }
+  }
+  .ops-cell {
+    background: var(--panel);
+    padding: 1.5rem;
+    position: relative;
+  }
+  .ops-cell-head {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 1rem;
+    padding-bottom: 0.7rem;
+    border-bottom: 1px solid var(--panel-line);
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+  }
+  .ops-cell-head .live-tag {
+    color: var(--accent);
+    display: flex; align-items: center; gap: 0.35rem;
+  }
+
+  .globe-stage {
+    position: relative;
+    aspect-ratio: 16/10;
+    background: var(--bg-soft);
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid var(--panel-line);
+  }
+  #globe-canvas {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+  }
+  .globe-overlay {
+    position: absolute;
+    bottom: 8px; left: 8px;
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    background: color-mix(in srgb, var(--bg) 80%, transparent);
+    padding: 4px 8px;
+    border-radius: 3px;
+    border: 1px solid var(--panel-line);
+  }
+  .globe-corner {
+    position: absolute;
+    width: 14px; height: 14px;
+    border: 1px solid var(--accent);
+  }
+  .globe-corner.tl { top: 6px; left: 6px; border-right: none; border-bottom: none; }
+  .globe-corner.tr { top: 6px; right: 6px; border-left: none; border-bottom: none; }
+  .globe-corner.bl { bottom: 6px; left: 6px; border-right: none; border-top: none; }
+  .globe-corner.br { bottom: 6px; right: 6px; border-left: none; border-top: none; }
+
+  .feed-list {
+    list-style: none;
+    padding: 0; margin: 0;
+    display: grid;
+    gap: 0.4rem;
+    max-height: 360px;
+    overflow: hidden;
+  }
+  .feed-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 0.6rem;
+    align-items: baseline;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    padding: 0.45rem 0.55rem;
+    border-left: 2px solid var(--line);
+    background: var(--bg-soft);
+    border-radius: 0 4px 4px 0;
+    animation: feedIn 0.4s ease;
+  }
+  @keyframes feedIn {
+    from { opacity: 0; transform: translateX(-6px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  .feed-row.crit { border-left-color: var(--crit); }
+  .feed-row.warn { border-left-color: var(--warn); }
+  .feed-row.ok { border-left-color: var(--accent); }
+  .feed-time { color: var(--dim); font-size: 0.7rem; font-variant-numeric: tabular-nums; }
+  .feed-msg { color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .feed-tag {
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 1px 5px;
+    border-radius: 2px;
+    border: 1px solid currentColor;
+  }
+  .feed-tag.crit { color: var(--crit); }
+  .feed-tag.warn { color: var(--warn); }
+  .feed-tag.ok { color: var(--accent); }
+
+  .meter-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.85rem;
+    margin-top: 1rem;
+  }
+  .meter {
+    border: 1px solid var(--panel-line);
+    border-radius: 4px;
+    padding: 0.6rem 0.7rem;
+  }
+  .meter-label { font-family: var(--mono); font-size: 0.62rem; color: var(--dim); text-transform: uppercase; letter-spacing: 0.1em; }
+  .meter-val { font-family: var(--display); font-size: 1.35rem; font-weight: 600; color: var(--accent); margin-top: 0.15rem; font-variant-numeric: tabular-nums; }
+  .meter-bar { margin-top: 0.5rem; height: 4px; background: var(--bg-soft); border-radius: 999px; overflow: hidden; }
+  .meter-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--info)); transition: width 1s ease; }
+
+  /* ---------- bento stack ---------- */
+  .bento {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: minmax(120px, auto);
+    gap: 14px;
+  }
+  @media (min-width: 700px) { .bento { grid-template-columns: repeat(4, 1fr); } }
+  @media (min-width: 1100px) { .bento { grid-template-columns: repeat(6, 1fr); } }
+
+  .bento-card {
+    border: 1px solid var(--panel-line);
+    background: var(--panel);
+    border-radius: 8px;
+    padding: 1.1rem;
+    display: flex; flex-direction: column; justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s, background 0.2s;
+    cursor: none;
+  }
+  .bento-card:hover {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 4%, var(--panel));
+    transform: translateY(-2px);
+  }
+  .bento-card.span-2 { grid-column: span 2; }
+  .bento-card.span-3 { grid-column: span 3; }
+  .bento-card.row-2 { grid-row: span 2; }
+  .bento-icon {
+    width: 36px; height: 36px;
+    display: grid;
+    place-items: center;
+    margin-bottom: 0.75rem;
+  }
+  .bento-icon img,
+  .bento-icon svg {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .bento-name {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: var(--text);
+    margin-bottom: 0.2rem;
+  }
+  .bento-desc {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+    line-height: 1.45;
+  }
+  .bento-card.featured {
+    background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 14%, var(--panel)), var(--panel));
+    border-color: color-mix(in srgb, var(--accent) 30%, var(--panel-line));
+  }
+  .bento-eyebrow {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 0.5rem;
+  }
+  .bento-big {
+    font-family: var(--display);
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  /* ---------- timeline / method ---------- */
+  .timeline {
+    display: grid;
+    gap: 0;
+    border-top: 1px solid var(--line);
+  }
+  .timeline-row {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 1.5rem;
+    padding: 1.75rem 0;
+    border-bottom: 1px solid var(--line);
+    align-items: start;
+    position: relative;
+  }
+  @media (min-width: 800px) {
+    .timeline-row { grid-template-columns: 120px 1fr 280px; }
+  }
+  .timeline-step {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding-top: 0.2rem;
+    position: relative;
+  }
+  .timeline-step::before {
+    content: '';
+    position: absolute;
+    left: -4px; top: 0.5rem;
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 12px var(--accent);
+  }
+  .timeline-title {
+    font-family: var(--display);
+    font-size: clamp(1.15rem, 2vw, 1.5rem);
+    font-weight: 600;
+    margin: 0 0 0.4rem;
+    letter-spacing: -0.015em;
+  }
+  .timeline-desc {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.6;
+    margin: 0;
+  }
+  .timeline-output {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--dim);
+    border-left: 1px solid var(--line);
+    padding-left: 1rem;
+    line-height: 1.7;
+  }
+  .timeline-output strong {
+    color: var(--accent);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.65rem;
+    display: block;
+    margin-bottom: 0.4rem;
+  }
+
+  /* ---------- insights / blog teaser ---------- */
+  .insights {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 900px) {
+    .insights { grid-template-columns: repeat(3, 1fr); }
+  }
+  .insight {
+    border: 1px solid var(--panel-line);
+    border-radius: 8px;
+    padding: 1.5rem;
+    background: var(--panel);
+    transition: all 0.2s ease;
+    cursor: none;
+    display: flex; flex-direction: column;
+    min-height: 280px;
+    text-decoration: none;
+    color: inherit;
+  }
+  .insight:hover {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px color-mix(in srgb, var(--accent) 12%, transparent);
+  }
+  .insight-meta {
+    display: flex; align-items: center; gap: 0.6rem;
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--dim);
+    margin-bottom: 1rem;
+  }
+  .insight-cat {
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 2px 6px;
+    border-radius: 2px;
+  }
+  .insight-title {
+    font-family: var(--display);
+    font-size: 1.2rem;
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    margin: 0 0 0.7rem;
+    color: var(--text);
+  }
+  .insight-excerpt {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 1.55;
+    flex: 1;
+    margin: 0 0 1rem;
+  }
+  .insight-readtime {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    display: flex; align-items: center; gap: 0.4rem;
+  }
+
+  /* ---------- contact ---------- */
+  .contact-block {
+    border: 1px solid var(--panel-line);
+    background:
+      linear-gradient(135deg, color-mix(in srgb, var(--accent) 6%, var(--panel)), var(--panel) 60%);
+    border-radius: 12px;
+    padding: clamp(2rem, 4vw, 3.5rem);
+    position: relative;
+    overflow: hidden;
+  }
+  .contact-block::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 32px 32px;
+    opacity: 0.6;
+    mask-image: radial-gradient(circle at 80% 30%, black 30%, transparent 70%);
+    pointer-events: none;
+  }
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    position: relative;
+    z-index: 1;
+  }
+  @media (min-width: 900px) {
+    .contact-grid { grid-template-columns: 1.4fr 1fr; }
+  }
+  .contact-title {
+    font-family: var(--display);
+    font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+    margin: 0 0 1rem;
+  }
+  .contact-title em { font-family: var(--serif); font-style: italic; font-weight: 400; color: var(--accent); }
+  .contact-body {
+    font-family: var(--mono);
+    color: var(--muted);
+    font-size: 0.95rem;
+    max-width: 50ch;
+    line-height: 1.65;
+    margin: 0 0 1.5rem;
+  }
+  .contact-details {
+    background: var(--bg-soft);
+    border: 1px solid var(--panel-line);
+    border-radius: 6px;
+    padding: 1.25rem;
+    font-family: var(--mono);
+    font-size: 0.82rem;
+  }
+  .contact-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px dashed var(--panel-line);
+    gap: 1rem;
+  }
+  .contact-row:last-child { border-bottom: none; }
+  .contact-row .label { color: var(--dim); text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.66rem; }
+  .contact-row .val { color: var(--text); font-variant-numeric: tabular-nums; }
+  .contact-row .val a { color: var(--accent); text-decoration: none; }
+
+  /* ---------- footer ---------- */
+  .site-footer {
+    margin-top: 4rem;
+    border-top: 1px solid var(--line);
+    padding: 2rem 0;
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    color: var(--dim);
+  }
+  .footer-grid {
+    display: flex; flex-wrap: wrap;
+    align-items: center; justify-content: space-between;
+    gap: 1rem;
+  }
+  .footer-grid a { color: var(--muted); text-decoration: none; }
+  .footer-grid a:hover { color: var(--accent); }
+
+  /* ---------- reveal on scroll ---------- */
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  [data-reveal].visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01s !important; transition-duration: 0.01s !important; }
+    [data-reveal] { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body>
+  <canvas id="matrix-canvas"></canvas>
+  <div class="grid-bg"></div>
+  <div class="scanlines"></div>
+  <div class="vignette"></div>
+
+  <!-- Crosshair cursor parts -->
+  <div class="crosshair-ring" id="ch-ring"></div>
+  <div class="crosshair-dot" id="ch-dot"></div>
+  <div class="crosshair-tick" id="ch-th" style="height:1px; width:14px;"></div>
+  <div class="crosshair-tick" id="ch-tv"></div>
+
+  <div id="root" class="site"></div>
+
+  <script src="vendor/react.development.js"></script>
+  <script src="vendor/react-dom.development.js"></script>
+  <script src="vendor/babel.min.js"></script>
+
+  <script type="text/babel" data-source="tweaks-panel.jsx">
+
+// tweaks-panel.jsx
+// Reusable Tweaks shell + form-control helpers.
+//
+// Owns the host protocol (listens for __activate_edit_mode / __deactivate_edit_mode,
+// posts __edit_mode_available / __edit_mode_set_keys / __edit_mode_dismissed) so
+// individual prototypes don't re-roll it. Ships a consistent set of controls so you
+// don't hand-draw <input type="range">, segmented radios, steppers, etc.
+//
+// Usage (in an HTML file that loads React + Babel):
+//
+//   const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+//     "primaryColor": "#D97757",
+//     "fontSize": 16,
+//     "density": "regular",
+//     "dark": false
+//   }/*EDITMODE-END*/;
+//
+//   function App() {
+//     const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+//     return (
+//       <div style={{ fontSize: t.fontSize, color: t.primaryColor }}>
+//         Hello
+//         <TweaksPanel>
+//           <TweakSection label="Typography" />
+//           <TweakSlider label="Font size" value={t.fontSize} min={10} max={32} unit="px"
+//                        onChange={(v) => setTweak('fontSize', v)} />
+//           <TweakRadio  label="Density" value={t.density}
+//                        options={['compact', 'regular', 'comfy']}
+//                        onChange={(v) => setTweak('density', v)} />
+//           <TweakSection label="Theme" />
+//           <TweakColor  label="Primary" value={t.primaryColor}
+//                        onChange={(v) => setTweak('primaryColor', v)} />
+//           <TweakToggle label="Dark mode" value={t.dark}
+//                        onChange={(v) => setTweak('dark', v)} />
+//         </TweaksPanel>
+//       </div>
+//     );
+//   }
+//
+// ─────────────────────────────────────────────────────────────────────────────
+
+const __TWEAKS_STYLE = `
+  .twk-panel{position:fixed;right:16px;bottom:16px;z-index:2147483646;width:280px;
+    max-height:calc(100vh - 32px);display:flex;flex-direction:column;
+    background:rgba(250,249,247,.78);color:#29261b;
+    -webkit-backdrop-filter:blur(24px) saturate(160%);backdrop-filter:blur(24px) saturate(160%);
+    border:.5px solid rgba(255,255,255,.6);border-radius:14px;
+    box-shadow:0 1px 0 rgba(255,255,255,.5) inset,0 12px 40px rgba(0,0,0,.18);
+    font:11.5px/1.4 ui-sans-serif,system-ui,-apple-system,sans-serif;overflow:hidden}
+  .twk-hd{display:flex;align-items:center;justify-content:space-between;
+    padding:10px 8px 10px 14px;cursor:move;user-select:none}
+  .twk-hd b{font-size:12px;font-weight:600;letter-spacing:.01em}
+  .twk-x{appearance:none;border:0;background:transparent;color:rgba(41,38,27,.55);
+    width:22px;height:22px;border-radius:6px;cursor:default;font-size:13px;line-height:1}
+  .twk-x:hover{background:rgba(0,0,0,.06);color:#29261b}
+  .twk-body{padding:2px 14px 14px;display:flex;flex-direction:column;gap:10px;
+    overflow-y:auto;overflow-x:hidden;min-height:0;
+    scrollbar-width:thin;scrollbar-color:rgba(0,0,0,.15) transparent}
+  .twk-body::-webkit-scrollbar{width:8px}
+  .twk-body::-webkit-scrollbar-track{background:transparent;margin:2px}
+  .twk-body::-webkit-scrollbar-thumb{background:rgba(0,0,0,.15);border-radius:4px;
+    border:2px solid transparent;background-clip:content-box}
+  .twk-body::-webkit-scrollbar-thumb:hover{background:rgba(0,0,0,.25);
+    border:2px solid transparent;background-clip:content-box}
+  .twk-row{display:flex;flex-direction:column;gap:5px}
+  .twk-row-h{flex-direction:row;align-items:center;justify-content:space-between;gap:10px}
+  .twk-lbl{display:flex;justify-content:space-between;align-items:baseline;
+    color:rgba(41,38,27,.72)}
+  .twk-lbl>span:first-child{font-weight:500}
+  .twk-val{color:rgba(41,38,27,.5);font-variant-numeric:tabular-nums}
+
+  .twk-sect{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+    color:rgba(41,38,27,.45);padding:10px 0 0}
+  .twk-sect:first-child{padding-top:0}
+
+  .twk-field{appearance:none;width:100%;height:26px;padding:0 8px;
+    border:.5px solid rgba(0,0,0,.1);border-radius:7px;
+    background:rgba(255,255,255,.6);color:inherit;font:inherit;outline:none}
+  .twk-field:focus{border-color:rgba(0,0,0,.25);background:rgba(255,255,255,.85)}
+  select.twk-field{padding-right:22px;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='rgba(0,0,0,.5)' d='M0 0h10L5 6z'/></svg>");
+    background-repeat:no-repeat;background-position:right 8px center}
+
+  .twk-slider{appearance:none;-webkit-appearance:none;width:100%;height:4px;margin:6px 0;
+    border-radius:999px;background:rgba(0,0,0,.12);outline:none}
+  .twk-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;
+    width:14px;height:14px;border-radius:50%;background:#fff;
+    border:.5px solid rgba(0,0,0,.12);box-shadow:0 1px 3px rgba(0,0,0,.2);cursor:default}
+  .twk-slider::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
+    background:#fff;border:.5px solid rgba(0,0,0,.12);box-shadow:0 1px 3px rgba(0,0,0,.2);cursor:default}
+
+  .twk-seg{position:relative;display:flex;padding:2px;border-radius:8px;
+    background:rgba(0,0,0,.06);user-select:none}
+  .twk-seg-thumb{position:absolute;top:2px;bottom:2px;border-radius:6px;
+    background:rgba(255,255,255,.9);box-shadow:0 1px 2px rgba(0,0,0,.12);
+    transition:left .15s cubic-bezier(.3,.7,.4,1),width .15s}
+  .twk-seg.dragging .twk-seg-thumb{transition:none}
+  .twk-seg button{appearance:none;position:relative;z-index:1;flex:1;border:0;
+    background:transparent;color:inherit;font:inherit;font-weight:500;min-height:22px;
+    border-radius:6px;cursor:default;padding:4px 6px;line-height:1.2;
+    overflow-wrap:anywhere}
+
+  .twk-toggle{position:relative;width:32px;height:18px;border:0;border-radius:999px;
+    background:rgba(0,0,0,.15);transition:background .15s;cursor:default;padding:0}
+  .twk-toggle[data-on="1"]{background:#34c759}
+  .twk-toggle i{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;
+    background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25);transition:transform .15s}
+  .twk-toggle[data-on="1"] i{transform:translateX(14px)}
+
+  .twk-num{display:flex;align-items:center;height:26px;padding:0 0 0 8px;
+    border:.5px solid rgba(0,0,0,.1);border-radius:7px;background:rgba(255,255,255,.6)}
+  .twk-num-lbl{font-weight:500;color:rgba(41,38,27,.6);cursor:ew-resize;
+    user-select:none;padding-right:8px}
+  .twk-num input{flex:1;min-width:0;height:100%;border:0;background:transparent;
+    font:inherit;font-variant-numeric:tabular-nums;text-align:right;padding:0 8px 0 0;
+    outline:none;color:inherit;-moz-appearance:textfield}
+  .twk-num input::-webkit-inner-spin-button,.twk-num input::-webkit-outer-spin-button{
+    -webkit-appearance:none;margin:0}
+  .twk-num-unit{padding-right:8px;color:rgba(41,38,27,.45)}
+
+  .twk-btn{appearance:none;height:26px;padding:0 12px;border:0;border-radius:7px;
+    background:rgba(0,0,0,.78);color:#fff;font:inherit;font-weight:500;cursor:default}
+  .twk-btn:hover{background:rgba(0,0,0,.88)}
+  .twk-btn.secondary{background:rgba(0,0,0,.06);color:inherit}
+  .twk-btn.secondary:hover{background:rgba(0,0,0,.1)}
+
+  .twk-swatch{appearance:none;-webkit-appearance:none;width:56px;height:22px;
+    border:.5px solid rgba(0,0,0,.1);border-radius:6px;padding:0;cursor:default;
+    background:transparent;flex-shrink:0}
+  .twk-swatch::-webkit-color-swatch-wrapper{padding:0}
+  .twk-swatch::-webkit-color-swatch{border:0;border-radius:5.5px}
+  .twk-swatch::-moz-color-swatch{border:0;border-radius:5.5px}
+`;
+
+// ── useTweaks ───────────────────────────────────────────────────────────────
+// Single source of truth for tweak values. setTweak persists via the host
+// (__edit_mode_set_keys → host rewrites the EDITMODE block on disk).
+function useTweaks(defaults) {
+  const [values, setValues] = React.useState(defaults);
+  // Accepts either setTweak('key', value) or setTweak({ key: value, ... }) so a
+  // useState-style call doesn't write a "[object Object]" key into the persisted
+  // JSON block.
+  const setTweak = React.useCallback((keyOrEdits, val) => {
+    const edits = typeof keyOrEdits === 'object' && keyOrEdits !== null
+      ? keyOrEdits : { [keyOrEdits]: val };
+    setValues((prev) => ({ ...prev, ...edits }));
+    window.parent.postMessage({ type: '__edit_mode_set_keys', edits }, '*');
+  }, []);
+  return [values, setTweak];
+}
+
+// ── TweaksPanel ─────────────────────────────────────────────────────────────
+// Floating shell. Registers the protocol listener BEFORE announcing
+// availability — if the announce ran first, the host's activate could land
+// before our handler exists and the toolbar toggle would silently no-op.
+// The close button posts __edit_mode_dismissed so the host's toolbar toggle
+// flips off in lockstep; the host echoes __deactivate_edit_mode back which
+// is what actually hides the panel.
+function TweaksPanel({ title = 'Tweaks', children }) {
+  const [open, setOpen] = React.useState(false);
+  const dragRef = React.useRef(null);
+  const offsetRef = React.useRef({ x: 16, y: 16 });
+  const PAD = 16;
+
+  const clampToViewport = React.useCallback(() => {
+    const panel = dragRef.current;
+    if (!panel) return;
+    const w = panel.offsetWidth, h = panel.offsetHeight;
+    const maxRight = Math.max(PAD, window.innerWidth - w - PAD);
+    const maxBottom = Math.max(PAD, window.innerHeight - h - PAD);
+    offsetRef.current = {
+      x: Math.min(maxRight, Math.max(PAD, offsetRef.current.x)),
+      y: Math.min(maxBottom, Math.max(PAD, offsetRef.current.y)),
+    };
+    panel.style.right = offsetRef.current.x + 'px';
+    panel.style.bottom = offsetRef.current.y + 'px';
+  }, []);
+
+  React.useEffect(() => {
+    if (!open) return;
+    clampToViewport();
+    if (typeof ResizeObserver === 'undefined') {
+      window.addEventListener('resize', clampToViewport);
+      return () => window.removeEventListener('resize', clampToViewport);
+    }
+    const ro = new ResizeObserver(clampToViewport);
+    ro.observe(document.documentElement);
+    return () => ro.disconnect();
+  }, [open, clampToViewport]);
+
+  React.useEffect(() => {
+    const onMsg = (e) => {
+      const t = e?.data?.type;
+      if (t === '__activate_edit_mode') setOpen(true);
+      else if (t === '__deactivate_edit_mode') setOpen(false);
+    };
+    window.addEventListener('message', onMsg);
+    window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+    return () => window.removeEventListener('message', onMsg);
+  }, []);
+
+  const dismiss = () => {
+    setOpen(false);
+    window.parent.postMessage({ type: '__edit_mode_dismissed' }, '*');
+  };
+
+  const onDragStart = (e) => {
+    const panel = dragRef.current;
+    if (!panel) return;
+    const r = panel.getBoundingClientRect();
+    const sx = e.clientX, sy = e.clientY;
+    const startRight = window.innerWidth - r.right;
+    const startBottom = window.innerHeight - r.bottom;
+    const move = (ev) => {
+      offsetRef.current = {
+        x: startRight - (ev.clientX - sx),
+        y: startBottom - (ev.clientY - sy),
+      };
+      clampToViewport();
+    };
+    const up = () => {
+      window.removeEventListener('mousemove', move);
+      window.removeEventListener('mouseup', up);
+    };
+    window.addEventListener('mousemove', move);
+    window.addEventListener('mouseup', up);
+  };
+
+  if (!open) return null;
+  return (
+    <>
+      <style>{__TWEAKS_STYLE}</style>
+      <div ref={dragRef} className="twk-panel"
+           style={{ right: offsetRef.current.x, bottom: offsetRef.current.y }}>
+        <div className="twk-hd" onMouseDown={onDragStart}>
+          <b>{title}</b>
+          <button className="twk-x" aria-label="Close tweaks"
+                  onMouseDown={(e) => e.stopPropagation()}
+                  onClick={dismiss}>✕</button>
+        </div>
+        <div className="twk-body">{children}</div>
+      </div>
+    </>
+  );
+}
+
+// ── Layout helpers ──────────────────────────────────────────────────────────
+
+function TweakSection({ label, children }) {
+  return (
+    <>
+      <div className="twk-sect">{label}</div>
+      {children}
+    </>
+  );
+}
+
+function TweakRow({ label, value, children, inline = false }) {
+  return (
+    <div className={inline ? 'twk-row twk-row-h' : 'twk-row'}>
+      <div className="twk-lbl">
+        <span>{label}</span>
+        {value != null && <span className="twk-val">{value}</span>}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+// ── Controls ────────────────────────────────────────────────────────────────
+
+function TweakSlider({ label, value, min = 0, max = 100, step = 1, unit = '', onChange }) {
+  return (
+    <TweakRow label={label} value={`${value}${unit}`}>
+      <input type="range" className="twk-slider" min={min} max={max} step={step}
+             value={value} onChange={(e) => onChange(Number(e.target.value))} />
+    </TweakRow>
+  );
+}
+
+function TweakToggle({ label, value, onChange }) {
+  return (
+    <div className="twk-row twk-row-h">
+      <div className="twk-lbl"><span>{label}</span></div>
+      <button type="button" className="twk-toggle" data-on={value ? '1' : '0'}
+              role="switch" aria-checked={!!value}
+              onClick={() => onChange(!value)}><i /></button>
+    </div>
+  );
+}
+
+function TweakRadio({ label, value, options, onChange }) {
+  const trackRef = React.useRef(null);
+  const [dragging, setDragging] = React.useState(false);
+  const opts = options.map((o) => (typeof o === 'object' ? o : { value: o, label: o }));
+  const idx = Math.max(0, opts.findIndex((o) => o.value === value));
+  const n = opts.length;
+
+  // The active value is read by pointer-move handlers attached for the lifetime
+  // of a drag — ref it so a stale closure doesn't fire onChange for every move.
+  const valueRef = React.useRef(value);
+  valueRef.current = value;
+
+  const segAt = (clientX) => {
+    const r = trackRef.current.getBoundingClientRect();
+    const inner = r.width - 4;
+    const i = Math.floor(((clientX - r.left - 2) / inner) * n);
+    return opts[Math.max(0, Math.min(n - 1, i))].value;
+  };
+
+  const onPointerDown = (e) => {
+    setDragging(true);
+    const v0 = segAt(e.clientX);
+    if (v0 !== valueRef.current) onChange(v0);
+    const move = (ev) => {
+      if (!trackRef.current) return;
+      const v = segAt(ev.clientX);
+      if (v !== valueRef.current) onChange(v);
+    };
+    const up = () => {
+      setDragging(false);
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup', up);
+    };
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', up);
+  };
+
+  return (
+    <TweakRow label={label}>
+      <div ref={trackRef} role="radiogroup" onPointerDown={onPointerDown}
+           className={dragging ? 'twk-seg dragging' : 'twk-seg'}>
+        <div className="twk-seg-thumb"
+             style={{ left: `calc(2px + ${idx} * (100% - 4px) / ${n})`,
+                      width: `calc((100% - 4px) / ${n})` }} />
+        {opts.map((o) => (
+          <button key={o.value} type="button" role="radio" aria-checked={o.value === value}>
+            {o.label}
+          </button>
+        ))}
+      </div>
+    </TweakRow>
+  );
+}
+
+function TweakSelect({ label, value, options, onChange }) {
+  return (
+    <TweakRow label={label}>
+      <select className="twk-field" value={value} onChange={(e) => onChange(e.target.value)}>
+        {options.map((o) => {
+          const v = typeof o === 'object' ? o.value : o;
+          const l = typeof o === 'object' ? o.label : o;
+          return <option key={v} value={v}>{l}</option>;
+        })}
+      </select>
+    </TweakRow>
+  );
+}
+
+function TweakText({ label, value, placeholder, onChange }) {
+  return (
+    <TweakRow label={label}>
+      <input className="twk-field" type="text" value={value} placeholder={placeholder}
+             onChange={(e) => onChange(e.target.value)} />
+    </TweakRow>
+  );
+}
+
+function TweakNumber({ label, value, min, max, step = 1, unit = '', onChange }) {
+  const clamp = (n) => {
+    if (min != null && n < min) return min;
+    if (max != null && n > max) return max;
+    return n;
+  };
+  const startRef = React.useRef({ x: 0, val: 0 });
+  const onScrubStart = (e) => {
+    e.preventDefault();
+    startRef.current = { x: e.clientX, val: value };
+    const decimals = (String(step).split('.')[1] || '').length;
+    const move = (ev) => {
+      const dx = ev.clientX - startRef.current.x;
+      const raw = startRef.current.val + dx * step;
+      const snapped = Math.round(raw / step) * step;
+      onChange(clamp(Number(snapped.toFixed(decimals))));
+    };
+    const up = () => {
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup', up);
+    };
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', up);
+  };
+  return (
+    <div className="twk-num">
+      <span className="twk-num-lbl" onPointerDown={onScrubStart}>{label}</span>
+      <input type="number" value={value} min={min} max={max} step={step}
+             onChange={(e) => onChange(clamp(Number(e.target.value)))} />
+      {unit && <span className="twk-num-unit">{unit}</span>}
+    </div>
+  );
+}
+
+function TweakColor({ label, value, onChange }) {
+  return (
+    <div className="twk-row twk-row-h">
+      <div className="twk-lbl"><span>{label}</span></div>
+      <input type="color" className="twk-swatch" value={value}
+             onChange={(e) => onChange(e.target.value)} />
+    </div>
+  );
+}
+
+function TweakButton({ label, onClick, secondary = false }) {
+  return (
+    <button type="button" className={secondary ? 'twk-btn secondary' : 'twk-btn'}
+            onClick={onClick}>{label}</button>
+  );
+}
+
+Object.assign(window, {
+  useTweaks, TweaksPanel, TweakSection, TweakRow,
+  TweakSlider, TweakToggle, TweakRadio, TweakSelect,
+  TweakText, TweakNumber, TweakColor, TweakButton,
+});
+
+</script>
+  <script type="text/babel" data-source="content.jsx">
+// Bilingual content for CiberPTY
+const CONTENT = {
+  es: {
+    nav: [
+      { href: '#about', label: 'Empresa' },
+      { href: '#services', label: 'Servicios' },
+      { href: '#ops', label: 'Operaciones' },
+      { href: '#stack', label: 'Stack' },
+      { href: '#method', label: 'Método' },
+      { href: '#insights', label: 'Insights' },
+      { href: '#contact', label: 'Contacto' }
+    ],
+    statusLabel: 'SOC ACTIVO',
+    langCode: 'ES',
+    altLang: 'EN',
+    hero: {
+      meta: ['v2.4.0', 'PANAMÁ · VERAGUAS', 'SOC 24/7'],
+      titleA: 'Defensa',
+      titleB: 'activa',
+      titleC: 'para infraestructura',
+      titleD: 'crítica.',
+      tagline: 'Operaciones Blue Team y Red Team con telemetría en vivo, automatización con IA y arquitectura resiliente sobre Linux, Docker y Proxmox. Reducción medible de superficie de ataque.',
+      ctaPrimary: 'Solicitar diagnóstico',
+      ctaSecondary: 'Ver capacidades',
+      stats: [
+        { num: '99.98%', label: 'Uptime SOC' },
+        { num: '< 4 min', label: 'MTTD promedio' },
+        { num: '24/7', label: 'Cobertura' }
+      ]
+    },
+    terminal: {
+      title: 'gilberto@ciberpty:~',
+      status: 'CONNECTED',
+      hint: 'Prueba: status, scan, ls, services, contact, clear, help'
+    },
+    about: {
+      eyebrow: '01 · Empresa',
+      title: ['Operaciones de seguridad para equipos que ', { em: 'no pueden parar' }, '.'],
+      meta: '/about',
+      paragraphs: [
+        'CiberPTY es una unidad técnica especializada en seguridad ofensiva, defensiva, continuidad operativa y arquitectura resiliente. Trabajamos con homelabs, pymes y equipos en crecimiento que necesitan postura de seguridad real, no checklists vacíos.',
+        'Combinamos prácticas Blue Team y Red Team con automatización mediante n8n, LLMs y orquestación sobre Linux/Docker/Proxmox. Cada engagement entrega evidencia técnica, documentación auditable y reducción medible del riesgo.'
+      ]
+    },
+    shieldPanel: {
+      head: 'firewall.status',
+      live: 'LIVE',
+      readouts: [
+        { label: 'Threats blocked', value: '14,237', cls: 'ok' },
+        { label: 'Latency', value: '12.4ms', cls: '' },
+        { label: 'Posture', value: 'STRONG', cls: 'ok' }
+      ]
+    },
+    services: {
+      eyebrow: '02 · Servicios',
+      title: ['Cobertura ', { em: 'completa' }, ' del ciclo de seguridad.'],
+      meta: '/services [6]',
+      items: [
+        { num: 'SVC.01', icon: 'shield', title: 'Blue Team Operations', desc: 'Hardening, detección y respuesta. Diseño de casos SIEM, ingestión de logs, runbooks de IR y mejora continua de la postura defensiva.', stack: ['Wazuh', 'Hardening', 'IR Playbooks', 'SIEM'] },
+        { num: 'SVC.02', icon: 'crosshair', title: 'Red Team Assessments', desc: 'Simulaciones ofensivas éticas para validar defensas, descubrir brechas reales y priorizar remediación con impacto medible al negocio.', stack: ['Recon', 'Exploitation', 'Reporting'] },
+        { num: 'SVC.03', icon: 'fingerprint', title: 'Forense Digital', desc: 'Análisis técnico de evidencia, reconstrucción de timelines y soporte en investigación de incidentes con cadena de custodia.', stack: ['Volatility', 'Autopsy', 'Timeline'] },
+        { num: 'SVC.04', icon: 'gavel', title: 'Ciber Legal', desc: 'Coordinación con asesoría legal: alineación técnica, manejo de evidencia, reporte formal y cumplimiento normativo.', stack: ['Compliance', 'Governance', 'Reporting'] },
+        { num: 'SVC.05', icon: 'cpu', title: 'Automatización IA', desc: 'Flujos seguros con n8n y LLMs para SOC e IT. Triage automatizado, enriquecimiento de alertas y orquestación de respuesta.', stack: ['n8n', 'LLMs', 'Workflows'] },
+        { num: 'SVC.06', icon: 'server', title: 'Infraestructura Segura', desc: 'Arquitectura y operación sobre Linux, Docker y Proxmox. Diseño con segmentación, hardening y backups verificados.', stack: ['Linux', 'Docker', 'Proxmox'] }
+      ],
+      cta: 'Solicitar servicio'
+    },
+    ops: {
+      eyebrow: '03 · Telemetría',
+      title: ['Visibilidad ', { em: 'en vivo' }, ' sobre el perímetro global.'],
+      meta: '/ops/telemetry',
+      globeTitle: 'GLOBAL THREAT MAP',
+      feedTitle: 'EVENT FEED',
+      meters: [
+        { label: 'EPS', val: '12,840', max: 100 },
+        { label: 'CPU', val: '34%', max: 34 },
+        { label: 'MEM', val: '61%', max: 61 },
+        { label: 'NET', val: '482MB/s', max: 78 }
+      ],
+      legend: 'NODOS · 14 · ACTIVOS'
+    },
+    stack: {
+      eyebrow: '04 · Stack',
+      title: ['Herramientas que ', { em: 'usamos' }, ' en producción.'],
+      meta: '/stack',
+      items: [
+        { name: 'Linux', desc: 'Hardening, kernel tuning, sysctl, AppArmor', span: 1 },
+        { name: 'Docker', desc: 'Aislamiento, imágenes mínimas, escaneo CVE', span: 1 },
+        { name: 'Proxmox', desc: 'Virtualización, snapshots, alta disponibilidad', span: 1 },
+        { name: 'Wazuh', desc: 'SIEM/XDR, detección de amenazas, FIM', span: 1 },
+        { name: 'n8n', desc: 'Orquestación de workflows con guardrails', span: 1 },
+        { name: 'Python', desc: 'Automatización, análisis, parsers custom', span: 1 },
+        { name: 'Ansible', desc: 'Infraestructura como código, idempotencia', span: 1 },
+        { name: 'MariaDB', desc: 'Persistencia, replicación, backups verificados', span: 1 }
+      ],
+      featured: { eyebrow: 'NÚCLEO', big: '8 herramientas', desc: 'integradas, hardenizadas y monitoreadas continuamente. Cada una con runbooks documentados y pruebas de recuperación.' }
+    },
+    method: {
+      eyebrow: '05 · Método',
+      title: ['Cuatro fases. ', { em: 'Evidencia' }, ' en cada una.'],
+      meta: '/method',
+      steps: [
+        { step: 'PHASE 01', title: 'Discovery técnico', desc: 'Mapeo de activos críticos, superficie de ataque y dependencias. Identificación de gaps contra baseline definido.', output: ['ENTREGABLE', 'Mapa de riesgo · Inventario · Baseline gap analysis'] },
+        { step: 'PHASE 02', title: 'Plan de acción', desc: 'Priorización por impacto al negocio. Definición de KPIs, ventanas de cambio y dependencias entre tareas.', output: ['ENTREGABLE', 'Roadmap priorizado · KPIs · RACI técnico'] },
+        { step: 'PHASE 03', title: 'Implementación', desc: 'Despliegue incremental con pruebas, evidencia de configuración y rollback documentado para cada cambio.', output: ['ENTREGABLE', 'Configuraciones IaC · Logs · Evidencia firmada'] },
+        { step: 'PHASE 04', title: 'Operación continua', desc: 'Monitoreo activo, mejora continua y transferencia de conocimiento al equipo interno con documentación viva.', output: ['ENTREGABLE', 'Dashboards · Runbooks · Sesiones de transferencia'] }
+      ]
+    },
+    insights: {
+      eyebrow: '06 · Insights',
+      title: ['Notas técnicas del ', { em: 'campo' }, '.'],
+      meta: '/blog',
+      posts: [
+        { cat: 'BLUE TEAM', date: '2026.04.18', title: 'Detección de living-off-the-land binaries con Wazuh', excerpt: 'Reglas custom para detectar abuso de utilidades nativas (certutil, mshta, rundll32) sin generar ruido en endpoints administrativos.', read: '8 min', slug: 'blog/wazuh-lolbins.html' },
+        { cat: 'AUTOMATION', date: '2026.04.02', title: 'Triage de alertas con LLMs sin filtrar datos sensibles', excerpt: 'Patrón de redacción y enriquecimiento local antes de enviar contexto a un modelo. Compatible con n8n y guardrails opensource.', read: '12 min', slug: 'blog/llm-triage.html' },
+        { cat: 'INFRASTRUCTURE', date: '2026.03.21', title: 'Proxmox + Tailscale: cluster privado sobre red pública', excerpt: 'Arquitectura para nodos remotos con cifrado en tránsito, sin exponer puertos públicos. Failover y backups verificados.', read: '15 min', slug: 'blog/proxmox-tailscale.html' }
+      ],
+      cta: 'Leer más'
+    },
+    contact: {
+      eyebrow: '07 · Contacto',
+      title: ['Listos para tu ', { em: 'próximo' }, ' diagnóstico.'],
+      body: 'Agenda una conversación de 30 minutos para mapear riesgos, automatización segura y mejoras de infraestructura. Confidencial bajo NDA.',
+      cta: 'Solicitar diagnóstico',
+      whatsapp: 'Iniciar WhatsApp',
+      details: [
+        { label: 'Contacto', val: 'Gilberto Ramos' },
+        { label: 'Email', val: 'gilberto@ciberpty.com', isLink: 'mailto:gilberto@ciberpty.com' },
+        { label: 'WhatsApp', val: '+507 6857-3845', isLink: 'https://wa.me/50768573845' },
+        { label: 'GitHub', val: 'github.com/cpu-16', isLink: 'https://github.com/cpu-16' },
+        { label: 'Ubicación', val: 'Panamá · Veraguas' }
+      ]
+    },
+    footer: {
+      copyright: '© 2026 CiberPTY · Todos los derechos reservados',
+      tagline: 'BUILT FOR DEFENDERS'
+    }
+  },
+  en: {
+    nav: [
+      { href: '#about', label: 'Company' },
+      { href: '#services', label: 'Services' },
+      { href: '#ops', label: 'Operations' },
+      { href: '#stack', label: 'Stack' },
+      { href: '#method', label: 'Method' },
+      { href: '#insights', label: 'Insights' },
+      { href: '#contact', label: 'Contact' }
+    ],
+    statusLabel: 'SOC ONLINE',
+    langCode: 'EN',
+    altLang: 'ES',
+    hero: {
+      meta: ['v2.4.0', 'PANAMA · VERAGUAS', 'SOC 24/7'],
+      titleA: 'Active',
+      titleB: 'defense',
+      titleC: 'for critical',
+      titleD: 'infrastructure.',
+      tagline: 'Blue Team and Red Team operations with live telemetry, AI-driven automation, and resilient architecture on Linux, Docker, and Proxmox. Measurable attack surface reduction.',
+      ctaPrimary: 'Request assessment',
+      ctaSecondary: 'View capabilities',
+      stats: [
+        { num: '99.98%', label: 'SOC uptime' },
+        { num: '< 4 min', label: 'Avg MTTD' },
+        { num: '24/7', label: 'Coverage' }
+      ]
+    },
+    terminal: {
+      title: 'gilberto@ciberpty:~',
+      status: 'CONNECTED',
+      hint: 'Try: status, scan, ls, services, contact, clear, help'
+    },
+    about: {
+      eyebrow: '01 · Company',
+      title: ['Security operations for teams that ', { em: 'cannot stop' }, '.'],
+      meta: '/about',
+      paragraphs: [
+        'CiberPTY is a technical unit specialized in offensive security, defense, operational continuity, and resilient architecture. We work with homelabs, SMBs, and growing teams that need real security posture, not empty checklists.',
+        'We combine Blue Team and Red Team practices with automation through n8n, LLMs, and orchestration on Linux/Docker/Proxmox. Every engagement delivers technical evidence, auditable documentation, and measurable risk reduction.'
+      ]
+    },
+    shieldPanel: {
+      head: 'firewall.status',
+      live: 'LIVE',
+      readouts: [
+        { label: 'Threats blocked', value: '14,237', cls: 'ok' },
+        { label: 'Latency', value: '12.4ms', cls: '' },
+        { label: 'Posture', value: 'STRONG', cls: 'ok' }
+      ]
+    },
+    services: {
+      eyebrow: '02 · Services',
+      title: ['Full ', { em: 'coverage' }, ' across the security cycle.'],
+      meta: '/services [6]',
+      items: [
+        { num: 'SVC.01', icon: 'shield', title: 'Blue Team Operations', desc: 'Hardening, detection, and response. SIEM use case design, log ingestion, IR runbooks, and continuous defensive posture uplift.', stack: ['Wazuh', 'Hardening', 'IR Playbooks', 'SIEM'] },
+        { num: 'SVC.02', icon: 'crosshair', title: 'Red Team Assessments', desc: 'Ethical offensive simulations to validate defenses, surface real gaps, and prioritize remediation with measurable business impact.', stack: ['Recon', 'Exploitation', 'Reporting'] },
+        { num: 'SVC.03', icon: 'fingerprint', title: 'Digital Forensics', desc: 'Technical evidence analysis, timeline reconstruction, and incident investigation support with full chain of custody.', stack: ['Volatility', 'Autopsy', 'Timeline'] },
+        { num: 'SVC.04', icon: 'gavel', title: 'Cyber Legal', desc: 'Coordination with legal counsel: technical alignment, evidence handling, formal reporting, and regulatory compliance.', stack: ['Compliance', 'Governance', 'Reporting'] },
+        { num: 'SVC.05', icon: 'cpu', title: 'AI Automation', desc: 'Secure workflows with n8n and LLMs for SOC and IT. Automated triage, alert enrichment, and response orchestration.', stack: ['n8n', 'LLMs', 'Workflows'] },
+        { num: 'SVC.06', icon: 'server', title: 'Secure Infrastructure', desc: 'Architecture and operation on Linux, Docker, and Proxmox. Design with segmentation, hardening, and verified backups.', stack: ['Linux', 'Docker', 'Proxmox'] }
+      ],
+      cta: 'Request service'
+    },
+    ops: {
+      eyebrow: '03 · Telemetry',
+      title: ['Live ', { em: 'visibility' }, ' across the global perimeter.'],
+      meta: '/ops/telemetry',
+      globeTitle: 'GLOBAL THREAT MAP',
+      feedTitle: 'EVENT FEED',
+      meters: [
+        { label: 'EPS', val: '12,840', max: 100 },
+        { label: 'CPU', val: '34%', max: 34 },
+        { label: 'MEM', val: '61%', max: 61 },
+        { label: 'NET', val: '482MB/s', max: 78 }
+      ],
+      legend: 'NODES · 14 · ACTIVE'
+    },
+    stack: {
+      eyebrow: '04 · Stack',
+      title: ['Tools we ', { em: 'run' }, ' in production.'],
+      meta: '/stack',
+      items: [
+        { name: 'Linux', desc: 'Hardening, kernel tuning, sysctl, AppArmor', span: 1 },
+        { name: 'Docker', desc: 'Isolation, minimal images, CVE scanning', span: 1 },
+        { name: 'Proxmox', desc: 'Virtualization, snapshots, high availability', span: 1 },
+        { name: 'Wazuh', desc: 'SIEM/XDR, threat detection, file integrity', span: 1 },
+        { name: 'n8n', desc: 'Workflow orchestration with guardrails', span: 1 },
+        { name: 'Python', desc: 'Automation, analysis, custom parsers', span: 1 },
+        { name: 'Ansible', desc: 'Infrastructure as code, idempotent', span: 1 },
+        { name: 'MariaDB', desc: 'Persistence, replication, verified backups', span: 1 }
+      ],
+      featured: { eyebrow: 'CORE', big: '8 tools', desc: 'integrated, hardened, and continuously monitored. Each one with documented runbooks and recovery drills.' }
+    },
+    method: {
+      eyebrow: '05 · Method',
+      title: ['Four phases. ', { em: 'Evidence' }, ' in every one.'],
+      meta: '/method',
+      steps: [
+        { step: 'PHASE 01', title: 'Technical discovery', desc: 'Critical asset mapping, attack surface, and dependencies. Gap identification against defined baseline.', output: ['DELIVERABLE', 'Risk map · Inventory · Baseline gap analysis'] },
+        { step: 'PHASE 02', title: 'Action plan', desc: 'Prioritization by business impact. Definition of KPIs, change windows, and inter-task dependencies.', output: ['DELIVERABLE', 'Prioritized roadmap · KPIs · Technical RACI'] },
+        { step: 'PHASE 03', title: 'Implementation', desc: 'Incremental deployment with testing, configuration evidence, and documented rollback for every change.', output: ['DELIVERABLE', 'IaC configs · Logs · Signed evidence'] },
+        { step: 'PHASE 04', title: 'Continuous operation', desc: 'Active monitoring, continuous improvement, and knowledge transfer to the internal team with living documentation.', output: ['DELIVERABLE', 'Dashboards · Runbooks · Transfer sessions'] }
+      ]
+    },
+    insights: {
+      eyebrow: '06 · Insights',
+      title: ['Field ', { em: 'notes' }, ' from the trenches.'],
+      meta: '/blog',
+      posts: [
+        { cat: 'BLUE TEAM', date: '2026.04.18', title: 'Detecting living-off-the-land binaries with Wazuh', excerpt: 'Custom rules to detect abuse of native utilities (certutil, mshta, rundll32) without generating noise on admin endpoints.', read: '8 min', slug: 'blog/wazuh-lolbins.html' },
+        { cat: 'AUTOMATION', date: '2026.04.02', title: 'Alert triage with LLMs without leaking sensitive data', excerpt: 'Local redaction and enrichment pattern before sending context to a model. Compatible with n8n and open-source guardrails.', read: '12 min', slug: 'blog/llm-triage.html' },
+        { cat: 'INFRASTRUCTURE', date: '2026.03.21', title: 'Proxmox + Tailscale: private cluster over public network', excerpt: 'Architecture for remote nodes with encryption in transit, no public ports exposed. Failover and verified backups.', read: '15 min', slug: 'blog/proxmox-tailscale.html' }
+      ],
+      cta: 'Read more'
+    },
+    contact: {
+      eyebrow: '07 · Contact',
+      title: ['Ready for your ', { em: 'next' }, ' assessment.'],
+      body: 'Book a 30-minute conversation to map risk, secure automation, and infrastructure improvements. Confidential under NDA.',
+      cta: 'Request assessment',
+      whatsapp: 'Start WhatsApp',
+      details: [
+        { label: 'Contact', val: 'Gilberto Ramos' },
+        { label: 'Email', val: 'gilberto@ciberpty.com', isLink: 'mailto:gilberto@ciberpty.com' },
+        { label: 'WhatsApp', val: '+507 6857-3845', isLink: 'https://wa.me/50768573845' },
+        { label: 'GitHub', val: 'github.com/cpu-16', isLink: 'https://github.com/cpu-16' },
+        { label: 'Location', val: 'Panama · Veraguas' }
+      ]
+    },
+    footer: {
+      copyright: '© 2026 CiberPTY · All rights reserved',
+      tagline: 'BUILT FOR DEFENDERS'
+    }
+  }
+};
+
+window.CONTENT = CONTENT;
+
+</script>
+  <script type="text/babel" data-source="effects.jsx">
+// Visual effects: matrix rain, attack globe, crosshair cursor
+
+function initMatrixRain() {
+  const canvas = document.getElementById('matrix-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let w, h, cols, drops;
+  const chars = '01ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃ#$%&*+=<>?@/\\|';
+
+  function resize() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+    cols = Math.floor(w / 18);
+    drops = Array(cols).fill(0).map(() => Math.random() * h / 18);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function getAccent() {
+    const root = document.documentElement;
+    const v = getComputedStyle(root).getPropertyValue('--accent').trim();
+    return v || '#00ff9c';
+  }
+
+  let frame = 0;
+  function draw() {
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    // slower, deeper trails
+    ctx.fillStyle = isLight ? 'rgba(244,246,248,0.045)' : 'rgba(5,6,8,0.035)';
+    ctx.fillRect(0, 0, w, h);
+    const accent = getAccent();
+    ctx.font = '15px JetBrains Mono, monospace';
+    for (let i = 0; i < cols; i++) {
+      // skip many columns each frame so movement is slow & sparse
+      if ((i + frame) % 3 !== 0) continue;
+      const ch = chars[Math.floor(Math.random() * chars.length)];
+      const x = i * 18;
+      const y = drops[i] * 18;
+      ctx.fillStyle = accent;
+      ctx.fillText(ch, x, y);
+      ctx.fillStyle = isLight ? 'rgba(0,135,92,0.18)' : 'rgba(0,255,156,0.22)';
+      ctx.fillText(ch, x, y - 18);
+
+      if (y > h && Math.random() > 0.985) drops[i] = 0;
+      drops[i] += 0.18;
+    }
+    frame++;
+  }
+  let raf;
+  let last = 0;
+  function tick(t) {
+    // throttle to ~22fps for that classic Matrix cadence
+    if (t - last > 45) { draw(); last = t; }
+    raf = requestAnimationFrame(tick);
+  }
+  raf = requestAnimationFrame(tick);
+}
+
+function initAttackGlobe(canvasEl) {
+  if (!canvasEl) return () => {};
+  const ctx = canvasEl.getContext('2d');
+  let w, h, dpr;
+
+  function resize() {
+    dpr = window.devicePixelRatio || 1;
+    const rect = canvasEl.getBoundingClientRect();
+    w = rect.width;
+    h = rect.height;
+    canvasEl.width = w * dpr;
+    canvasEl.height = h * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  resize();
+  const ro = new ResizeObserver(resize);
+  ro.observe(canvasEl);
+
+  // World point cloud — simplified continent sketches via lat/lon
+  // We'll generate procedural dot map for landmasses using a low-res mask drawn from rectangles approximating continents.
+  // Cleaner approach: random stars across mapped continents.
+  const points = [];
+  // approximate continent regions [latMin, latMax, lonMin, lonMax, density]
+  const regions = [
+    [10, 70, -130, -65, 220],   // North America
+    [-55, 12, -82, -34, 180],   // South America
+    [35, 70, -10, 40, 200],     // Europe
+    [-35, 35, -18, 52, 260],    // Africa
+    [10, 70, 30, 145, 320],     // Asia
+    [-45, -10, 110, 155, 90],   // Australia
+  ];
+  regions.forEach(([lat0, lat1, lon0, lon1, n]) => {
+    for (let i = 0; i < n; i++) {
+      const lat = lat0 + Math.random() * (lat1 - lat0);
+      const lon = lon0 + Math.random() * (lon1 - lon0);
+      points.push({ lat, lon });
+    }
+  });
+
+  // Hubs & cities (rough lat/lon)
+  const cities = [
+    { name: 'PA', lat: 9, lon: -79, home: true },
+    { name: 'NYC', lat: 40.7, lon: -74 },
+    { name: 'LDN', lat: 51.5, lon: -0.1 },
+    { name: 'BER', lat: 52.5, lon: 13.4 },
+    { name: 'MAD', lat: 40.4, lon: -3.7 },
+    { name: 'SAO', lat: -23.5, lon: -46.6 },
+    { name: 'BOG', lat: 4.7, lon: -74 },
+    { name: 'LAX', lat: 34, lon: -118 },
+    { name: 'TYO', lat: 35.6, lon: 139.7 },
+    { name: 'SIN', lat: 1.35, lon: 103.8 },
+    { name: 'SYD', lat: -33.9, lon: 151.2 },
+    { name: 'JNB', lat: -26.2, lon: 28 },
+    { name: 'MOS', lat: 55.7, lon: 37.6 },
+    { name: 'DXB', lat: 25.2, lon: 55.3 }
+  ];
+
+  // Project equirectangular
+  function project(lat, lon) {
+    const x = ((lon + 180) / 360) * w;
+    const y = ((90 - lat) / 180) * h;
+    return [x, y];
+  }
+
+  const home = cities.find(c => c.home);
+  const arcs = [];
+
+  function spawnArc() {
+    const candidates = cities.filter(c => !c.home);
+    const from = candidates[Math.floor(Math.random() * candidates.length)];
+    const to = home;
+    const isCrit = Math.random() < 0.25;
+    arcs.push({ from, to, t: 0, dur: 60 + Math.random() * 80, crit: isCrit });
+    if (arcs.length > 20) arcs.shift();
+  }
+
+  const arcTimer = setInterval(spawnArc, 700);
+
+  function getColor(name) {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  }
+
+  function draw() {
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    const accent = getColor('--accent') || '#00ff9c';
+    const crit = getColor('--crit') || '#ff4d6d';
+    const dim = isLight ? 'rgba(74,85,104,0.5)' : 'rgba(125,138,154,0.4)';
+    const bgFill = isLight ? '#eaeef2' : '#0a0d12';
+
+    ctx.fillStyle = bgFill;
+    ctx.fillRect(0, 0, w, h);
+
+    // grid
+    ctx.strokeStyle = isLight ? 'rgba(0,135,92,0.06)' : 'rgba(0,255,156,0.05)';
+    ctx.lineWidth = 1;
+    for (let lat = -60; lat <= 60; lat += 30) {
+      const [, y] = project(lat, 0);
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+    }
+    for (let lon = -180; lon <= 180; lon += 30) {
+      const [x] = project(0, lon);
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+    }
+
+    // continents as point cloud
+    ctx.fillStyle = dim;
+    points.forEach(p => {
+      const [x, y] = project(p.lat, p.lon);
+      ctx.fillRect(x, y, 1.2, 1.2);
+    });
+
+    // home pulse
+    const [hx, hy] = project(home.lat, home.lon);
+    const t = (Date.now() % 2000) / 2000;
+    ctx.beginPath();
+    ctx.arc(hx, hy, 2 + t * 14, 0, Math.PI * 2);
+    ctx.strokeStyle = accent + '88';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(hx, hy, 3, 0, Math.PI * 2);
+    ctx.fillStyle = accent;
+    ctx.fill();
+
+    // arcs
+    arcs.forEach(a => {
+      const [x1, y1] = project(a.from.lat, a.from.lon);
+      const [x2, y2] = project(a.to.lat, a.to.lon);
+      const mx = (x1 + x2) / 2;
+      const my = (y1 + y2) / 2 - Math.abs(x2 - x1) * 0.25;
+
+      // full path faint
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.quadraticCurveTo(mx, my, x2, y2);
+      ctx.strokeStyle = (a.crit ? crit : accent) + (isLight ? '40' : '30');
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      // animated head
+      const p = Math.min(1, a.t / a.dur);
+      // sample
+      const px = (1-p)*(1-p)*x1 + 2*(1-p)*p*mx + p*p*x2;
+      const py = (1-p)*(1-p)*y1 + 2*(1-p)*p*my + p*p*y2;
+      ctx.beginPath();
+      ctx.arc(px, py, 2.5, 0, Math.PI * 2);
+      ctx.fillStyle = a.crit ? crit : accent;
+      ctx.shadowColor = a.crit ? crit : accent;
+      ctx.shadowBlur = 8;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // origin marker
+      ctx.beginPath();
+      ctx.arc(x1, y1, 1.6, 0, Math.PI * 2);
+      ctx.fillStyle = (a.crit ? crit : accent) + 'cc';
+      ctx.fill();
+
+      a.t += 1;
+    });
+
+    for (let i = arcs.length - 1; i >= 0; i--) {
+      if (arcs[i].t >= arcs[i].dur) arcs.splice(i, 1);
+    }
+  }
+
+  let raf;
+  function tick() {
+    draw();
+    raf = requestAnimationFrame(tick);
+  }
+  tick();
+  return () => { cancelAnimationFrame(raf); clearInterval(arcTimer); ro.disconnect(); };
+}
+
+function initCrosshair() {
+  const ring = document.getElementById('ch-ring');
+  const dot = document.getElementById('ch-dot');
+  const th = document.getElementById('ch-th');
+  const tv = document.getElementById('ch-tv');
+  if (!ring || !dot) return;
+  let mx = -100, my = -100, rx = -100, ry = -100;
+  function move(e) {
+    mx = e.clientX; my = e.clientY;
+    dot.style.left = mx + 'px';
+    dot.style.top = my + 'px';
+  }
+  window.addEventListener('mousemove', move);
+  function tick() {
+    rx += (mx - rx) * 0.18;
+    ry += (my - ry) * 0.18;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    if (th) { th.style.left = (rx - 7) + 'px'; th.style.top = ry + 'px'; }
+    if (tv) { tv.style.left = rx + 'px'; tv.style.top = (ry - 7) + 'px'; tv.style.height = '14px'; tv.style.width = '1px'; }
+    requestAnimationFrame(tick);
+  }
+  tick();
+
+  document.addEventListener('mouseover', e => {
+    const t = e.target;
+    if (t && t.closest && t.closest('a, button, [data-hover]')) {
+      document.body.classList.add('is-hovering');
+    }
+  });
+  document.addEventListener('mouseout', e => {
+    const t = e.target;
+    if (t && t.closest && t.closest('a, button, [data-hover]')) {
+      document.body.classList.remove('is-hovering');
+    }
+  });
+}
+
+function initRevealOnScroll() {
+  const els = Array.from(document.querySelectorAll('[data-reveal]'));
+  const reveal = el => el.classList.add('visible');
+
+  if (!('IntersectionObserver' in window)) {
+    els.forEach(reveal);
+    return;
+  }
+
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        reveal(e.target);
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -10% 0px' });
+
+  els.forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight * 0.95) reveal(el);
+    else obs.observe(el);
+  });
+}
+
+window.initMatrixRain = initMatrixRain;
+window.initAttackGlobe = initAttackGlobe;
+window.initCrosshair = initCrosshair;
+window.initRevealOnScroll = initRevealOnScroll;
+
+</script>
+  <script type="text/babel" data-source="components.jsx">
+// Reusable components, icons, shield SVG
+
+const Icon = ({ name }) => {
+  const icons = {
+    shield: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 2 4 5v6c0 5 3.5 9 8 11 4.5-2 8-6 8-11V5l-8-3z"/><path d="m9 12 2 2 4-4"/></svg>,
+    crosshair: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/><circle cx="12" cy="12" r="2"/></svg>,
+    fingerprint: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M6 12c0-3 3-6 6-6s6 3 6 6"/><path d="M9 12c0-2 1.5-3 3-3s3 1 3 3v3"/><path d="M12 9v8"/><path d="M9 16c0 2 1 4 3 5"/><path d="M15 14c0 4-1 6-3 7"/></svg>,
+    gavel: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="m14 5 5 5"/><path d="m13 6 5 5-7 7-5-5z"/><path d="M3 21h10"/><path d="m18 4 3 3"/></svg>,
+    cpu: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="6" y="6" width="12" height="12" rx="1"/><rect x="9" y="9" width="6" height="6"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/></svg>,
+    server: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="4" width="18" height="6" rx="1"/><rect x="3" y="14" width="18" height="6" rx="1"/><circle cx="7" cy="7" r="0.5" fill="currentColor"/><circle cx="7" cy="17" r="0.5" fill="currentColor"/></svg>,
+    arrow: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>,
+    sun: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>,
+    moon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>,
+  };
+  return icons[name] || null;
+};
+
+// Renders title arrays like ['plain ', { em: 'italic' }, ' more']
+const RichTitle = ({ parts }) => (
+  <>
+    {parts.map((p, i) => typeof p === 'string' ? p : <em key={i}>{p.em}</em>)}
+  </>
+);
+
+const BrandMark = () => (
+  <svg viewBox="0 0 32 32" fill="none">
+    <path d="M16 3 5 7v9c0 7 5 11 11 13 6-2 11-6 11-13V7L16 3z" stroke="currentColor" strokeWidth="1.5"/>
+    <path d="M16 9v14M9 13l7 4 7-4" stroke="currentColor" strokeWidth="1.5"/>
+    <circle cx="16" cy="17" r="2" fill="currentColor"/>
+  </svg>
+);
+
+// Detailed 3D-ish shield SVG
+const ShieldArt = () => (
+  <svg viewBox="0 0 400 400" className="shield-svg">
+    <defs>
+      <linearGradient id="sg1" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.9"/>
+        <stop offset="100%" stopColor="var(--info)" stopOpacity="0.4"/>
+      </linearGradient>
+      <linearGradient id="sg2" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.4"/>
+        <stop offset="100%" stopColor="var(--accent)" stopOpacity="0"/>
+      </linearGradient>
+      <radialGradient id="sg3">
+        <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.3"/>
+        <stop offset="100%" stopColor="var(--accent)" stopOpacity="0"/>
+      </radialGradient>
+    </defs>
+    {/* outer rotating ring with ticks */}
+    <g className="shield-rotate-1">
+      {Array.from({ length: 60 }).map((_, i) => {
+        const a = (i / 60) * Math.PI * 2;
+        const r1 = 180, r2 = i % 5 === 0 ? 168 : 174;
+        const x1 = 200 + Math.cos(a) * r1;
+        const y1 = 200 + Math.sin(a) * r1;
+        const x2 = 200 + Math.cos(a) * r2;
+        const y2 = 200 + Math.sin(a) * r2;
+        return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="var(--accent)" strokeWidth={i % 5 === 0 ? 1.5 : 0.5} opacity={i % 5 === 0 ? 0.7 : 0.3}/>;
+      })}
+      <circle cx="200" cy="200" r="180" fill="none" stroke="var(--accent)" strokeWidth="0.5" opacity="0.4"/>
+    </g>
+    {/* second rotating ring */}
+    <g className="shield-rotate-2">
+      <circle cx="200" cy="200" r="155" fill="none" stroke="var(--accent)" strokeWidth="0.8" strokeDasharray="2 6" opacity="0.5"/>
+      <circle cx="200" cy="200" r="140" fill="none" stroke="var(--info)" strokeWidth="0.6" strokeDasharray="20 8 4 8" opacity="0.4"/>
+    </g>
+    {/* shield body — front */}
+    <path d="M200 70 L120 100 L120 200 Q120 280 200 330 Q280 280 280 200 L280 100 Z"
+      fill="url(#sg2)" stroke="url(#sg1)" strokeWidth="2"/>
+    {/* facets — 3d feel */}
+    <path d="M200 70 L120 100 L200 200 Z" fill="var(--accent)" opacity="0.12"/>
+    <path d="M200 70 L280 100 L200 200 Z" fill="var(--accent)" opacity="0.06"/>
+    <path d="M120 100 L120 200 L200 200 Z" fill="var(--info)" opacity="0.08"/>
+    <path d="M280 100 L280 200 L200 200 Z" fill="var(--info)" opacity="0.04"/>
+    <path d="M120 200 Q120 280 200 330 L200 200 Z" fill="var(--accent)" opacity="0.09"/>
+    <path d="M280 200 Q280 280 200 330 L200 200 Z" fill="var(--accent)" opacity="0.05"/>
+    {/* edges */}
+    <path d="M200 70 L200 330" stroke="var(--accent)" strokeWidth="0.6" opacity="0.6"/>
+    <path d="M120 100 L200 200 L280 100" stroke="var(--accent)" strokeWidth="1" opacity="0.7"/>
+    <path d="M120 200 L200 200 L280 200" stroke="var(--accent)" strokeWidth="0.6" opacity="0.5"/>
+    {/* center emblem */}
+    <circle cx="200" cy="200" r="36" fill="none" stroke="var(--accent)" strokeWidth="1.5"/>
+    <circle cx="200" cy="200" r="28" fill="url(#sg3)"/>
+    <path d="M186 200 l10 10 l20 -22" stroke="var(--accent)" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+    {/* corner markers */}
+    {[[120,100],[280,100],[120,200],[280,200]].map(([x,y], i) => (
+      <g key={i}>
+        <circle cx={x} cy={y} r="3" fill="var(--accent)"/>
+        <circle cx={x} cy={y} r="6" fill="none" stroke="var(--accent)" strokeWidth="0.8" opacity="0.6"/>
+      </g>
+    ))}
+    {/* readout text */}
+    <text x="200" y="262" textAnchor="middle" fill="var(--accent)" fontFamily="JetBrains Mono, monospace" fontSize="9" letterSpacing="2" opacity="0.85">PROTECTED</text>
+    <text x="200" y="278" textAnchor="middle" fill="var(--muted)" fontFamily="JetBrains Mono, monospace" fontSize="7" letterSpacing="1.5">AES-256 · TLS 1.3</text>
+  </svg>
+);
+
+// Header
+const Header = ({ lang, setLang, theme, setTheme }) => {
+  const c = window.CONTENT[lang];
+  return (
+    <header className="site-header">
+      <div className="container nav">
+        <a href="#top" className="brand" data-hover>
+          <span className="brand-mark"><BrandMark/></span>
+          <span className="brand-name">CiberPTY<span className="brand-suffix">.com</span></span>
+        </a>
+        <nav className="nav-links">
+          {c.nav.map(n => <a key={n.href} href={n.href}>{n.label}</a>)}
+        </nav>
+        <div className="nav-actions">
+          <button className="pill-btn" onClick={() => setLang(lang === 'es' ? 'en' : 'es')} aria-label="Toggle language">
+            {c.langCode}<span style={{opacity: 0.4}}>/</span><span style={{color: 'var(--accent)'}}>{c.altLang}</span>
+          </button>
+          <button className="pill-btn" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} aria-label="Toggle theme">
+            <span style={{display: 'inline-flex', width: 14, height: 14}}>
+              <Icon name={theme === 'dark' ? 'moon' : 'sun'}/>
+            </span>
+          </button>
+          <span className="pill-btn" style={{borderColor: 'var(--accent)', color: 'var(--accent)'}}>
+            <span className="status-dot"></span>{c.statusLabel}
+          </span>
+        </div>
+      </div>
+    </header>
+  );
+};
+
+// Interactive Terminal
+const TerminalBlock = ({ lang }) => {
+  const c = window.CONTENT[lang].terminal;
+  const [lines, setLines] = React.useState([]);
+  const [input, setInput] = React.useState('');
+  const [booted, setBooted] = React.useState(false);
+  const [uptime, setUptime] = React.useState(0);
+  const startRef = React.useRef(Date.now());
+  const inputRef = React.useRef(null);
+  const bodyRef = React.useRef(null);
+
+  React.useEffect(() => {
+    const id = setInterval(() => setUptime(Math.floor((Date.now() - startRef.current)/1000)), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  const fmtUp = (s) => {
+    const h = String(Math.floor(s/3600)).padStart(2,'0');
+    const m = String(Math.floor((s%3600)/60)).padStart(2,'0');
+    const ss = String(s%60).padStart(2,'0');
+    return `${h}:${m}:${ss}`;
+  };
+
+  // boot sequence
+  React.useEffect(() => {
+    let mounted = true;
+    const bootLines = lang === 'es' ? [
+      { cls: 'term-out', text: '[INIT] Iniciando ciberpty-os v2.4.0...' },
+      { cls: 'term-out', text: '[BOOT] Cargando módulos: wazuh, n8n, suricata, falco...' },
+      { cls: 'term-ok', text: '[ OK ] Conectado a SIEM · 12,840 EPS' },
+      { cls: 'term-ok', text: '[ OK ] Firewall activo · 0 brechas detectadas' },
+      { cls: 'term-warn', text: '[WARN] 2 alertas en triage automatizado' },
+      { cls: 'term-out', text: '' },
+      { cls: 'term-out', text: `Bienvenido. ${c.hint}` }
+    ] : [
+      { cls: 'term-out', text: '[INIT] Booting ciberpty-os v2.4.0...' },
+      { cls: 'term-out', text: '[BOOT] Loading modules: wazuh, n8n, suricata, falco...' },
+      { cls: 'term-ok', text: '[ OK ] SIEM connected · 12,840 EPS' },
+      { cls: 'term-ok', text: '[ OK ] Firewall active · 0 breaches detected' },
+      { cls: 'term-warn', text: '[WARN] 2 alerts in automated triage' },
+      { cls: 'term-out', text: '' },
+      { cls: 'term-out', text: `Welcome. ${c.hint}` }
+    ];
+    let i = 0;
+    function next() {
+      if (!mounted) return;
+      if (i >= bootLines.length) { setBooted(true); return; }
+      const line = bootLines[i];
+      if (line) setLines(prev => [...prev, line]);
+      i++;
+      setTimeout(next, 280 + Math.random() * 180);
+    }
+    setTimeout(next, 400);
+    return () => { mounted = false; };
+  }, [lang]);
+
+  React.useEffect(() => {
+    if (bodyRef.current) bodyRef.current.scrollTop = bodyRef.current.scrollHeight;
+  }, [lines]);
+
+  function runCmd(cmd) {
+    const cmdLine = { cls: 'term-cmd', text: cmd, prompt: true };
+    const args = cmd.trim().split(/\s+/);
+    const c0 = (args[0] || '').toLowerCase();
+    let out = [];
+    if (c0 === '') {
+      out = [];
+    } else if (c0 === 'help' || c0 === '?') {
+      out = lang === 'es' ? [
+        { cls: 'term-out', text: 'Comandos disponibles:' },
+        { cls: 'term-dim', text: '  status      Estado del SOC y servicios' },
+        { cls: 'term-dim', text: '  scan <ip>   Escaneo de puertos simulado' },
+        { cls: 'term-dim', text: '  ls          Listar capacidades' },
+        { cls: 'term-dim', text: '  services    Servicios ofrecidos' },
+        { cls: 'term-dim', text: '  contact     Datos de contacto' },
+        { cls: 'term-dim', text: '  whoami      Identidad actual' },
+        { cls: 'term-dim', text: '  uptime      Tiempo en línea' },
+        { cls: 'term-dim', text: '  clear       Limpiar terminal' }
+      ] : [
+        { cls: 'term-out', text: 'Available commands:' },
+        { cls: 'term-dim', text: '  status      SOC and services status' },
+        { cls: 'term-dim', text: '  scan <ip>   Simulated port scan' },
+        { cls: 'term-dim', text: '  ls          List capabilities' },
+        { cls: 'term-dim', text: '  services    Offered services' },
+        { cls: 'term-dim', text: '  contact     Contact details' },
+        { cls: 'term-dim', text: '  whoami      Current identity' },
+        { cls: 'term-dim', text: '  uptime      Time online' },
+        { cls: 'term-dim', text: '  clear       Clear terminal' }
+      ];
+    } else if (c0 === 'status') {
+      out = [
+        { cls: 'term-ok', text: '● SIEM       online   12,840 EPS' },
+        { cls: 'term-ok', text: '● Firewall   online   14,237 blocks/24h' },
+        { cls: 'term-ok', text: '● n8n        online   42 workflows · 0 errors' },
+        { cls: 'term-ok', text: '● Proxmox    online   3 nodes · HA' },
+        { cls: 'term-warn', text: '● Backup     pending  next: 02:00 UTC-5' }
+      ];
+    } else if (c0 === 'scan') {
+      const ip = args[1] || '10.0.0.1';
+      out = [
+        { cls: 'term-out', text: `Scanning ${ip}...` },
+        { cls: 'term-dim', text: 'PORT    STATE  SERVICE' },
+        { cls: 'term-ok',  text: '22/tcp  open   ssh      OpenSSH 9.2 (hardened)' },
+        { cls: 'term-ok',  text: '443/tcp open   https    nginx 1.25 (TLS 1.3)' },
+        { cls: 'term-dim', text: '80/tcp  closed http' },
+        { cls: 'term-dim', text: '21/tcp  closed ftp' },
+        { cls: 'term-out', text: `Done. ${ip} · 2 open · firewall enforced` }
+      ];
+    } else if (c0 === 'ls') {
+      out = [
+        { cls: 'term-info', text: 'capabilities/' },
+        { cls: 'term-out',  text: '  blue-team/      red-team/      forensics/' },
+        { cls: 'term-out',  text: '  cyber-legal/    ai-automation/ infra/' }
+      ];
+    } else if (c0 === 'services') {
+      const svc = window.CONTENT[lang].services.items;
+      out = svc.map(s => ({ cls: 'term-out', text: `${s.num.padEnd(8)} ${s.title}` }));
+    } else if (c0 === 'contact') {
+      out = [
+        { cls: 'term-out', text: 'gilberto@ciberpty.com' },
+        { cls: 'term-out', text: 'wa.me/50768573845' },
+        { cls: 'term-out', text: 'github.com/cpu-16' }
+      ];
+    } else if (c0 === 'whoami') {
+      out = [{ cls: 'term-ok', text: 'guest@ciberpty (read-only · no privileges)' }];
+    } else if (c0 === 'uptime') {
+      out = [{ cls: 'term-out', text: `up ${fmtUp(uptime)} · load: 0.42 0.38 0.31` }];
+    } else if (c0 === 'clear') {
+      setLines([]);
+      return;
+    } else if (c0 === 'sudo') {
+      out = [{ cls: 'term-crit', text: `${args[0]}: nice try ;) — guest cannot escalate` }];
+    } else if (c0 === 'rm') {
+      out = [{ cls: 'term-crit', text: 'rm: operation not permitted (read-only sandbox)' }];
+    } else {
+      out = [{ cls: 'term-crit', text: `${c0}: command not found · try 'help'` }];
+    }
+    setLines(prev => [...prev, cmdLine, ...out]);
+  }
+
+  function onSubmit(e) {
+    e.preventDefault();
+    runCmd(input);
+    setInput('');
+  }
+
+  return (
+    <div className="terminal" data-hover onClick={() => inputRef.current && inputRef.current.focus()}>
+      <div className="terminal-bar">
+        <div className="terminal-dots">
+          <span className="terminal-dot r"></span>
+          <span className="terminal-dot y"></span>
+          <span className="terminal-dot g"></span>
+        </div>
+        <div className="terminal-title">{c.title}</div>
+        <div className="terminal-status">
+          <span className="status-dot"></span>{c.status} · {fmtUp(uptime)}
+        </div>
+      </div>
+      <div className="terminal-body" ref={bodyRef} style={{maxHeight: 380, overflowY: 'auto'}}>
+        {lines.filter(Boolean).map((l, i) => (
+          <div key={i} className="terminal-line">
+            {l && l.prompt && <span className="term-prompt">guest@ciberpty:~$ </span>}
+            <span className={l && l.cls}>{l && l.text}</span>
+          </div>
+        ))}
+        {booted && (
+          <form onSubmit={onSubmit} className="terminal-input">
+            <span className="term-prompt">guest@ciberpty:~$</span>
+            <input ref={inputRef} value={input} onChange={e => setInput(e.target.value)} autoFocus spellCheck={false} autoComplete="off"/>
+            <span className="blink-cursor"></span>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// Hero
+const Hero = ({ lang }) => {
+  const h = window.CONTENT[lang].hero;
+  return (
+    <section className="hero" id="top">
+      <div className="container hero-grid">
+        <div data-reveal>
+          <div className="hero-meta-line">
+            <span className="bracket">[</span>
+            {h.meta.map((m, i) => (
+              <React.Fragment key={i}>
+                <span>{m}</span>
+                {i < h.meta.length - 1 && <span className="sep">·</span>}
+              </React.Fragment>
+            ))}
+            <span className="bracket">]</span>
+          </div>
+          <h1 className="hero-title">
+            {h.titleA} <span className="glitch">{h.titleB}</span><br/>
+            {h.titleC} <span className="strike">{h.titleD}</span>
+          </h1>
+          <p className="hero-tagline">{h.tagline}</p>
+          <div className="hero-cta">
+            <a href="#contact" className="btn btn-primary" data-hover>
+              {h.ctaPrimary} <span className="btn-arrow"><Icon name="arrow"/></span>
+            </a>
+            <a href="#services" className="btn btn-secondary" data-hover>{h.ctaSecondary}</a>
+          </div>
+          <div className="hero-stats">
+            {h.stats.map((s, i) => (
+              <div key={i}>
+                <div className="stat-num">{s.num}</div>
+                <div className="stat-label">{s.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div data-reveal>
+          <TerminalBlock lang={lang}/>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// About + Shield
+const AboutSection = ({ lang }) => {
+  const a = window.CONTENT[lang].about;
+  const s = window.CONTENT[lang].shieldPanel;
+  const [readouts, setReadouts] = React.useState(s.readouts);
+  React.useEffect(() => {
+    const id = setInterval(() => {
+      setReadouts(prev => prev.map((r, i) => {
+        if (i === 0) {
+          const n = parseInt(r.value.replace(/,/g,'')) + Math.floor(Math.random()*4);
+          return { ...r, value: n.toLocaleString() };
+        }
+        if (i === 1) {
+          const ms = (10 + Math.random()*6).toFixed(1);
+          return { ...r, value: `${ms}ms` };
+        }
+        return r;
+      }));
+    }, 1400);
+    return () => clearInterval(id);
+  }, []);
+  return (
+    <section className="section" id="about">
+      <div className="container">
+        <div className="section-head" data-reveal>
+          <div>
+            <div className="section-eyebrow">{a.eyebrow}</div>
+            <h2 className="section-title"><RichTitle parts={a.title}/></h2>
+          </div>
+          <div className="section-meta">{a.meta}</div>
+        </div>
+        <div className="about-grid">
+          <div className="about-text" data-reveal>
+            {a.paragraphs.map((p, i) => <p key={i}>{p}</p>)}
+          </div>
+          <div className="shield-panel" data-reveal>
+            <div className="shield-panel-head">
+              <span>{s.head}</span>
+              <span style={{color: 'var(--accent)', display: 'inline-flex', alignItems: 'center', gap: 6}}>
+                <span className="status-dot"></span>{s.live}
+              </span>
+            </div>
+            <div className="shield-panel-stage">
+              <div className="shield-svg-wrap">
+                <div className="shield-pulse-ring"></div>
+                <div className="shield-pulse-ring"></div>
+                <div className="shield-pulse-ring"></div>
+                <ShieldArt/>
+              </div>
+            </div>
+            <div className="shield-readout">
+              {readouts.map((r, i) => (
+                <div key={i} className="readout-cell">
+                  <div className="readout-label">{r.label}</div>
+                  <div className={`readout-value ${r.cls}`}>{r.value}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// Services
+const ServicesSection = ({ lang }) => {
+  const s = window.CONTENT[lang].services;
+  return (
+    <section className="section" id="services">
+      <div className="container">
+        <div className="section-head" data-reveal>
+          <div>
+            <div className="section-eyebrow">{s.eyebrow}</div>
+            <h2 className="section-title"><RichTitle parts={s.title}/></h2>
+          </div>
+          <div className="section-meta">{s.meta}</div>
+        </div>
+        <div className="services-grid" data-reveal>
+          {s.items.map((it, i) => (
+            <article key={i} className="service-card" data-hover>
+              <div className="service-num">
+                <span>{it.num}</span>
+                <span style={{color: 'var(--dim)'}}>0{i+1}/{s.items.length}</span>
+              </div>
+              <div className="service-icon"><Icon name={it.icon}/></div>
+              <h3 className="service-title service-glitch">{it.title}</h3>
+              <p className="service-desc">{it.desc}</p>
+              <div className="service-stack">
+                {it.stack.map((tag, j) => <span key={j} className="stack-tag">{tag}</span>)}
+              </div>
+              <a href="#contact" className="service-link">{s.cta}</a>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// Ops / Globe
+const OpsSection = ({ lang }) => {
+  const o = window.CONTENT[lang].ops;
+  const canvasRef = React.useRef(null);
+  const [feed, setFeed] = React.useState([]);
+  const [meters, setMeters] = React.useState(o.meters);
+
+  React.useEffect(() => {
+    const cleanup = window.initAttackGlobe(canvasRef.current);
+    return cleanup;
+  }, []);
+
+  React.useEffect(() => {
+    const messages = [
+      { tag: 'BLOCK', cls: 'ok', msg: 'SSH brute-force from 185.117.x.x — IP banned' },
+      { tag: 'TRIAGE', cls: 'warn', msg: 'Anomalous outbound to TOR exit node — quarantined' },
+      { tag: 'BLOCK', cls: 'ok', msg: 'WAF: SQLi attempt on /api/login — 403' },
+      { tag: 'CRIT', cls: 'crit', msg: 'Privilege escalation attempt — host isolated' },
+      { tag: 'OK', cls: 'ok', msg: 'IDS rules updated — 14,237 indicators loaded' },
+      { tag: 'WARN', cls: 'warn', msg: 'Cert expiring in 14d — auto-renewal queued' },
+      { tag: 'BLOCK', cls: 'ok', msg: 'Phishing payload caught at gateway — sandboxed' },
+      { tag: 'OK', cls: 'ok', msg: 'Backup verified — 1.2TB · sha256 match' },
+      { tag: 'TRIAGE', cls: 'warn', msg: 'Unusual user-agent on /admin — challenge issued' },
+      { tag: 'BLOCK', cls: 'ok', msg: 'XSS reflected attempt — sanitized + logged' },
+      { tag: 'OK', cls: 'ok', msg: 'n8n workflow #042 — alert enriched in 1.4s' },
+      { tag: 'CRIT', cls: 'crit', msg: 'Lateral movement detected on subnet 10.0.20/24' }
+    ];
+    function now() {
+      const d = new Date();
+      return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;
+    }
+    function spawn() {
+      const m = messages[Math.floor(Math.random() * messages.length)];
+      setFeed(prev => {
+        const next = [{ ...m, time: now(), id: Math.random() }, ...prev];
+        return next.slice(0, 8);
+      });
+    }
+    spawn();
+    const id = setInterval(spawn, 1700);
+    return () => clearInterval(id);
+  }, []);
+
+  React.useEffect(() => {
+    const id = setInterval(() => {
+      setMeters(prev => prev.map((m, i) => {
+        if (i === 0) {
+          const n = 12000 + Math.floor(Math.random()*1500);
+          return { ...m, val: n.toLocaleString(), max: 60 + Math.random()*30 };
+        }
+        if (i === 1) return { ...m, val: `${20 + Math.floor(Math.random()*30)}%`, max: 20 + Math.random()*30 };
+        if (i === 2) return { ...m, val: `${55 + Math.floor(Math.random()*15)}%`, max: 55 + Math.random()*15 };
+        if (i === 3) return { ...m, val: `${300 + Math.floor(Math.random()*250)}MB/s`, max: 50 + Math.random()*40 };
+        return m;
+      }));
+    }, 2000);
+    return () => clearInterval(id);
+  }, []);
+
+  return (
+    <section className="section" id="ops">
+      <div className="container">
+        <div className="section-head" data-reveal>
+          <div>
+            <div className="section-eyebrow">{o.eyebrow}</div>
+            <h2 className="section-title"><RichTitle parts={o.title}/></h2>
+          </div>
+          <div className="section-meta">{o.meta}</div>
+        </div>
+        <div className="ops-grid" data-reveal>
+          <div className="ops-cell">
+            <div className="ops-cell-head">
+              <span>{o.globeTitle}</span>
+              <span className="live-tag"><span className="status-dot"></span>LIVE</span>
+            </div>
+            <div className="globe-stage">
+              <canvas ref={canvasRef} id="globe-canvas"></canvas>
+              <span className="globe-corner tl"></span>
+              <span className="globe-corner tr"></span>
+              <span className="globe-corner bl"></span>
+              <span className="globe-corner br"></span>
+              <div className="globe-overlay">{o.legend}</div>
+            </div>
+            <div className="meter-grid">
+              {meters.map((m, i) => (
+                <div key={i} className="meter">
+                  <div className="meter-label">{m.label}</div>
+                  <div className="meter-val">{m.val}</div>
+                  <div className="meter-bar"><div className="meter-bar-fill" style={{width: `${m.max}%`}}></div></div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="ops-cell">
+            <div className="ops-cell-head">
+              <span>{o.feedTitle}</span>
+              <span className="live-tag"><span className="status-dot"></span>STREAM</span>
+            </div>
+            <ul className="feed-list">
+              {feed.map(f => (
+                <li key={f.id} className={`feed-row ${f.cls}`}>
+                  <span className="feed-time">{f.time}</span>
+                  <span className="feed-msg">{f.msg}</span>
+                  <span className={`feed-tag ${f.cls}`}>{f.tag}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// Stack bento
+const StackSection = ({ lang }) => {
+  const s = window.CONTENT[lang].stack;
+  return (
+    <section className="section" id="stack">
+      <div className="container">
+        <div className="section-head" data-reveal>
+          <div>
+            <div className="section-eyebrow">{s.eyebrow}</div>
+            <h2 className="section-title"><RichTitle parts={s.title}/></h2>
+          </div>
+          <div className="section-meta">{s.meta}</div>
+        </div>
+        <div className="bento" data-reveal>
+          <div className="bento-card featured span-2 row-2">
+            <div>
+              <div className="bento-eyebrow">{s.featured.eyebrow}</div>
+              <div className="bento-big">{s.featured.big}</div>
+            </div>
+            <div className="bento-desc">{s.featured.desc}</div>
+          </div>
+          {s.items.map((it, i) => (
+            <div key={i} className="bento-card" data-hover>
+              <div className="bento-icon">
+                <img src={`icons/${it.name.toLowerCase()}.svg`} alt={`${it.name} logo`}/>
+              </div>
+              <div>
+                <div className="bento-name">{it.name}</div>
+                <div className="bento-desc">{it.desc}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// Method timeline
+const MethodSection = ({ lang }) => {
+  const m = window.CONTENT[lang].method;
+  return (
+    <section className="section" id="method">
+      <div className="container">
+        <div className="section-head" data-reveal>
+          <div>
+            <div className="section-eyebrow">{m.eyebrow}</div>
+            <h2 className="section-title"><RichTitle parts={m.title}/></h2>
+          </div>
+          <div className="section-meta">{m.meta}</div>
+        </div>
+        <div className="timeline" data-reveal>
+          {m.steps.map((step, i) => (
+            <div key={i} className="timeline-row">
+              <div className="timeline-step">{step.step}</div>
+              <div>
+                <h3 className="timeline-title">{step.title}</h3>
+                <p className="timeline-desc">{step.desc}</p>
+              </div>
+              <div className="timeline-output">
+                <strong>{step.output[0]}</strong>
+                {step.output[1]}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// Insights
+const InsightsSection = ({ lang }) => {
+  const ins = window.CONTENT[lang].insights;
+  return (
+    <section className="section" id="insights">
+      <div className="container">
+        <div className="section-head" data-reveal>
+          <div>
+            <div className="section-eyebrow">{ins.eyebrow}</div>
+            <h2 className="section-title"><RichTitle parts={ins.title}/></h2>
+          </div>
+          <div className="section-meta">{ins.meta}</div>
+        </div>
+        <div className="insights" data-reveal>
+          {ins.posts.map((p, i) => (
+            <a key={i} className="insight" data-hover href={p.slug || '#'}>
+              <div className="insight-meta">
+                <span className="insight-cat">{p.cat}</span>
+                <span>{p.date}</span>
+              </div>
+              <h3 className="insight-title">{p.title}</h3>
+              <p className="insight-excerpt">{p.excerpt}</p>
+              <div className="insight-readtime">→ {ins.cta} · {p.read}</div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// Contact
+const ContactSection = ({ lang }) => {
+  const c = window.CONTENT[lang].contact;
+  return (
+    <section className="section" id="contact">
+      <div className="container" data-reveal>
+        <div className="contact-block">
+          <div className="contact-grid">
+            <div>
+              <div className="section-eyebrow" style={{marginBottom: '1rem'}}>{c.eyebrow}</div>
+              <h2 className="contact-title"><RichTitle parts={c.title}/></h2>
+              <p className="contact-body">{c.body}</p>
+              <div className="hero-cta">
+                <a href="mailto:gilberto@ciberpty.com" className="btn btn-primary" data-hover>
+                  {c.cta} <span className="btn-arrow"><Icon name="arrow"/></span>
+                </a>
+                <a href="https://wa.me/50768573845" target="_blank" rel="noopener" className="btn btn-secondary" data-hover>{c.whatsapp}</a>
+              </div>
+            </div>
+            <div className="contact-details">
+              {c.details.map((d, i) => (
+                <div key={i} className="contact-row">
+                  <span className="label">{d.label}</span>
+                  <span className="val">
+                    {d.isLink ? <a href={d.isLink} target={d.isLink.startsWith('http') ? '_blank' : undefined} rel="noopener" data-hover>{d.val}</a> : d.val}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const Footer = ({ lang }) => {
+  const f = window.CONTENT[lang].footer;
+  return (
+    <footer className="site-footer">
+      <div className="container footer-grid">
+        <div>{f.copyright}</div>
+        <div style={{color: 'var(--accent)'}}>{f.tagline}</div>
+        <div>
+          <a href="https://github.com/cpu-16" target="_blank" rel="noopener" data-hover>github.com/cpu-16</a>
+        </div>
+      </div>
+    </footer>
+  );
+};
+
+Object.assign(window, {
+  Header, Hero, AboutSection, ServicesSection, OpsSection,
+  StackSection, MethodSection, InsightsSection, ContactSection, Footer,
+  Icon, RichTitle
+});
+
+</script>
+  <script type="text/babel" data-source="app.jsx">
+// App entry — wires together components, theme, language, tweaks panel
+
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "theme": "dark",
+  "lang": "es"
+}/*EDITMODE-END*/;
+
+function App() {
+  const [tweaks, setTweak] = window.useTweaks(TWEAK_DEFAULTS);
+  const lang = tweaks.lang === 'en' ? 'en' : 'es';
+  const theme = tweaks.theme === 'light' ? 'light' : 'dark';
+
+  React.useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    document.documentElement.setAttribute('lang', lang);
+    document.title = lang === 'es'
+      ? 'CiberPTY · Ciberseguridad & Automatización'
+      : 'CiberPTY · Cybersecurity & Automation';
+  }, [theme, lang]);
+
+  React.useEffect(() => {
+    window.initMatrixRain && window.initMatrixRain();
+    window.initCrosshair && window.initCrosshair();
+  }, []);
+
+  // Re-init reveal on every content change
+  React.useEffect(() => {
+    setTimeout(() => window.initRevealOnScroll && window.initRevealOnScroll(), 60);
+  }, [lang]);
+
+  const setLang = (l) => setTweak('lang', l);
+  const setTheme = (t) => setTweak('theme', t);
+
+  return (
+    <>
+      <Header lang={lang} setLang={setLang} theme={theme} setTheme={setTheme}/>
+      <main>
+        <Hero lang={lang}/>
+        <AboutSection lang={lang}/>
+        <ServicesSection lang={lang}/>
+        <OpsSection lang={lang}/>
+        <StackSection lang={lang}/>
+        <MethodSection lang={lang}/>
+        <InsightsSection lang={lang}/>
+        <ContactSection lang={lang}/>
+      </main>
+      <Footer lang={lang}/>
+      <window.TweaksPanel title="Tweaks">
+        <window.TweakSection label="Apariencia">
+          <window.TweakRadio
+            label="Tema"
+            value={theme}
+            onChange={(v) => setTheme(v)}
+            options={['dark', 'light']}
+          />
+          <window.TweakRadio
+            label="Idioma"
+            value={lang}
+            onChange={(v) => setLang(v)}
+            options={['es', 'en']}
+          />
+        </window.TweakSection>
+      </window.TweaksPanel>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+
+</script>
+</body>
+</html>

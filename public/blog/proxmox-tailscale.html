@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proxmox + Tailscale: cluster privado · CiberPTY</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#050608;--bg-soft:#0a0d12;--panel:#0c1117;--line:#1c2532;--panel-line:#1a2230;--text:#e6edf3;--muted:#7d8a9a;--dim:#4a5568;--accent:#00ff9c;--crit:#ff4d6d;--info:#4cc9ff;--mono:'JetBrains Mono',ui-monospace,monospace;--display:'Space Grotesk',system-ui,sans-serif;--serif:'Instrument Serif',Georgia,serif;}
+  *{box-sizing:border-box}html,body{margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:var(--mono);line-height:1.65;background-image:linear-gradient(rgba(0,255,156,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,156,0.04) 1px,transparent 1px);background-size:64px 64px;}
+  .vignette{position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 50%,transparent 40%,rgba(0,0,0,0.5) 100%);z-index:0}
+  .container{width:min(820px,92vw);margin-inline:auto;position:relative;z-index:1}
+  .header{padding:1.5rem 0;border-bottom:1px solid var(--line);margin-bottom:3rem;backdrop-filter:blur(12px);background:color-mix(in srgb,var(--bg) 70%,transparent);position:sticky;top:0;z-index:10}
+  .header-inner{display:flex;align-items:center;justify-content:space-between;width:min(820px,92vw);margin-inline:auto}
+  .brand{font-family:var(--display);font-weight:700;letter-spacing:-.02em;font-size:1rem;text-decoration:none;color:var(--text)}
+  .brand-suffix{color:var(--accent);font-family:var(--mono);font-weight:500;font-size:.7rem;margin-left:.3rem}
+  .back{font-family:var(--mono);font-size:.78rem;color:var(--muted);text-decoration:none}.back:hover{color:var(--accent)}
+  article{padding-bottom:5rem}
+  .meta{display:flex;gap:.6rem;align-items:center;font-family:var(--mono);font-size:.7rem;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:1.5rem}
+  .cat{color:var(--accent);border:1px solid var(--accent);padding:2px 6px;border-radius:2px}
+  h1{font-family:var(--display);font-size:clamp(2rem,5vw,3.4rem);line-height:1.05;letter-spacing:-.025em;font-weight:600;margin:0 0 1rem}
+  h1 em{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--accent)}
+  .lede{font-family:var(--display);font-size:1.2rem;line-height:1.5;color:var(--muted);margin-bottom:2.5rem;max-width:60ch}
+  h2{font-family:var(--display);font-size:1.5rem;letter-spacing:-.015em;margin:2.5rem 0 .8rem}
+  h3{font-family:var(--display);font-size:1.15rem;margin:1.8rem 0 .5rem;color:var(--accent)}
+  p{font-family:var(--mono);font-size:.92rem;color:var(--text);margin:0 0 1rem;max-width:64ch}
+  p.dim{color:var(--muted)}
+  ul{padding-left:1.2rem;margin:0 0 1rem}
+  li{font-family:var(--mono);font-size:.9rem;color:var(--muted);margin:.3rem 0}
+  pre{background:var(--panel);border:1px solid var(--panel-line);border-radius:6px;padding:1rem 1.1rem;overflow-x:auto;font-family:var(--mono);font-size:.82rem;margin:1rem 0;color:var(--text);position:relative}
+  pre::before{content:attr(data-lang);position:absolute;top:8px;right:12px;font-size:.62rem;color:var(--dim);text-transform:uppercase;letter-spacing:.1em}
+  code{color:var(--accent);font-family:var(--mono);font-size:.85em;background:rgba(0,255,156,.06);padding:1px 5px;border-radius:3px;border:1px solid rgba(0,255,156,.15)}
+  pre code{background:none;border:none;padding:0;color:inherit;font-size:inherit}
+  blockquote{border-left:2px solid var(--accent);padding:.4rem 0 .4rem 1.2rem;margin:1.5rem 0;font-family:var(--serif);font-style:italic;font-size:1.1rem}
+  .callout{border:1px solid var(--panel-line);background:var(--panel);border-radius:6px;padding:1rem 1.2rem;margin:1.5rem 0}
+  .callout strong{color:var(--accent);text-transform:uppercase;letter-spacing:.08em;font-size:.7rem;display:block;margin-bottom:.4rem}
+  hr{border:none;border-top:1px dashed var(--line);margin:3rem 0 2rem}
+  .footer{font-family:var(--mono);font-size:.75rem;color:var(--dim);padding:2rem 0;border-top:1px solid var(--line)}
+  .footer a{color:var(--muted);text-decoration:none}.footer a:hover{color:var(--accent)}
+  .topology{background:var(--panel);border:1px solid var(--panel-line);border-radius:6px;padding:1.5rem;margin:1.5rem 0;font-family:var(--mono);font-size:.78rem;color:var(--muted);white-space:pre;overflow-x:auto;line-height:1.5}
+  .topology .ok{color:var(--accent)}.topology .info{color:var(--info)}
+</style>
+</head>
+<body>
+<div class="vignette"></div>
+<header class="header">
+  <div class="header-inner">
+    <a href="../ciberpty.html" class="brand">CiberPTY<span class="brand-suffix">/insights</span></a>
+    <a href="../ciberpty.html#insights" class="back">← Volver al sitio</a>
+  </div>
+</header>
+<div class="container">
+<article>
+  <div class="meta"><span class="cat">INFRASTRUCTURE</span><span>2026.03.21</span><span>·</span><span>15 min de lectura</span></div>
+  <h1>Proxmox + Tailscale: cluster <em>privado</em> sobre red pública</h1>
+  <p class="lede">Arquitectura para nodos remotos con cifrado en tránsito, sin exponer puertos públicos. Failover, replicación y backups verificados.</p>
+
+  <h2>Por qué esta combinación</h2>
+  <p>Proxmox Cluster fue diseñado para LAN. Cuando intentas hacer cluster entre dos data centers o entre on-prem y un VPS público, te enfrentas con: corosync gritando por latencia, puertos expuestos en internet, y configuración de IPSec dolorosa. Tailscale (basado en WireGuard) resuelve los tres problemas con una mesh privada cifrada y mantiene latencias razonables.</p>
+
+  <h2>Topología</h2>
+  <div class="topology"><span class="ok">PANAMÁ DC</span>                          <span class="info">FRANKFURT VPS</span>
+┌─────────────┐                       ┌──────────┐
+│ pve-pa-01   │ ──── tailscale ─────  │ pve-eu-01│
+│ pve-pa-02   │ ────  WireGuard ────  │          │
+│ pve-pa-03   │     (mesh privada)    └──────────┘
+└─────────────┘
+       │                                    │
+       │      <span class="ok">corosync over tailnet0</span>          │
+       └────────────── ring 0 ──────────────┘
+
+<span class="ok">Sin puertos públicos.</span> Cero ingress en firewalls.
+<span class="ok">Latencia P95: 89ms PA → EU</span> (suficiente para HA async).</div>
+
+  <h3>Setup mínimo del tailnet</h3>
+  <pre data-lang="bash"><code># En cada nodo Proxmox
+curl -fsSL https://tailscale.com/install.sh | sh
+
+# Auth con tag para ACLs
+tailscale up \
+  --advertise-tags=tag:proxmox \
+  --hostname=pve-pa-01 \
+  --accept-routes=false
+
+# Verificar que cada nodo se ve por su IP 100.x
+tailscale status</code></pre>
+
+  <h3>ACL en Tailscale para aislar el cluster</h3>
+  <pre data-lang="json"><code>{
+  "tagOwners": {
+    "tag:proxmox": ["admin@ciberpty.com"]
+  },
+  "acls": [
+    {
+      "action": "accept",
+      "src": ["tag:proxmox"],
+      "dst": ["tag:proxmox:*"]
+    },
+    {
+      "action": "accept",
+      "src": ["group:soc"],
+      "dst": ["tag:proxmox:8006"]
+    }
+  ],
+  "ssh": [
+    {
+      "action": "check",
+      "src": ["group:admin"],
+      "dst": ["tag:proxmox"],
+      "users": ["root"]
+    }
+  ]
+}</code></pre>
+
+  <h3>Configurar corosync sobre tailnet</h3>
+  <p>El truco: en <code>/etc/pve/corosync.conf</code>, usar las IPs <code>100.x.x.x</code> de Tailscale en vez de las IPs públicas o LAN. Esto fuerza el tráfico de cluster por el túnel cifrado.</p>
+
+  <pre data-lang="conf"><code>nodelist {
+  node {
+    name: pve-pa-01
+    nodeid: 1
+    quorum_votes: 1
+    ring0_addr: 100.64.0.10
+  }
+  node {
+    name: pve-pa-02
+    nodeid: 2
+    quorum_votes: 1
+    ring0_addr: 100.64.0.11
+  }
+  node {
+    name: pve-eu-01
+    nodeid: 3
+    quorum_votes: 1
+    ring0_addr: 100.64.0.20
+  }
+}
+
+totem {
+  cluster_name: ciberpty-prod
+  config_version: 4
+  transport: knet
+  link_mode: passive
+}</code></pre>
+
+  <div class="callout">
+    <strong>Importante</strong>
+    Para clusters cross-region, usa replicación storage <em>asíncrona</em> (zfs-send + cron). HA síncrona sobre 80+ ms de latencia sufre. Mejor: failover manual con replicación cada 5 minutos para VMs críticas.
+  </div>
+
+  <h2>Replicación ZFS verificada</h2>
+  <pre data-lang="bash"><code># Snapshot + send incremental cada 5 min
+pvesr create-local-job 100-0 pve-eu-01 \
+  --schedule "*/5" \
+  --rate 50 \
+  --comment "VM 100 cross-region async"
+
+# Verificación de integridad post-replicación
+zfs list -t snapshot rpool/data/vm-100-disk-0 | tail -3
+zfs get -H -o value compressratio rpool/data/vm-100-disk-0</code></pre>
+
+  <h2>Backups verificados</h2>
+  <p>Backup a Proxmox Backup Server, también accesible solo por tailnet. Verificación automática semanal con <code>proxmox-backup-client benchmark</code> y restore de prueba mensual a un namespace separado.</p>
+
+  <blockquote>
+    Un backup que nunca probaste a restaurar no es un backup. Es esperanza con timestamp.
+  </blockquote>
+
+  <h2>Métricas de la implementación real</h2>
+  <ul>
+    <li>Puertos públicos expuestos: <strong>0</strong></li>
+    <li>Latencia cluster P95: <strong>89ms</strong> (PA ↔ EU)</li>
+    <li>Tiempo de failover manual probado: <strong>~3 minutos</strong> para VMs críticas</li>
+    <li>RPO con replicación cada 5 min: <strong>≤ 5 minutos</strong></li>
+    <li>RTO probado mensualmente con drill: <strong>~12 minutos</strong></li>
+  </ul>
+
+  <hr>
+  <p class="dim">Si manejas infraestructura distribuida y quieres un cluster privado robusto sin VPN dolorosa, podemos diseñar e implementar la arquitectura sobre tu hardware.</p>
+  <p><a href="../ciberpty.html#contact" style="color:var(--accent);text-decoration:none">→ Solicitar diagnóstico</a></p>
+</article>
+<div class="footer">© 2026 CiberPTY · <a href="../ciberpty.html">ciberpty.com</a></div>
+</div>
+</body>
+</html>
