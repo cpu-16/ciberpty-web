@@ -18,12 +18,12 @@ const { locale, pageKey, title, description } = Astro.props;
 ---
 
 <!doctype html>
-<html lang={locale}>
+<html lang={locale} data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
-    <meta name="color-scheme" content="light dark" />
+    <meta name="color-scheme" content="dark light" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
@@ -34,24 +34,27 @@ const { locale, pageKey, title, description } = Astro.props;
     <script is:inline>
       (() => {
         const stored = localStorage.getItem('theme');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const prefersDark = !window.matchMedia('(prefers-color-scheme: light)').matches;
         document.documentElement.setAttribute('data-theme', stored || (prefersDark ? 'dark' : 'light'));
       })();
     </script>
   </head>
   <body>
-    <div class="bg-gradient" aria-hidden="true"></div>
-    <div class="bg-waves" aria-hidden="true"></div>
-    <div class="bg-stream" aria-hidden="true"></div>
-    <div class="bg-grid" aria-hidden="true"></div>
-    <div class="bg-scanlines" aria-hidden="true"></div>
-    <div class="bg-particles" aria-hidden="true"></div>
+    <canvas id="matrix-canvas" aria-hidden="true"></canvas>
+    <div class="grid-bg" aria-hidden="true"></div>
+    <div class="scanlines" aria-hidden="true"></div>
+    <div class="vignette" aria-hidden="true"></div>
+    <div class="ch-ring" id="ch-ring" aria-hidden="true"></div>
+    <div class="ch-dot" id="ch-dot" aria-hidden="true"></div>
+
     <SiteHeader locale={locale} pageKey={pageKey} />
     <main>
       <slot />
     </main>
     <SiteFooter locale={locale} />
+
     <script is:inline>
+      // reveal on scroll
       (() => {
         document.documentElement.classList.add('js-motion');
         const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -63,15 +66,80 @@ const { locale, pageKey, title, description } = Astro.props;
         const obs = new IntersectionObserver(
           (entries, o) => {
             entries.forEach((e) => {
-              if (e.isIntersecting) {
-                e.target.classList.add('is-visible');
-                o.unobserve(e.target);
-              }
+              if (e.isIntersecting) { e.target.classList.add('is-visible'); o.unobserve(e.target); }
             });
           },
           { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
         );
         nodes.forEach((n) => obs.observe(n));
+      })();
+
+      // matrix rain
+      (() => {
+        const canvas = document.getElementById('matrix-canvas');
+        if (!canvas) return;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        const ctx = canvas.getContext('2d');
+        let w, h, cols, drops;
+        const chars = '01<>[]{}/=+*#$%&アイウエオカキクケコサシスセソ';
+        function resize() {
+          w = canvas.width = window.innerWidth;
+          h = canvas.height = window.innerHeight;
+          cols = Math.floor(w / 18);
+          drops = Array(cols).fill(0).map(() => (Math.random() * h) / 18);
+        }
+        resize();
+        window.addEventListener('resize', resize);
+        function accent() {
+          return getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#00ff9c';
+        }
+        let frame = 0, last = 0;
+        function draw() {
+          const light = document.documentElement.getAttribute('data-theme') === 'light';
+          ctx.fillStyle = light ? 'rgba(244,246,248,0.05)' : 'rgba(5,6,8,0.05)';
+          ctx.fillRect(0, 0, w, h);
+          const a = accent();
+          ctx.font = '15px JetBrains Mono, monospace';
+          ctx.fillStyle = a;
+          for (let i = 0; i < cols; i++) {
+            if ((i + frame) % 3 !== 0) continue;
+            const ch = chars[Math.floor(Math.random() * chars.length)];
+            const x = i * 18, y = drops[i] * 18;
+            ctx.fillText(ch, x, y);
+            if (y > h && Math.random() > 0.985) drops[i] = 0;
+            drops[i] += 0.18;
+          }
+          frame++;
+        }
+        function tick(t) {
+          if (t - last > 45) { draw(); last = t; }
+          requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+      })();
+
+      // crosshair cursor (desktop)
+      (() => {
+        if (!window.matchMedia('(pointer: fine)').matches || window.innerWidth <= 800) return;
+        const ring = document.getElementById('ch-ring');
+        const dot = document.getElementById('ch-dot');
+        if (!ring || !dot) return;
+        let mx = -100, my = -100, rx = -100, ry = -100;
+        window.addEventListener('mousemove', (e) => {
+          mx = e.clientX; my = e.clientY;
+          dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+        });
+        (function loop() {
+          rx += (mx - rx) * 0.18; ry += (my - ry) * 0.18;
+          ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+          requestAnimationFrame(loop);
+        })();
+        document.addEventListener('mouseover', (e) => {
+          if (e.target.closest && e.target.closest('a, button, summary, [data-hover]')) document.body.classList.add('is-hovering');
+        });
+        document.addEventListener('mouseout', (e) => {
+          if (e.target.closest && e.target.closest('a, button, summary, [data-hover]')) document.body.classList.remove('is-hovering');
+        });
       })();
     </script>
   </body>
