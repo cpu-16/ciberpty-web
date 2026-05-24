@@ -1,0 +1,64 @@
+---
+import { SITE, type Locale } from '../../utils/site';
+
+interface Props {
+  content: any;
+  locale: Locale;
+}
+
+const { content, locale } = Astro.props;
+---
+
+<section class="page-hero container">
+  <div data-reveal>
+    <p class="kicker">{content.hero.kicker}</p>
+    <h1 class="page-title">{content.hero.titleA} <span>{content.hero.titleB}</span></h1>
+    <p class="lead">{content.hero.lead}</p>
+    <div class="hero-cta">
+      <a class="btn btn-primary" href={SITE.whatsapp} target="_blank" rel="noreferrer">{content.hero.cta}</a>
+    </div>
+  </div>
+</section>
+
+<section class="container section">
+  <h2 data-reveal>{content.services.title}</h2>
+  <div class="grid3">
+    {content.services.items.map((s: any) => (
+      <article class="card tile" data-reveal>
+        <span class="badge-num">{s.num}</span>
+        <h3>{s.title}</h3>
+        <p>{s.desc}</p>
+        <div class="pill-row">{s.stack.map((x: string) => <span class="pill">{x}</span>)}</div>
+      </article>
+    ))}
+  </div>
+</section>
+
+<section class="container section">
+  <h2 data-reveal>{content.method.title}</h2>
+  <div class="grid4">
+    {content.method.steps.map((s: any) => (
+      <article class="card step" data-reveal>
+        <span class="num">{s.n}</span>
+        <h3>{s.title}</h3>
+        <p>{s.desc}</p>
+      </article>
+    ))}
+  </div>
+</section>
+
+<section class="container section">
+  <h2 data-reveal>{content.stack.title}</h2>
+  <ul class="stack-list" data-reveal>
+    {content.stack.items.map((x: string) => <li>{x}</li>)}
+  </ul>
+</section>
+
+<section class="container section">
+  <div class="card cta-box" data-reveal>
+    <h2>{content.cta.title}</h2>
+    <p>{content.cta.lead}</p>
+    <a class="btn btn-primary" href={SITE.whatsapp} target="_blank" rel="noreferrer">{content.cta.button}</a>
+    <p class="cta-contact">{SITE.whatsappLabel} · {SITE.email}</p>
+  </div>
+</section>

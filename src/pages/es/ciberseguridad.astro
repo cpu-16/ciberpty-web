@@ -1,0 +1,9 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import CyberPage from '../../components/cyber/CyberPage.astro';
+import { cyberEs } from '../../content/cyber.es';
+---
+
+<SiteLayout locale="es" pageKey="cyber" title={cyberEs.title} description={cyberEs.description}>
+  <CyberPage content={cyberEs} locale="es" />
+</SiteLayout>

@@ -1,0 +1,31 @@
+---
+import { type Locale } from '../utils/site';
+
+interface Props {
+  content: any;
+  locale: Locale;
+}
+
+const { content, locale } = Astro.props;
+---
+
+<section class="page-hero container">
+  <div data-reveal>
+    <p class="kicker">{content.kicker}</p>
+    <h1 class="page-title">{content.heading}</h1>
+    <p class="lead">{content.lead}</p>
+  </div>
+</section>
+
+<section class="container section">
+  <div class="grid2">
+    {content.posts.map((p: any) => (
+      <a class="card tile post-card" href={p.href} data-reveal>
+        <span class="meta">{p.cat} · {p.date} · {p.read}</span>
+        <h3>{p.title}</h3>
+        <p>{p.excerpt}</p>
+        <span class="more">{content.readMore} →</span>
+      </a>
+    ))}
+  </div>
+</section>

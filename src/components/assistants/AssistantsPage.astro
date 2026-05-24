@@ -177,6 +177,9 @@ const icons: Record<string, string> = {
   .a-openclaw { transform: rotate(7deg); }
   .a-hermes { transform: rotate(-7deg); }
   .a-medallion img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  /* encuadre por mascota: el bot rojo tiene mucho margen blanco → acercar; la chica → centrar el rostro */
+  .a-openclaw img { transform: scale(1.32); }
+  .a-hermes img { object-position: center 20%; }
 
   .a-bubble {
     position: absolute;
