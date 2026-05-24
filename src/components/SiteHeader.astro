@@ -13,6 +13,7 @@ const labels = LABELS[locale];
 const brandHref = pagePath('home', locale);
 const langHref = altPath(pageKey, locale);
 const nextLang = locale === 'es' ? 'EN' : 'ES';
+const soc = locale === 'es' ? 'SOC ACTIVO' : 'SOC ONLINE';
 ---
 
 <header class="site-header">
@@ -26,6 +27,7 @@ const nextLang = locale === 'es' ? 'EN' : 'ES';
     </nav>
 
     <div class="actions">
+      <span class="soc" aria-hidden="true"><span class="soc-dot"></span>{soc}</span>
       <a class="lang-toggle" href={langHref} aria-label={labels.language}>{nextLang}</a>
       <ThemeToggle label={labels.theme} dark={labels.dark} light={labels.light} />
       <button class="nav-burger" id="nav-burger" aria-label="Menu" aria-expanded="false" aria-controls="primary-nav">
@@ -80,6 +82,28 @@ const nextLang = locale === 'es' ? 'EN' : 'ES';
     .main-nav.open { display: flex; }
     .main-nav a { padding: 0.85rem 0.2rem; font-size: 1rem; }
   }
+
+  .main-nav a { font-family: var(--font-mono); }
+  .main-nav a::before { content: '> '; color: var(--accent); opacity: 0; transition: opacity 0.18s ease; }
+  .main-nav a:hover::before,
+  .main-nav a[aria-current='page']::before { opacity: 1; }
+
+  .soc {
+    display: none;
+    align-items: center;
+    gap: 0.45rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 0.36rem 0.7rem;
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+  }
+  .soc-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); animation: socPulse 1.6s ease-in-out infinite; }
+  @keyframes socPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+  @media (min-width: 980px) { .soc { display: inline-flex; } }
 </style>
 
 <script is:inline>
