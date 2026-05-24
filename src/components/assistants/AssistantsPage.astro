@@ -146,7 +146,8 @@ const icons: Record<string, string> = {
   }
 
   /* HERO VISUAL */
-  .a-hero-visual { position: relative; min-height: 340px; display: grid; place-items: center; }
+  .a-hero > * { min-width: 0; }
+  .a-hero-visual { position: relative; min-height: 360px; display: grid; place-items: center; overflow: hidden; border-radius: 16px; }
   .a-orb { position: absolute; border-radius: 50%; filter: blur(46px); opacity: 0.6; pointer-events: none; }
   .a-orb-1 { width: 280px; height: 280px; top: -10px; right: 6%; background: radial-gradient(circle, color-mix(in srgb, var(--accent) 60%, transparent), transparent 70%); }
   .a-orb-2 { width: 240px; height: 240px; bottom: -20px; left: 4%; background: radial-gradient(circle, color-mix(in srgb, var(--a-red) 55%, transparent), transparent 70%); }
@@ -186,7 +187,7 @@ const icons: Record<string, string> = {
 
   .a-bubble {
     position: absolute;
-    max-width: 220px;
+    max-width: 200px;
     padding: 0.6rem 0.85rem;
     border-radius: 16px;
     font-size: 0.86rem;
@@ -198,8 +199,8 @@ const icons: Record<string, string> = {
     box-shadow: var(--shadow-soft);
     animation: aFloat 6s ease-in-out infinite alternate;
   }
-  .a-bubble-1 { top: 2%; right: 0; }
-  .a-bubble-2 { bottom: 6%; left: 0; animation-delay: 0.8s; }
+  .a-bubble-1 { top: 14px; right: 14px; }
+  .a-bubble-2 { bottom: 14px; left: 14px; animation-delay: 0.8s; }
   .a-bubble-3 { display: none; }
   .a-bubble-4 { display: none; }
 
@@ -248,11 +249,13 @@ const icons: Record<string, string> = {
   @keyframes aFloat { from { transform: translateY(0); } to { transform: translateY(-9px); } }
 
   @media (min-width: 840px) {
-    .a-hero { grid-template-columns: 1.05fr 0.95fr; gap: 2.6rem; }
     .a-feature-grid { grid-template-columns: repeat(2, 1fr); }
     .a-steps { grid-template-columns: repeat(3, 1fr); }
     .a-cases { grid-template-columns: repeat(2, 1fr); }
-    .a-bubble-3 { display: block; top: 40%; right: -10px; animation-delay: 1.4s; }
+  }
+  @media (min-width: 980px) {
+    .a-hero { grid-template-columns: 1.02fr 0.98fr; gap: 2.6rem; }
+    .a-bubble-3 { display: block; top: 44%; right: 14px; animation-delay: 1.4s; }
   }
 
   @media (prefers-reduced-motion: reduce) {
