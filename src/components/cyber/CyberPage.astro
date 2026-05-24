@@ -7,25 +7,54 @@ interface Props {
 }
 
 const { content, locale } = Astro.props;
+
+const svc: Record<string, string> = {
+  shield: '<svg viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v5c0 4.4-3 7.7-7 9-4-1.3-7-4.6-7-9V6l7-3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  crosshair: '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="7.5" stroke="currentColor" stroke-width="1.6"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/></svg>',
+  fingerprint: '<svg viewBox="0 0 24 24" fill="none"><path d="M5 11a7 7 0 0 1 13-3.5M19 13a13 13 0 0 1-1 6M8 20a9 9 0 0 1-1.5-7 5.5 5.5 0 0 1 11 0c0 1.5-.2 3-.7 4.4M12 12v3a8 8 0 0 0 .8 3.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+  gavel: '<svg viewBox="0 0 24 24" fill="none"><path d="M14 4l6 6-3 3-6-6 3-3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M11 7L4 14l3 3 7-7M14 20H6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  cpu: '<svg viewBox="0 0 24 24" fill="none"><rect x="6" y="6" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.6"/><rect x="9.5" y="9.5" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.4"/><path d="M9 3v3M15 3v3M9 18v3M15 18v3M3 9h3M3 15h3M18 9h3M18 15h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
+  server: '<svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="7" rx="2" stroke="currentColor" stroke-width="1.6"/><rect x="3" y="13" width="18" height="7" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M7 7.5h.01M7 16.5h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>'
+};
 ---
 
-<section class="page-hero container">
-  <div data-reveal>
+<!-- HERO -->
+<section class="page-hero container cy-hero">
+  <div class="cy-hero-copy" data-reveal>
     <p class="kicker">{content.hero.kicker}</p>
     <h1 class="page-title">{content.hero.titleA} <span>{content.hero.titleB}</span></h1>
     <p class="lead">{content.hero.lead}</p>
     <div class="hero-cta">
       <a class="btn btn-primary" href={SITE.whatsapp} target="_blank" rel="noreferrer">{content.hero.cta}</a>
     </div>
+    <div class="cy-stats">
+      {content.hero.stats.map((s: any) => (
+        <div class="cy-stat"><span class="cy-stat-n">{s.num}</span><span class="cy-stat-l">{s.label}</span></div>
+      ))}
+    </div>
+  </div>
+
+  <div class="cy-hero-side" data-reveal>
+    <div class="card term">
+      <div class="term-head"><span>{content.hero.termTitle}</span><span class="term-status">CONNECTED</span></div>
+      <div class="term-line"><span id="term-typed" data-lines={JSON.stringify(content.hero.termLines)}></span><span class="term-cursor"></span></div>
+    </div>
+    <div class="card fw">
+      <div class="fw-head"><span>{content.firewall.head}</span><span class="fw-live"><span class="fw-dot"></span>{content.firewall.live}</span></div>
+      {content.firewall.readouts.map((r: any) => (
+        <div class="fw-row"><span>{r.label}</span><span class={r.ok ? 'ok' : ''}>{r.value}</span></div>
+      ))}
+    </div>
   </div>
 </section>
 
+<!-- SERVICES -->
 <section class="container section">
   <h2 data-reveal>{content.services.title}</h2>
   <div class="grid3">
     {content.services.items.map((s: any) => (
       <article class="card tile" data-reveal>
-        <span class="badge-num">{s.num}</span>
+        <div class="svc-top"><span class="ico" set:html={svc[s.icon]} /><span class="badge-num">{s.num}</span></div>
         <h3>{s.title}</h3>
         <p>{s.desc}</p>
         <div class="pill-row">{s.stack.map((x: string) => <span class="pill">{x}</span>)}</div>
@@ -34,26 +63,46 @@ const { content, locale } = Astro.props;
   </div>
 </section>
 
+<!-- TELEMETRY -->
 <section class="container section">
-  <h2 data-reveal>{content.method.title}</h2>
-  <div class="grid4">
-    {content.method.steps.map((s: any) => (
-      <article class="card step" data-reveal>
-        <span class="num">{s.n}</span>
-        <h3>{s.title}</h3>
-        <p>{s.desc}</p>
-      </article>
+  <h2 data-reveal>{content.telemetry.title}</h2>
+  <div class="cy-telemetry" data-reveal>
+    <div class="card tele-map">
+      <div class="tele-map-head"><span>{content.telemetry.mapTitle}</span><span class="tele-legend">{content.telemetry.legend}</span></div>
+      <canvas id="globe" class="globe"></canvas>
+    </div>
+    <div class="card tele-meters">
+      {content.telemetry.meters.map((m: any) => (
+        <div class="meter">
+          <div class="meter-top"><span>{m.label}</span><span class="meter-val">{m.val}</span></div>
+          <div class="meter-bar"><span style={`width:${m.pct}%`}></span></div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<!-- STACK -->
+<section class="container section">
+  <h2 data-reveal>{content.stack.title}</h2>
+  <div class="cy-tools" data-reveal>
+    {content.stack.items.map((t: any) => (
+      <div class="cy-tool"><img src={t.icon} alt={t.name} loading="lazy" /><span>{t.name}</span></div>
     ))}
   </div>
 </section>
 
+<!-- METHOD -->
 <section class="container section">
-  <h2 data-reveal>{content.stack.title}</h2>
-  <ul class="stack-list" data-reveal>
-    {content.stack.items.map((x: string) => <li>{x}</li>)}
-  </ul>
+  <h2 data-reveal>{content.method.title}</h2>
+  <div class="grid4">
+    {content.method.steps.map((s: any) => (
+      <article class="card step" data-reveal><span class="num">{s.n}</span><h3>{s.title}</h3><p>{s.desc}</p></article>
+    ))}
+  </div>
 </section>
 
+<!-- CTA -->
 <section class="container section">
   <div class="card cta-box" data-reveal>
     <h2>{content.cta.title}</h2>
@@ -62,3 +111,151 @@ const { content, locale } = Astro.props;
     <p class="cta-contact">{SITE.whatsappLabel} · {SITE.email}</p>
   </div>
 </section>
+
+<style>
+  .cy-hero { display: grid; grid-template-columns: 1fr; gap: 2rem; align-items: center; }
+  .cy-hero > * { min-width: 0; }
+  .cy-stats { display: flex; flex-wrap: wrap; gap: 1.6rem; margin-top: 1.6rem; }
+  .cy-stat { display: flex; flex-direction: column; }
+  .cy-stat-n { font-family: var(--font-title); font-size: 1.7rem; color: var(--accent); }
+  .cy-stat-l { font-family: var(--font-mono); font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+  .cy-hero-side { display: grid; gap: 1rem; }
+  .term, .fw { font-family: var(--font-mono); }
+  .term-head, .fw-head { display: flex; justify-content: space-between; align-items: center; font-size: 0.76rem; color: var(--muted); }
+  .term-status { color: var(--accent); }
+  .term-line { margin-top: 0.6rem; min-height: 1.4rem; color: var(--accent-2); font-size: 0.9rem; word-break: break-word; }
+  .term-cursor { display: inline-block; width: 8px; height: 1.05em; background: var(--accent); margin-left: 3px; vertical-align: text-bottom; animation: cyBlink 1s step-end infinite; }
+  @keyframes cyBlink { 50% { opacity: 0; } }
+
+  .fw-head { margin-bottom: 0.5rem; }
+  .fw-live { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--accent); }
+  .fw-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); animation: cyPulse 1.6s ease-in-out infinite; }
+  @keyframes cyPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+  .fw-row { display: flex; justify-content: space-between; padding: 0.45rem 0; border-top: 1px solid var(--line); font-size: 0.85rem; }
+  .fw-row .ok { color: var(--accent); }
+
+  .svc-top { display: flex; justify-content: space-between; align-items: center; }
+
+  .cy-telemetry { display: grid; gap: 1rem; grid-template-columns: 1fr; margin-top: 1.2rem; }
+  .tele-map { padding: 0; overflow: hidden; }
+  .tele-map-head { display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 1rem; font-family: var(--font-mono); font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; border-bottom: 1px solid var(--line); }
+  .tele-legend { color: var(--accent); }
+  .globe { display: block; width: 100%; height: 300px; }
+  .tele-meters { display: flex; flex-direction: column; gap: 1.1rem; justify-content: center; }
+  .meter-top { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 0.78rem; color: var(--muted); margin-bottom: 0.35rem; }
+  .meter-val { color: var(--text); }
+  .meter-bar { height: 8px; border-radius: 999px; background: color-mix(in srgb, var(--accent) 12%, transparent); overflow: hidden; }
+  .meter-bar span { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-3)); border-radius: 999px; }
+
+  .cy-tools { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.8rem; margin-top: 1.2rem; }
+  .cy-tool { display: flex; align-items: center; gap: 0.7rem; border: 1px solid var(--line); border-radius: 8px; padding: 0.7rem 0.9rem; background: color-mix(in srgb, var(--panel) 80%, transparent); }
+  .cy-tool img { width: 26px; height: 26px; }
+  .cy-tool span { font-family: var(--font-mono); font-size: 0.85rem; }
+
+  @media (min-width: 840px) {
+    .cy-tools { grid-template-columns: repeat(4, 1fr); }
+  }
+  @media (min-width: 980px) {
+    .cy-hero { grid-template-columns: 1.1fr 0.9fr; gap: 2.6rem; }
+    .cy-telemetry { grid-template-columns: 1.4fr 1fr; }
+    .globe { height: 340px; }
+  }
+</style>
+
+<script is:inline>
+  // terminal typing
+  (() => {
+    const node = document.getElementById('term-typed');
+    if (!node) return;
+    let lines;
+    try { lines = JSON.parse(node.getAttribute('data-lines') || '[]'); } catch (e) { return; }
+    if (!lines.length) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { node.textContent = lines[0]; return; }
+    let li = 0, ci = 0, del = false;
+    function tick() {
+      const cur = lines[li];
+      if (!del) {
+        ci++; node.textContent = cur.slice(0, ci);
+        if (ci >= cur.length) { del = true; setTimeout(tick, 1600); return; }
+      } else {
+        ci--; node.textContent = cur.slice(0, ci);
+        if (ci <= 0) { del = false; li = (li + 1) % lines.length; }
+      }
+      setTimeout(tick, del ? 22 : 48);
+    }
+    tick();
+  })();
+
+  // attack globe (equirectangular threat map)
+  (() => {
+    const canvas = document.getElementById('globe');
+    if (!canvas) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const ctx = canvas.getContext('2d');
+    let w, h, dpr;
+    function resize() {
+      dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      w = rect.width; h = rect.height || 300;
+      canvas.width = w * dpr; canvas.height = h * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    resize();
+    new ResizeObserver(resize).observe(canvas);
+    const points = [];
+    const regions = [
+      [10, 70, -130, -65, 200], [-55, 12, -82, -34, 160], [35, 70, -10, 40, 180],
+      [-35, 35, -18, 52, 230], [10, 70, 30, 145, 290], [-45, -10, 110, 155, 80]
+    ];
+    regions.forEach(([la0, la1, lo0, lo1, n]) => {
+      for (let i = 0; i < n; i++) points.push({ lat: la0 + Math.random() * (la1 - la0), lon: lo0 + Math.random() * (lo1 - lo0) });
+    });
+    const cities = [
+      { lat: 9, lon: -79, home: true }, { lat: 40.7, lon: -74 }, { lat: 51.5, lon: -0.1 },
+      { lat: 52.5, lon: 13.4 }, { lat: 40.4, lon: -3.7 }, { lat: -23.5, lon: -46.6 },
+      { lat: 4.7, lon: -74 }, { lat: 35.6, lon: 139.7 }, { lat: -33.9, lon: 151.2 }, { lat: 25.2, lon: 55.3 }
+    ];
+    function project(lat, lon) { return [((lon + 180) / 360) * w, ((90 - lat) / 180) * h]; }
+    const home = cities.find((c) => c.home);
+    const arcs = [];
+    function spawn() {
+      const c = cities.filter((x) => !x.home);
+      arcs.push({ from: c[Math.floor(Math.random() * c.length)], to: home, t: 0, dur: 60 + Math.random() * 80, crit: Math.random() < 0.25 });
+      if (arcs.length > 18) arcs.shift();
+    }
+    setInterval(spawn, 750);
+    function col(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+    function draw() {
+      const light = document.documentElement.getAttribute('data-theme') === 'light';
+      const accent = col('--accent') || '#00ff9c';
+      const crit = col('--crit') || '#ff4d6d';
+      ctx.fillStyle = light ? '#eaeef2' : '#0a0d12';
+      ctx.fillRect(0, 0, w, h);
+      ctx.strokeStyle = light ? 'rgba(0,135,92,0.06)' : 'rgba(0,255,156,0.05)';
+      ctx.lineWidth = 1;
+      for (let lat = -60; lat <= 60; lat += 30) { const [, y] = project(lat, 0); ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+      for (let lon = -180; lon <= 180; lon += 30) { const [x] = project(0, lon); ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
+      ctx.fillStyle = light ? 'rgba(74,85,104,0.5)' : 'rgba(125,138,154,0.4)';
+      points.forEach((p) => { const [x, y] = project(p.lat, p.lon); ctx.fillRect(x, y, 1.2, 1.2); });
+      const [hx, hy] = project(home.lat, home.lon);
+      const t = (Date.now() % 2000) / 2000;
+      ctx.beginPath(); ctx.arc(hx, hy, 2 + t * 14, 0, Math.PI * 2); ctx.strokeStyle = accent + '88'; ctx.lineWidth = 1; ctx.stroke();
+      ctx.beginPath(); ctx.arc(hx, hy, 3, 0, Math.PI * 2); ctx.fillStyle = accent; ctx.fill();
+      arcs.forEach((a) => {
+        const [x1, y1] = project(a.from.lat, a.from.lon);
+        const [x2, y2] = project(a.to.lat, a.to.lon);
+        const mx = (x1 + x2) / 2, my = (y1 + y2) / 2 - Math.abs(x2 - x1) * 0.25;
+        ctx.beginPath(); ctx.moveTo(x1, y1); ctx.quadraticCurveTo(mx, my, x2, y2);
+        ctx.strokeStyle = (a.crit ? crit : accent) + (light ? '40' : '30'); ctx.lineWidth = 1; ctx.stroke();
+        const p = Math.min(1, a.t / a.dur);
+        const px = (1 - p) * (1 - p) * x1 + 2 * (1 - p) * p * mx + p * p * x2;
+        const py = (1 - p) * (1 - p) * y1 + 2 * (1 - p) * p * my + p * p * y2;
+        ctx.beginPath(); ctx.arc(px, py, 2.4, 0, Math.PI * 2); ctx.fillStyle = a.crit ? crit : accent; ctx.shadowColor = a.crit ? crit : accent; ctx.shadowBlur = 8; ctx.fill(); ctx.shadowBlur = 0;
+        a.t += 1;
+      });
+      for (let i = arcs.length - 1; i >= 0; i--) if (arcs[i].t >= arcs[i].dur) arcs.splice(i, 1);
+    }
+    (function tick() { draw(); requestAnimationFrame(tick); })();
+  })();
+</script>
