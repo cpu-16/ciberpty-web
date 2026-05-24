@@ -1,0 +1,64 @@
+/* Utilidades compartidas para las páginas del sitio multipágina */
+
+.page-hero { padding-top: clamp(2.4rem, 8vw, 5rem); }
+.page-title { font-size: clamp(2.3rem, 6vw, 4.1rem); line-height: 1.03; letter-spacing: -0.02em; margin-top: 0.7rem; }
+.page-title span { color: var(--accent); text-shadow: 0 0 28px color-mix(in srgb, var(--accent) 45%, transparent); }
+.lead { margin-top: 1.05rem; max-width: 60ch; color: var(--muted); font-size: clamp(1rem, 1.4vw, 1.18rem); }
+
+.section-head { margin-bottom: 0.4rem; }
+
+.grid2, .grid3, .grid4 { display: grid; gap: 1rem; grid-template-columns: 1fr; margin-top: 1.2rem; }
+
+.tile { transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease; }
+.tile:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--accent) 45%, var(--card-border)); box-shadow: 0 16px 34px color-mix(in srgb, var(--accent) 14%, transparent); }
+.tile h3 { margin: 0.2rem 0 0.45rem; }
+.tile p { color: var(--muted); margin: 0; }
+
+.ico { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 13px; color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); margin-bottom: 0.7rem; }
+.ico.red { color: #ff7a70; background: color-mix(in srgb, #e23b2e 14%, transparent); }
+.ico svg { width: 24px; height: 24px; }
+
+.badge-num { font-family: var(--font-mono); font-size: 0.82rem; color: var(--accent); letter-spacing: 0.06em; }
+
+.pill-row { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 0.8rem; }
+.pill { border: 1px solid var(--line); border-radius: 999px; padding: 0.24rem 0.62rem; font-family: var(--font-mono); font-size: 0.74rem; color: var(--muted); }
+
+.steps { display: grid; gap: 1rem; grid-template-columns: 1fr; margin-top: 1.2rem; }
+.step .num { font-family: var(--font-mono); font-size: 1.3rem; color: var(--accent); }
+.step h3 { margin: 0.4rem 0; }
+.step p { color: var(--muted); margin: 0; }
+
+.list-cards { list-style: none; padding: 0; margin: 1.2rem 0 0; display: grid; gap: 0.6rem; grid-template-columns: 1fr; }
+.list-cards li { border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 10px; padding: 0.75rem 0.9rem; background: color-mix(in srgb, var(--panel) 80%, transparent); }
+
+.cta-box { text-align: center; padding: clamp(1.6rem, 5vw, 2.6rem); background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 12%, var(--panel)), var(--panel)); }
+.cta-box p { color: var(--muted); }
+.cta-box .btn { margin-top: 0.5rem; }
+.cta-contact { margin-top: 0.9rem; font-family: var(--font-mono); font-size: 0.82rem; color: var(--muted); }
+
+.post-card .meta { font-family: var(--font-mono); font-size: 0.74rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.06em; }
+.post-card h3 { margin: 0.5rem 0; }
+.post-card p { color: var(--muted); }
+.post-card .more { color: var(--accent); font-weight: 600; font-family: var(--font-mono); font-size: 0.85rem; }
+
+.contact-list2 { margin-top: 1.2rem; display: grid; gap: 0.2rem; }
+.contact-row { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.6rem; padding: 0.7rem 0; border-bottom: 1px solid var(--line); }
+.contact-row .k { color: var(--muted); font-family: var(--font-mono); font-size: 0.82rem; }
+.contact-row .v { font-weight: 600; }
+.contact-row a.v { color: var(--accent); }
+
+.split { display: grid; gap: 1.2rem; grid-template-columns: 1fr; align-items: stretch; margin-top: 1.2rem; }
+.arm { display: flex; flex-direction: column; gap: 0.5rem; }
+.arm .arm-tag { font-family: var(--font-mono); font-size: 0.76rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; }
+.arm h3 { font-size: 1.4rem; }
+.arm p { color: var(--muted); }
+.arm .more { margin-top: auto; color: var(--accent); font-weight: 600; font-family: var(--font-mono); font-size: 0.88rem; }
+
+@media (min-width: 840px) {
+  .grid2 { grid-template-columns: repeat(2, 1fr); }
+  .grid3 { grid-template-columns: repeat(3, 1fr); }
+  .grid4 { grid-template-columns: repeat(2, 1fr); }
+  .steps { grid-template-columns: repeat(3, 1fr); }
+  .list-cards { grid-template-columns: repeat(2, 1fr); }
+  .split { grid-template-columns: repeat(2, 1fr); }
+}

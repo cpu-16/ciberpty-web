@@ -1,0 +1,9 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import BlogIndex from '../../components/BlogIndex.astro';
+import { blogEn } from '../../content/blog.en';
+---
+
+<SiteLayout locale="en" pageKey="blog" title={blogEn.title} description={blogEn.description}>
+  <BlogIndex content={blogEn} locale="en" />
+</SiteLayout>

@@ -1,0 +1,65 @@
+---
+import { SITE, type Locale } from '../utils/site';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+
+const t =
+  locale === 'es'
+    ? {
+        kicker: 'Contacto',
+        title: 'Hablemos',
+        lead: 'Escríbeme y te respondo. Para tu agente personal de IA o para ciberseguridad y automatización.',
+        waBtn: 'Escríbeme por WhatsApp',
+        emailBtn: 'Enviar email',
+        rows: [
+          { k: 'Contacto', v: 'Gilberto Ramos' },
+          { k: 'Email', v: SITE.email, href: `mailto:${SITE.email}` },
+          { k: 'WhatsApp', v: SITE.whatsappLabel, href: SITE.whatsapp },
+          { k: 'GitHub', v: 'github.com/cpu-16', href: SITE.github },
+          { k: 'Ubicación', v: SITE.location.es }
+        ]
+      }
+    : {
+        kicker: 'Contact',
+        title: "Let's talk",
+        lead: 'Reach out and I will get back to you. For your personal AI agent or for cybersecurity and automation.',
+        waBtn: 'Message me on WhatsApp',
+        emailBtn: 'Send email',
+        rows: [
+          { k: 'Contact', v: 'Gilberto Ramos' },
+          { k: 'Email', v: SITE.email, href: `mailto:${SITE.email}` },
+          { k: 'WhatsApp', v: SITE.whatsappLabel, href: SITE.whatsapp },
+          { k: 'GitHub', v: 'github.com/cpu-16', href: SITE.github },
+          { k: 'Location', v: SITE.location.en }
+        ]
+      };
+---
+
+<section class="page-hero container">
+  <div data-reveal>
+    <p class="kicker">{t.kicker}</p>
+    <h1 class="page-title">{t.title}</h1>
+    <p class="lead">{t.lead}</p>
+    <div class="hero-cta">
+      <a class="btn btn-primary" href={SITE.whatsapp} target="_blank" rel="noreferrer">{t.waBtn}</a>
+      <a class="btn btn-secondary" href={`mailto:${SITE.email}`}>{t.emailBtn}</a>
+    </div>
+  </div>
+</section>
+
+<section class="container section">
+  <div class="card" data-reveal>
+    <div class="contact-list2">
+      {t.rows.map((r: any) => (
+        <div class="contact-row">
+          <span class="k">{r.k}</span>
+          {r.href ? <a class="v" href={r.href} target="_blank" rel="noreferrer">{r.v}</a> : <span class="v">{r.v}</span>}
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
