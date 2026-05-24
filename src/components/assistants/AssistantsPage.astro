@@ -39,13 +39,10 @@ const icons: Record<string, string> = {
     <span class="a-orb a-orb-1" aria-hidden="true"></span>
     <span class="a-orb a-orb-2" aria-hidden="true"></span>
     <div class="a-stage card">
-      <div class="a-medallion a-openclaw"><img src="/img/openclaw.jpeg" alt="" loading="lazy" /></div>
+      <div class="a-medallion a-openclaw"><img src="/img/openclaw.jpeg" alt="Mascota de Ciberpty" loading="lazy" /></div>
       <span class="a-link" aria-hidden="true"></span>
-      <div class="a-medallion a-hermes"><img src="/img/hermes.jpeg" alt="" loading="lazy" /></div>
+      <div class="a-medallion a-hermes"><img src="/img/hermes.jpeg" alt="Asistente de Ciberpty" loading="lazy" /></div>
     </div>
-    {content.hero.bubbles.map((b: string, i: number) => (
-      <div class={`a-bubble a-bubble-${i + 1}`}>{b}</div>
-    ))}
   </div>
 </section>
 
@@ -147,7 +144,7 @@ const icons: Record<string, string> = {
 
   /* HERO VISUAL */
   .a-hero > * { min-width: 0; }
-  .a-hero-visual { position: relative; min-height: 360px; display: grid; place-items: center; overflow: hidden; border-radius: 16px; }
+  .a-hero-visual { position: relative; display: grid; place-items: center; padding: 0.5rem 0; }
   .a-orb { position: absolute; border-radius: 50%; filter: blur(46px); opacity: 0.6; pointer-events: none; }
   .a-orb-1 { width: 280px; height: 280px; top: -10px; right: 6%; background: radial-gradient(circle, color-mix(in srgb, var(--accent) 60%, transparent), transparent 70%); }
   .a-orb-2 { width: 240px; height: 240px; bottom: -20px; left: 4%; background: radial-gradient(circle, color-mix(in srgb, var(--a-red) 55%, transparent), transparent 70%); }
