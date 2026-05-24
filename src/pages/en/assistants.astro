@@ -1,0 +1,9 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import AssistantsPage from '../../components/assistants/AssistantsPage.astro';
+import { assistantsEn } from '../../content/assistants.en';
+---
+
+<SiteLayout locale="en" pageKey="assistants" title={assistantsEn.title} description={assistantsEn.description}>
+  <AssistantsPage content={assistantsEn} locale="en" />
+</SiteLayout>
