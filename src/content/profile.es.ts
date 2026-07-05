@@ -7,7 +7,7 @@ export const profileEs: ProfileContent = {
     'CiberPTY ofrece servicios de Blue Team, Red Team, forense digital, automatización con IA e infraestructura segura.',
   name: 'CiberPTY',
   role: 'Soluciones de Ciberseguridad y Automatización',
-  location: 'Panamá, Veraguas',
+  location: 'Panamá',
   github: 'https://github.com/cpu-16',
   heroTagline:
     'Protegemos operaciones digitales con defensa activa, pruebas ofensivas controladas y automatización inteligente para equipos modernos.',
@@ -54,7 +54,7 @@ export const profileEs: ProfileContent = {
   contactCta: 'Solicitar diagnóstico',
   contactDetails: [
     'Contacto principal: Gilberto Ramos',
-    'Email: gilberto@ciberpty.com',
+    'Email: info@ciberpty.com',
     'WhatsApp: wa.me/50768573845',
     'GitHub: github.com/cpu-16'
   ],
