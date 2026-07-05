@@ -4,7 +4,6 @@
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
   --font-serif: 'Instrument Serif', Georgia, serif;
   --radius: 8px;
-  --shadow-soft: 0 30px 80px rgba(0, 0, 0, 0.4);
   --container: min(1200px, 92vw);
 }
 
@@ -47,11 +46,13 @@ ul { margin: 0; padding-left: 1.2rem; }
 
 .container { width: var(--container); margin-inline: auto; }
 
-.section { margin-top: 3.4rem; }
+.section { margin-top: clamp(3.4rem, 9vw, 5.4rem); }
 
 .card { border-radius: var(--radius); padding: clamp(1rem, 3vw, 1.7rem); box-shadow: var(--shadow-soft); }
 
 .btn {
+  position: relative;
+  overflow: hidden;
   border-radius: 4px;
   padding: 0.8rem 1.25rem;
   font-weight: 500;
@@ -69,15 +70,30 @@ ul { margin: 0; padding-left: 1.2rem; }
 
 .btn-primary {
   background: var(--accent);
-  color: #050608;
+  color: var(--btn-primary-text);
   border-color: var(--accent);
   box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 30%, transparent), 0 8px 24px color-mix(in srgb, var(--accent) 25%, transparent);
+}
+
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -80%;
+  width: 55%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transform: skewX(-20deg);
+  pointer-events: none;
 }
 
 .btn-primary:hover {
   transform: translateY(-1px);
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 40%, transparent), 0 12px 32px color-mix(in srgb, var(--accent) 35%, transparent);
 }
+
+.btn-primary:hover::after { animation: btnSheen 0.65s ease; }
+@keyframes btnSheen { to { left: 130%; } }
 
 .btn-secondary { background: transparent; border-color: var(--line); }
 .btn-secondary:hover { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, transparent); }
