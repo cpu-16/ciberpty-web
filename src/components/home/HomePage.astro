@@ -112,6 +112,7 @@ const { content, locale } = Astro.props;
 
 <style>
   .home-hero { display: grid; grid-template-columns: 1fr; gap: 1.6rem; align-items: center; }
+  .home-hero .page-title :global(span) { white-space: nowrap; }
   .home-visual { display: grid; place-items: center; }
   @media (min-width: 840px) {
     .home-hero { grid-template-columns: 1.05fr 0.95fr; gap: 2.6rem; }
