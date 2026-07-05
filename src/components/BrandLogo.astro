@@ -1,0 +1,41 @@
+---
+import { SITE } from '../utils/site';
+---
+
+<span class="brand-logo" aria-label={SITE.brand}>
+  <span class="bl-prompt" aria-hidden="true">&gt;<span class="bl-cursor">_</span></span>
+  <span class="bl-name">{SITE.brand}</span>
+</span>
+
+<style>
+  .brand-logo {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    line-height: 1;
+  }
+  .bl-prompt {
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: -0.04em;
+  }
+  .bl-cursor {
+    display: inline-block;
+    margin-left: 0.02em;
+    animation: blBlink 1.1s steps(1) infinite;
+  }
+  .bl-name {
+    color: var(--text);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+  }
+  @keyframes blBlink {
+    0%, 50% { opacity: 1; }
+    50.01%, 100% { opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bl-cursor { animation: none; }
+  }
+</style>

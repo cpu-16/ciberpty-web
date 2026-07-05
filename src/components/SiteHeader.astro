@@ -1,5 +1,6 @@
 ---
 import ThemeToggle from './ThemeToggle.astro';
+import BrandLogo from './BrandLogo.astro';
 import { NAV, LABELS, SITE, pagePath, altPath, type Locale, type PageKey } from '../utils/site';
 
 interface Props {
@@ -18,7 +19,7 @@ const soc = locale === 'es' ? 'SOC ACTIVO' : 'SOC ONLINE';
 
 <header class="site-header">
   <div class="container nav-wrap">
-    <a href={brandHref} class="brand">{SITE.brand}</a>
+    <a href={brandHref} class="brand"><BrandLogo /></a>
 
     <nav id="primary-nav" aria-label="Primary" class="main-nav">
       {nav.map((item) => (

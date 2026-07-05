@@ -1,0 +1,152 @@
+---
+import type { Locale } from '../utils/site';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+
+const t =
+  locale === 'es'
+    ? {
+        rows: [
+          { k: 'Ciberseguridad', v: 'ACTIVO' },
+          { k: 'Asistentes IA', v: 'ONLINE' }
+        ],
+        foot: '2 agentes desplegados · Panamá'
+      }
+    : {
+        rows: [
+          { k: 'Cybersecurity', v: 'ACTIVE' },
+          { k: 'AI Assistants', v: 'ONLINE' }
+        ],
+        foot: '2 agents deployed · Panama'
+      };
+
+const cmd = 'ciberpty --status';
+const ariaLabel = `ciberpty status: ${t.rows.map((r) => `${r.k} ${r.v}`).join(', ')}`;
+---
+
+<div class="boot-terminal" role="img" aria-label={ariaLabel}>
+  <div class="bt-bar" aria-hidden="true">
+    <span class="bt-dot r"></span>
+    <span class="bt-dot y"></span>
+    <span class="bt-dot g"></span>
+    <span class="bt-title">~/ciberpty</span>
+  </div>
+  <div class="bt-body" aria-hidden="true">
+    <p class="bt-cmd"><span class="bt-prompt">$</span> <span class="bt-cmd-text">{cmd}</span></p>
+    {t.rows.map((r, i) => (
+      <p class="bt-row" style={`--i:${i}`}>
+        <span class="bt-key">▸ {r.k}</span>
+        <span class="bt-leader"></span>
+        <span class="bt-val">{r.v}</span>
+      </p>
+    ))}
+    <p class="bt-foot">{t.foot}<span class="bt-cursor">_</span></p>
+  </div>
+</div>
+
+<style>
+  .boot-terminal {
+    position: relative;
+    width: min(440px, 100%);
+    margin-inline: auto;
+    background: #0b0f14;
+    border: 1px solid rgba(0, 255, 156, 0.18);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4), 0 26px 60px rgba(0, 0, 0, 0.5),
+      0 0 50px rgba(0, 255, 156, 0.08);
+  }
+  .boot-terminal::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 120px;
+    background: radial-gradient(80% 120px at 50% 0, rgba(0, 255, 156, 0.12), transparent 70%);
+    pointer-events: none;
+  }
+
+  .bt-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.62rem 0.85rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  .bt-dot { width: 11px; height: 11px; border-radius: 50%; }
+  .bt-dot.r { background: #ff5f56; }
+  .bt-dot.y { background: #ffbd2e; }
+  .bt-dot.g { background: #27c93f; }
+  .bt-title {
+    margin-left: 0.45rem;
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    color: #6b7886;
+    letter-spacing: 0.02em;
+  }
+
+  .bt-body {
+    position: relative;
+    padding: 1.15rem 1.1rem 1.3rem;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    line-height: 1.9;
+    min-height: 176px;
+  }
+
+  .bt-cmd { margin: 0; color: #cdd9e3; }
+  .bt-prompt { color: #00ff9c; }
+  .bt-cmd-text {
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    vertical-align: bottom;
+    width: 0;
+    animation: btType 1.05s steps(17) 0.25s forwards;
+  }
+  @keyframes btType { to { width: 17ch; } }
+
+  .bt-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin: 0;
+    opacity: 0;
+    transform: translateY(5px);
+    animation: btReveal 0.42s ease forwards;
+    animation-delay: calc(1.5s + var(--i) * 0.35s);
+  }
+  .bt-key { color: #9fb0bd; white-space: nowrap; }
+  .bt-leader { flex: 1; border-bottom: 1px dotted rgba(255, 255, 255, 0.18); transform: translateY(-3px); }
+  .bt-val { color: #00ff9c; font-weight: 600; white-space: nowrap; }
+  .bt-val::before { content: '● '; font-size: 0.7em; vertical-align: middle; }
+
+  .bt-foot {
+    margin: 0.7rem 0 0;
+    color: #6b7886;
+    font-size: 0.74rem;
+    opacity: 0;
+    animation: btReveal 0.42s ease forwards;
+    animation-delay: 2.4s;
+  }
+  .bt-cursor {
+    color: #00ff9c;
+    margin-left: 0.1rem;
+    animation: btBlink 1.1s steps(1) infinite;
+    animation-delay: 2.6s;
+  }
+
+  @keyframes btReveal { to { opacity: 1; transform: none; } }
+  @keyframes btBlink { 0%, 50% { opacity: 1; } 50.01%, 100% { opacity: 0; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bt-cmd-text { width: auto; animation: none; }
+    .bt-row, .bt-foot { opacity: 1; transform: none; animation: none; }
+    .bt-cursor { animation: none; }
+  }
+</style>

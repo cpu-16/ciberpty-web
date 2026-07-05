@@ -1,5 +1,6 @@
 ---
 import { SITE, type Locale } from '../../utils/site';
+import StackWindow from '../StackWindow.astro';
 
 interface Props {
   content: any;
@@ -36,13 +37,7 @@ const icons: Record<string, string> = {
   </div>
 
   <div class="a-hero-visual" data-reveal>
-    <span class="a-orb a-orb-1" aria-hidden="true"></span>
-    <span class="a-orb a-orb-2" aria-hidden="true"></span>
-    <div class="a-stage card">
-      <div class="a-medallion a-openclaw"><img src="/img/openclaw.jpeg" alt="Mascota de Ciberpty" loading="lazy" /></div>
-      <span class="a-link" aria-hidden="true"></span>
-      <div class="a-medallion a-hermes"><img src="/img/hermes.jpeg" alt="Asistente de Ciberpty" loading="lazy" /></div>
-    </div>
+    <StackWindow locale={locale} />
   </div>
 </section>
 
@@ -101,7 +96,7 @@ const icons: Record<string, string> = {
     <h2>{content.cta.title}</h2>
     <p>{content.cta.lead}</p>
     <a class="btn btn-primary" href={SITE.whatsapp} target="_blank" rel="noreferrer">{content.cta.button}</a>
-    <p class="a-cta-contact">{SITE.whatsappLabel} · {SITE.domain}</p>
+    <p class="a-cta-contact">{SITE.whatsappLabel} · {SITE.email}</p>
   </div>
 </section>
 
@@ -145,61 +140,6 @@ const icons: Record<string, string> = {
   /* HERO VISUAL */
   .a-hero > * { min-width: 0; }
   .a-hero-visual { position: relative; display: grid; place-items: center; padding: 0.5rem 0; }
-  .a-orb { position: absolute; border-radius: 50%; filter: blur(46px); opacity: 0.6; pointer-events: none; }
-  .a-orb-1 { width: 280px; height: 280px; top: -10px; right: 6%; background: radial-gradient(circle, color-mix(in srgb, var(--accent) 60%, transparent), transparent 70%); }
-  .a-orb-2 { width: 240px; height: 240px; bottom: -20px; left: 4%; background: radial-gradient(circle, color-mix(in srgb, var(--a-red) 55%, transparent), transparent 70%); }
-
-  .a-stage {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: clamp(1rem, 4vw, 2.6rem);
-    padding: clamp(1.4rem, 4vw, 2.4rem);
-    width: min(440px, 100%);
-    z-index: 1;
-  }
-  .a-link {
-    width: clamp(40px, 8vw, 80px);
-    height: 2px;
-    background: linear-gradient(90deg, var(--a-red), var(--accent));
-    box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 60%, transparent);
-    border-radius: 2px;
-  }
-  .a-medallion {
-    width: clamp(108px, 24vw, 150px);
-    height: clamp(108px, 24vw, 150px);
-    border-radius: 50%;
-    overflow: hidden;
-    border: 2px solid rgba(255, 255, 255, 0.7);
-    background: radial-gradient(circle at 35% 28%, #ffffff, #eafffb 55%, #ffe7e4);
-    box-shadow: 0 0 34px color-mix(in srgb, var(--accent) 32%, transparent), 0 18px 40px rgba(0, 0, 0, 0.3);
-  }
-  .a-openclaw { transform: rotate(7deg); }
-  .a-hermes { transform: rotate(-7deg); }
-  .a-medallion img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  /* encuadre por mascota: el bot rojo tiene mucho margen blanco → acercar; la chica → centrar el rostro */
-  .a-openclaw img { transform: scale(1.32); }
-  .a-hermes img { object-position: center 20%; }
-
-  .a-bubble {
-    position: absolute;
-    max-width: 200px;
-    padding: 0.6rem 0.85rem;
-    border-radius: 16px;
-    font-size: 0.86rem;
-    line-height: 1.25;
-    color: var(--text);
-    background: color-mix(in srgb, var(--panel) 86%, transparent);
-    border: 1px solid var(--card-border);
-    backdrop-filter: blur(8px);
-    box-shadow: var(--shadow-soft);
-    animation: aFloat 6s ease-in-out infinite alternate;
-  }
-  .a-bubble-1 { top: 14px; right: 14px; }
-  .a-bubble-2 { bottom: 14px; left: 14px; animation-delay: 0.8s; }
-  .a-bubble-3 { display: none; }
-  .a-bubble-4 { display: none; }
 
   /* FEATURES */
   .a-feature-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; margin-top: 1.2rem; }
@@ -243,7 +183,6 @@ const icons: Record<string, string> = {
   .a-cta .btn { margin-top: 0.6rem; }
   .a-cta-contact { margin-top: 0.9rem; font-family: var(--font-mono); font-size: 0.82rem; }
 
-  @keyframes aFloat { from { transform: translateY(0); } to { transform: translateY(-9px); } }
 
   @media (min-width: 840px) {
     .a-feature-grid { grid-template-columns: repeat(2, 1fr); }
@@ -252,10 +191,6 @@ const icons: Record<string, string> = {
   }
   @media (min-width: 980px) {
     .a-hero { grid-template-columns: 1.02fr 0.98fr; gap: 2.6rem; }
-    .a-bubble-3 { display: block; top: 44%; right: 14px; animation-delay: 1.4s; }
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .a-bubble { animation: none; }
-  }
 </style>

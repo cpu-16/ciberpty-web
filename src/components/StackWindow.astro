@@ -1,0 +1,160 @@
+---
+import type { Locale } from '../utils/site';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const label = locale === 'es' ? 'construido y operado con' : 'built & operated with';
+
+const items = [
+  { name: 'Hermes', src: '/img/hermes.jpeg', kind: 'mascot' as const },
+  { name: 'OpenClaw', src: '/img/openclaw.jpeg', kind: 'mascot' as const },
+  { name: 'Claude Code', src: '/img/logos/claude.svg', kind: 'mark' as const },
+  { name: 'Codex', src: '/img/logos/codex.svg', kind: 'mark' as const },
+  { name: 'OpenCode', src: '/img/logos/opencode.svg', kind: 'mark' as const }
+];
+
+// Duplicado para el bucle infinito sin costura
+const loop = [...items, ...items];
+---
+
+<div class="stack-window" role="img" aria-label={`${label}: ${items.map((i) => i.name).join(', ')}`}>
+  <div class="sw-bar" aria-hidden="true">
+    <span class="sw-dot r"></span>
+    <span class="sw-dot y"></span>
+    <span class="sw-dot g"></span>
+    <span class="sw-title">~/ciberpty/stack</span>
+  </div>
+  <div class="sw-body">
+    <p class="sw-prompt" aria-hidden="true">{label}</p>
+    <div class="sw-marquee">
+      <div class="sw-track">
+        {loop.map((it, i) => (
+          <div class="sw-item" aria-hidden={i >= items.length ? 'true' : undefined}>
+            <span class={`sw-badge ${it.kind}`}>
+              <img src={it.src} alt="" loading="lazy" decoding="async" />
+            </span>
+            <span class="sw-name">{it.name}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .stack-window {
+    position: relative;
+    width: min(440px, 100%);
+    margin-inline: auto;
+    background: #0b0f14;
+    border: 1px solid rgba(0, 255, 156, 0.18);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4), 0 26px 60px rgba(0, 0, 0, 0.5),
+      0 0 50px rgba(0, 255, 156, 0.08);
+  }
+  /* leve resplandor verde superior (terminal vibe) */
+  .stack-window::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 120px;
+    background: radial-gradient(80% 120px at 50% 0, rgba(0, 255, 156, 0.12), transparent 70%);
+    pointer-events: none;
+  }
+
+  .sw-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.62rem 0.85rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  .sw-dot { width: 11px; height: 11px; border-radius: 50%; }
+  .sw-dot.r { background: #ff5f56; }
+  .sw-dot.y { background: #ffbd2e; }
+  .sw-dot.g { background: #27c93f; }
+  .sw-title {
+    margin-left: 0.45rem;
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    color: #6b7886;
+    letter-spacing: 0.02em;
+  }
+
+  .sw-body { position: relative; padding: 1.05rem 0 1.35rem; }
+  .sw-prompt {
+    margin: 0 0 1.05rem 0.95rem;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: #00ff9c;
+    letter-spacing: 0.02em;
+  }
+  .sw-prompt::before { content: '$ '; opacity: 0.65; }
+
+  /* CARRUSEL */
+  .sw-marquee {
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
+  }
+  .sw-track {
+    display: flex;
+    width: max-content;
+    gap: 1.6rem;
+    padding: 0 0.95rem;
+    animation: swScroll 24s linear infinite;
+  }
+  .sw-marquee:hover .sw-track { animation-play-state: paused; }
+  @keyframes swScroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  .sw-item {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    width: 84px;
+  }
+  .sw-badge {
+    display: grid;
+    place-items: center;
+    width: 58px;
+    height: 58px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+    transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+  }
+  .sw-item:hover .sw-badge {
+    transform: translateY(-3px);
+    border-color: rgba(0, 255, 156, 0.5);
+    box-shadow: 0 10px 22px rgba(0, 255, 156, 0.14);
+  }
+  /* logos monocromos */
+  .sw-badge.mark img { width: 30px; height: 30px; object-fit: contain; opacity: 0.92; }
+  /* mascotas a color, recortadas en círculo */
+  .sw-badge.mascot { border-radius: 50%; overflow: hidden; padding: 0; background: radial-gradient(circle at 35% 28%, #fff, #eafffb 55%, #ffe7e4); }
+  .sw-badge.mascot img { width: 100%; height: 100%; object-fit: cover; }
+
+  .sw-name {
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    color: #8a97a5;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sw-track { animation: none; flex-wrap: wrap; justify-content: center; width: auto; }
+    .sw-marquee { -webkit-mask-image: none; mask-image: none; }
+  }
+</style>

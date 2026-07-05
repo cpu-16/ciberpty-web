@@ -43,8 +43,8 @@ export const SITE = {
   brand: 'CiberPTY',
   whatsapp: 'https://wa.me/50768573845',
   whatsappLabel: '+507 6857-3845',
-  email: 'gilberto@ciberpty.com',
+  email: 'info@ciberpty.com',
   github: 'https://github.com/cpu-16',
   domain: 'ciberpty.com',
-  location: { es: 'Panamá · Veraguas', en: 'Panama · Veraguas' } as Record<Locale, string>
+  location: { es: 'Panamá', en: 'Panama' } as Record<Locale, string>
 };

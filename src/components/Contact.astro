@@ -6,7 +6,7 @@ interface Props {
 }
 
 const { profile } = Astro.props;
-const serviceEmail = 'gilberto@ciberpty.com';
+const serviceEmail = 'info@ciberpty.com';
 const whatsappLink = 'https://wa.me/50768573845';
 const mailSubject =
   profile.locale === 'es' ? 'Consulta de servicios CiberPTY' : 'CiberPTY service inquiry';
@@ -43,7 +43,7 @@ const mailtoHref = `mailto:${serviceEmail}?subject=${encodeURIComponent(mailSubj
 <script is:inline>
   const button = document.getElementById('reveal-email');
   const output = document.getElementById('email-output');
-  const address = 'gilberto@ciberpty.com';
+  const address = 'info@ciberpty.com';
 
   button?.addEventListener('click', () => {
     if (!output) return;
