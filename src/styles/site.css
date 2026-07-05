@@ -2,7 +2,26 @@
 
 .page-hero { padding-top: clamp(2.4rem, 8vw, 5rem); }
 .page-title { font-size: clamp(2.3rem, 6.4vw, 4.6rem); line-height: 1.0; letter-spacing: -0.03em; margin-top: 0.7rem; font-weight: 700; }
-.page-title span { color: var(--accent); font-family: var(--font-serif); font-style: italic; font-weight: 400; letter-spacing: 0; }
+.page-title span {
+  color: var(--accent);
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0;
+  background: linear-gradient(100deg, var(--accent) 42%, var(--accent-hi) 50%, var(--accent) 58%);
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: titleShine 7s ease-in-out infinite;
+}
+@keyframes titleShine {
+  0%, 55% { background-position: 130% 0; }
+  100% { background-position: -60% 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .page-title span { background: none; -webkit-text-fill-color: currentColor; }
+}
 .lead { margin-top: 1.05rem; max-width: 60ch; color: var(--muted); font-size: clamp(0.95rem, 1.3vw, 1.05rem); line-height: 1.65; }
 
 .kicker { color: var(--accent); font-family: var(--font-mono); font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.14em; }
@@ -10,6 +29,47 @@
 .section-head { margin-bottom: 0.4rem; }
 
 .grid2, .grid3, .grid4 { display: grid; gap: 1rem; grid-template-columns: 1fr; margin-top: 1.2rem; }
+
+/* Spotlight: halo que sigue el cursor dentro de la card (setea --mx/--my el script del layout) */
+@media (pointer: fine) {
+  .tile, .arm, .post-card, .project-card, .cta-box { position: relative; }
+  .tile::after, .arm::after, .post-card::after, .project-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 20%), color-mix(in srgb, var(--accent) 9%, transparent), transparent 70%);
+    opacity: 0;
+    transition: opacity 260ms ease;
+    pointer-events: none;
+  }
+  .tile:hover::after, .arm:hover::after, .post-card:hover::after, .project-card:hover::after { opacity: 1; }
+}
+
+/* Border-beam: destello que recorre el borde (terminales del hero y CTA) */
+@property --bb-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+.border-beam { position: relative; }
+.border-beam::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(from var(--bb-angle), transparent 0 72%, var(--accent) 86%, transparent 98%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: bbSpin 7s linear infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+@keyframes bbSpin { to { --bb-angle: 360deg; } }
+@media (prefers-reduced-motion: reduce) { .border-beam::after { display: none; } }
 
 .tile { transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease; }
 .tile:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--accent) 45%, var(--card-border)); box-shadow: 0 16px 34px color-mix(in srgb, var(--accent) 14%, transparent); }
@@ -65,24 +125,28 @@
   .split { grid-template-columns: repeat(2, 1fr); }
 }
 
-/* ===== Efectos estilo SOC (matrix, grid, scanlines, viñeta, cursor de mira) ===== */
+/* ===== Efectos estilo SOC (matrix, aurora, scanlines, viñeta, cursor de mira) ===== */
 #matrix-canvas { position: fixed; inset: 0; z-index: -3; pointer-events: none; opacity: 0.32; }
-html[data-theme='light'] #matrix-canvas { opacity: 0.16; }
+html[data-theme='light'] #matrix-canvas { opacity: 0.13; }
 
-.grid-bg {
-  position: fixed; inset: 0; z-index: -2; pointer-events: none;
-  background-image:
-    linear-gradient(color-mix(in srgb, var(--accent) 6%, transparent) 1px, transparent 1px),
-    linear-gradient(90deg, color-mix(in srgb, var(--accent) 6%, transparent) 1px, transparent 1px);
-  background-size: 64px 64px;
-  -webkit-mask-image: radial-gradient(ellipse at 50% 30%, black 30%, transparent 80%);
-  mask-image: radial-gradient(ellipse at 50% 30%, black 30%, transparent 80%);
+.bg-aurora {
+  position: fixed; inset: 0; z-index: -4; pointer-events: none;
+  background:
+    radial-gradient(70vw 40vw at 8% -8%, var(--grad-a), transparent 55%),
+    radial-gradient(70vw 45vw at 92% -10%, var(--grad-b), transparent 50%),
+    radial-gradient(80vw 50vw at 48% 118%, var(--grad-c), transparent 55%);
+  animation: auroraDrift 22s ease-in-out infinite alternate;
+}
+@keyframes auroraDrift {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(0, -1.6%, 0) scale(1.06); }
 }
 
 .scanlines {
   position: fixed; inset: 0; z-index: -1; pointer-events: none;
   background: repeating-linear-gradient(0deg, transparent 0, transparent 2px, color-mix(in srgb, var(--accent) 3%, transparent) 2px, color-mix(in srgb, var(--accent) 3%, transparent) 3px);
 }
+html[data-theme='light'] .scanlines { display: none; }
 
 .vignette { position: fixed; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(ellipse at 50% 50%, transparent 42%, rgba(0, 0, 0, 0.6) 100%); }
 html[data-theme='light'] .vignette { background: radial-gradient(ellipse at 50% 50%, transparent 50%, rgba(0, 0, 0, 0.06) 100%); }

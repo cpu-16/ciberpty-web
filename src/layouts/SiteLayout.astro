@@ -41,7 +41,7 @@ const { locale, pageKey, title, description } = Astro.props;
   </head>
   <body>
     <canvas id="matrix-canvas" aria-hidden="true"></canvas>
-    <div class="grid-bg" aria-hidden="true"></div>
+    <div class="bg-aurora" aria-hidden="true"></div>
     <div class="scanlines" aria-hidden="true"></div>
     <div class="vignette" aria-hidden="true"></div>
     <div class="ch-ring" id="ch-ring" aria-hidden="true"></div>
@@ -71,7 +71,24 @@ const { locale, pageKey, title, description } = Astro.props;
           },
           { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
         );
-        nodes.forEach((n) => obs.observe(n));
+        nodes.forEach((n) => {
+          // stagger: entrada escalonada entre hermanos revelables
+          const sibs = n.parentElement ? [...n.parentElement.children].filter((c) => c.hasAttribute('data-reveal')) : [];
+          if (sibs.length > 1) n.style.transitionDelay = `${Math.min(sibs.indexOf(n), 7) * 80}ms`;
+          obs.observe(n);
+        });
+      })();
+
+      // spotlight en cards (sigue el cursor)
+      (() => {
+        if (!window.matchMedia('(pointer: fine)').matches) return;
+        document.addEventListener('pointermove', (e) => {
+          const c = e.target.closest && e.target.closest('.card');
+          if (!c) return;
+          const r = c.getBoundingClientRect();
+          c.style.setProperty('--mx', e.clientX - r.left + 'px');
+          c.style.setProperty('--my', e.clientY - r.top + 'px');
+        });
       })();
 
       // matrix rain

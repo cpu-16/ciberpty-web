@@ -10,42 +10,49 @@ html[data-theme='dark'] {
   --accent: #00ff9c;
   --accent-2: #00d98a;
   --accent-3: #4cc9ff;
+  --accent-hi: #b8ffe0;
   --warn: #ffb547;
   --crit: #ff4d6d;
   --line: #1c2532;
   --card-border: #1a2230;
-  --grad-a: rgba(0, 255, 156, 0.10);
+  --grad-a: rgba(0, 255, 156, 0.1);
   --grad-b: rgba(76, 201, 255, 0.08);
   --grad-c: rgba(0, 255, 156, 0.06);
   --email-bg: rgba(12, 17, 23, 0.85);
   --email-text: #bff3e0;
   --ghost-btn-bg: rgba(12, 17, 23, 0.5);
   --ghost-btn-text: #e6edf3;
+  --shadow-soft: 0 30px 80px rgba(0, 0, 0, 0.4);
+  --btn-primary-text: #050608;
 }
 
+/* «Papel de sala de control»: claro con contraste real, nada pastel */
 html[data-theme='light'] {
-  --bg: #f4f6f8;
-  --bg-soft: #eaeef2;
+  --bg: #f4f4ef;
+  --bg-soft: #ebebe4;
   --bg-deep: #ffffff;
-  --panel: rgba(255, 255, 255, 0.8);
+  --panel: rgba(255, 255, 255, 0.88);
   --panel-solid: #ffffff;
-  --text: #0a0d12;
-  --muted: #4a5568;
-  --dim: #94a3b8;
-  --accent: #00875c;
-  --accent-2: #00b377;
-  --accent-3: #0070d2;
-  --warn: #c97a00;
-  --crit: #d6336c;
-  --line: #cfd6e0;
-  --card-border: #d8dee6;
-  --grad-a: rgba(0, 135, 92, 0.10);
-  --grad-b: rgba(0, 112, 210, 0.07);
-  --grad-c: rgba(0, 135, 92, 0.06);
-  --email-bg: rgba(255, 255, 255, 0.96);
-  --email-text: #0a5a3f;
-  --ghost-btn-bg: rgba(255, 255, 255, 0.84);
-  --ghost-btn-text: #0a0d12;
+  --text: #14181d;
+  --muted: #47545f;
+  --dim: #8b96a1;
+  --accent: #00784f;
+  --accent-2: #009468;
+  --accent-3: #005fb8;
+  --accent-hi: #00b377;
+  --warn: #a86400;
+  --crit: #c22a55;
+  --line: #d6d9cf;
+  --card-border: #d9dcd2;
+  --grad-a: rgba(0, 150, 100, 0.12);
+  --grad-b: rgba(0, 95, 184, 0.07);
+  --grad-c: rgba(0, 150, 100, 0.05);
+  --email-bg: #ffffff;
+  --email-text: #00603f;
+  --ghost-btn-bg: rgba(255, 255, 255, 0.9);
+  --ghost-btn-text: #14181d;
+  --shadow-soft: 0 1px 2px rgba(23, 34, 28, 0.05), 0 14px 34px rgba(23, 34, 28, 0.09);
+  --btn-primary-text: #ffffff;
 }
 
 body {
