@@ -1,0 +1,110 @@
+---
+import { SITE, type Locale } from '../utils/site';
+import { ICONS } from '../utils/icons';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+
+const WA_ICON =
+  '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3.5a8.5 8.5 0 0 0-7.3 12.8L3.5 20.5l4.3-1.1A8.5 8.5 0 1 0 12 3.5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9.2 8.6c.2-.5.4-.5.6-.5h.5c.2 0 .4 0 .5.4l.7 1.6c.1.2 0 .4-.1.5l-.4.5c-.1.2-.2.3 0 .6a6.3 6.3 0 0 0 2.8 2.5c.3.1.4.1.6-.1l.6-.7c.2-.2.3-.2.6-.1l1.5.7c.3.1.4.2.4.4 0 .3-.2 1-.7 1.3-.4.3-1 .5-1.6.4a8 8 0 0 1-3.6-1.8 8.7 8.7 0 0 1-2.6-3.3c-.3-.7-.3-1.3-.2-1.6.1-.3.3-.6.4-.8Z" fill="currentColor"/></svg>';
+const MAIL_ICON =
+  '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="13" rx="2.5" stroke="currentColor" stroke-width="1.7"/><path d="m4.5 7 7.5 6 7.5-6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const GH_ICON =
+  '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3a9 9 0 0 0-2.85 17.54c.45.08.62-.2.62-.44v-1.7c-2.5.55-3.03-1.06-3.03-1.06-.41-1.04-1-1.32-1-1.32-.82-.56.06-.55.06-.55.9.06 1.38.93 1.38.93.8 1.38 2.11.98 2.63.75.08-.58.31-.98.57-1.2-2-.23-4.1-1-4.1-4.45 0-.98.35-1.79.93-2.42-.1-.23-.4-1.15.08-2.4 0 0 .76-.24 2.48.92a8.6 8.6 0 0 1 4.51 0c1.72-1.16 2.47-.92 2.47-.92.49 1.25.18 2.17.09 2.4.58.63.93 1.44.93 2.42 0 3.46-2.11 4.22-4.12 4.44.32.28.61.83.61 1.68v2.48c0 .24.16.53.62.44A9 9 0 0 0 12 3Z" fill="currentColor"/></svg>';
+
+const t =
+  locale === 'es'
+    ? {
+        kicker: 'Contacto',
+        title: 'Hablemos',
+        lead: 'Escríbeme y te respondo. Para tu agente personal de IA o para ciberseguridad y automatización.',
+        waBtn: 'Escríbeme por WhatsApp',
+        emailBtn: 'Enviar email',
+        cards: [
+          { icon: WA_ICON, k: 'WhatsApp', v: SITE.whatsappLabel, hint: 'Respuesta rápida', href: SITE.whatsapp },
+          { icon: MAIL_ICON, k: 'Email', v: SITE.email, hint: 'Para propuestas y detalles', href: `mailto:${SITE.email}` },
+          { icon: GH_ICON, k: 'GitHub', v: 'github.com/cpu-16', hint: 'Proyectos y código', href: SITE.github }
+        ],
+        meta: `Gilberto Ramos · ${SITE.location.es}`
+      }
+    : {
+        kicker: 'Contact',
+        title: "Let's talk",
+        lead: 'Reach out and I will get back to you. For your personal AI agent or for cybersecurity and automation.',
+        waBtn: 'Message me on WhatsApp',
+        emailBtn: 'Send email',
+        cards: [
+          { icon: WA_ICON, k: 'WhatsApp', v: SITE.whatsappLabel, hint: 'Fast reply', href: SITE.whatsapp },
+          { icon: MAIL_ICON, k: 'Email', v: SITE.email, hint: 'For proposals and details', href: `mailto:${SITE.email}` },
+          { icon: GH_ICON, k: 'GitHub', v: 'github.com/cpu-16', hint: 'Projects and code', href: SITE.github }
+        ],
+        meta: `Gilberto Ramos · ${SITE.location.en}`
+      };
+---
+
+<section class="page-hero container">
+  <div data-reveal>
+    <p class="kicker">{t.kicker}</p>
+    <h1 class="page-title">{t.title}</h1>
+    <p class="lead">{t.lead}</p>
+    <div class="hero-cta">
+      <a class="btn btn-primary" href={SITE.whatsapp} target="_blank" rel="noreferrer">{t.waBtn}</a>
+      <a class="btn btn-secondary" href={`mailto:${SITE.email}`}>{t.emailBtn}</a>
+    </div>
+  </div>
+</section>
+
+<section class="container section">
+  <div class="c-grid">
+    {t.cards.map((c) => (
+      <a class="card tile c-card" href={c.href} target="_blank" rel="noreferrer" data-reveal>
+        <span class="c-ico" set:html={c.icon} />
+        <span class="c-k">{c.k}</span>
+        <span class="c-v">{c.v}</span>
+        <span class="c-hint">{c.hint}</span>
+      </a>
+    ))}
+  </div>
+  <p class="c-meta" data-reveal>
+    <span class="c-meta-ico" set:html={ICONS.pin} />
+    {t.meta}
+  </p>
+</section>
+
+<style>
+  .c-grid { display: grid; gap: 1rem; grid-template-columns: 1fr; margin-top: 0.4rem; }
+  .c-card { display: flex; flex-direction: column; gap: 0.15rem; }
+  .c-ico {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    margin-bottom: 0.65rem;
+  }
+  .c-ico :global(svg) { width: 24px; height: 24px; }
+  .c-k { font-family: var(--font-mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
+  .c-v { font-weight: 600; font-family: var(--font-title); font-size: 1.08rem; color: var(--accent); overflow-wrap: anywhere; }
+  .c-hint { color: var(--muted); font-size: 0.85rem; margin-top: 0.3rem; }
+
+  .c-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1.4rem;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+  }
+  .c-meta-ico { display: inline-grid; place-items: center; color: var(--accent); }
+  .c-meta-ico :global(svg) { width: 16px; height: 16px; }
+
+  @media (min-width: 840px) {
+    .c-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+</style>

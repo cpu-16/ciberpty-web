@@ -1,16 +1,9 @@
 ---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import HomePage from '../../components/home/HomePage.astro';
+import { homeEn } from '../../content/home.en';
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CiberPTY · Cybersecurity & Automation</title>
-    <meta http-equiv="refresh" content="0; url=/ciberpty.html" />
-    <script is:inline>window.location.replace('/ciberpty.html');</script>
-  </head>
-  <body>
-    <a href="/ciberpty.html">Continue to CiberPTY</a>
-  </body>
-</html>
+<SiteLayout locale="en" pageKey="home" title={homeEn.title} description={homeEn.description}>
+  <HomePage content={homeEn} locale="en" />
+</SiteLayout>

@@ -1,0 +1,58 @@
+---
+import { NAV, SITE, pagePath, type Locale } from '../utils/site';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const nav = NAV[locale];
+const year = new Date().getFullYear();
+const t =
+  locale === 'es'
+    ? { tagline: 'Agentes de IA, ciberseguridad y automatización.', rights: 'Todos los derechos reservados', write: 'Escríbeme' }
+    : { tagline: 'AI agents, cybersecurity and automation.', rights: 'All rights reserved', write: 'Write me' };
+---
+
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div>
+      <a href={pagePath('home', locale)} class="brand">{SITE.brand}</a>
+      <p class="footer-tagline">{t.tagline}</p>
+    </div>
+    <nav class="footer-nav" aria-label="Footer">
+      {nav.map((item) => <a href={pagePath(item.key, locale)}>{item.label}</a>)}
+    </nav>
+    <div class="footer-contact">
+      <a class="btn btn-primary" href={SITE.whatsapp} target="_blank" rel="noreferrer">{t.write} · WhatsApp</a>
+      <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+    </div>
+  </div>
+  <div class="container footer-bottom">
+    <span>© {year} {SITE.brand} · {t.rights}</span>
+    <span>{SITE.location[locale]}</span>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: 4.5rem;
+    border-top: 1px solid var(--line);
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    padding: 2.6rem 0 1.4rem;
+  }
+  .footer-grid { display: grid; gap: 1.5rem; grid-template-columns: 1fr; }
+  .footer-tagline { color: var(--muted); margin-top: 0.6rem; max-width: 34ch; }
+  .footer-nav { display: flex; flex-wrap: wrap; gap: 0.9rem; }
+  .footer-nav a { color: var(--muted); font-family: var(--font-mono); font-size: 0.88rem; }
+  .footer-nav a:hover { color: var(--text); }
+  .footer-contact { display: flex; flex-direction: column; align-items: flex-start; gap: 0.7rem; }
+  .footer-contact a:not(.btn) { color: var(--muted); font-family: var(--font-mono); font-size: 0.88rem; }
+  .footer-bottom {
+    display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.6rem;
+    margin-top: 1.8rem; color: var(--muted); font-family: var(--font-mono); font-size: 0.78rem;
+  }
+  @media (min-width: 840px) {
+    .footer-grid { grid-template-columns: 1.6fr 1fr 1.1fr; align-items: start; }
+  }
+</style>

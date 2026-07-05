@@ -1,0 +1,120 @@
+---
+import ThemeToggle from './ThemeToggle.astro';
+import BrandLogo from './BrandLogo.astro';
+import { NAV, LABELS, SITE, pagePath, altPath, type Locale, type PageKey } from '../utils/site';
+
+interface Props {
+  locale: Locale;
+  pageKey: PageKey;
+}
+
+const { locale, pageKey } = Astro.props;
+const nav = NAV[locale];
+const labels = LABELS[locale];
+const brandHref = pagePath('home', locale);
+const langHref = altPath(pageKey, locale);
+const nextLang = locale === 'es' ? 'EN' : 'ES';
+const soc = locale === 'es' ? 'SOC ACTIVO' : 'SOC ONLINE';
+---
+
+<header class="site-header">
+  <div class="container nav-wrap">
+    <a href={brandHref} class="brand"><BrandLogo /></a>
+
+    <nav id="primary-nav" aria-label="Primary" class="main-nav">
+      {nav.map((item) => (
+        <a href={pagePath(item.key, locale)} aria-current={item.key === pageKey ? 'page' : undefined}>{item.label}</a>
+      ))}
+    </nav>
+
+    <div class="actions">
+      <span class="soc" aria-hidden="true"><span class="soc-dot"></span>{soc}</span>
+      <a class="lang-toggle" href={langHref} aria-label={labels.language}>{nextLang}</a>
+      <ThemeToggle label={labels.theme} dark={labels.dark} light={labels.light} />
+      <button class="nav-burger" id="nav-burger" aria-label="Menu" aria-expanded="false" aria-controls="primary-nav">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<style>
+  .nav-wrap { position: relative; }
+  .main-nav a[aria-current='page'] { color: var(--text); position: relative; }
+  .main-nav a[aria-current='page']::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: -6px;
+    height: 2px; border-radius: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-3));
+  }
+
+  .nav-burger {
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 9px 10px;
+    cursor: pointer;
+  }
+  .nav-burger span { width: 20px; height: 2px; background: var(--text); border-radius: 2px; transition: transform .2s ease, opacity .2s ease; }
+  .nav-burger[aria-expanded='true'] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-burger[aria-expanded='true'] span:nth-child(2) { opacity: 0; }
+  .nav-burger[aria-expanded='true'] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  @media (min-width: 840px) {
+    .nav-burger { display: none; }
+  }
+  @media (max-width: 839px) {
+    .main-nav {
+      display: none;
+      position: absolute;
+      left: 0; right: 0; top: calc(100% + 1px);
+      flex-direction: column;
+      gap: 0;
+      padding: 0.4rem 0;
+      background: color-mix(in srgb, var(--bg) 97%, transparent);
+      border-bottom: 1px solid var(--line);
+      box-shadow: var(--shadow-soft);
+    }
+    .main-nav.open { display: flex; }
+    .main-nav a { padding: 0.85rem 0.2rem; font-size: 1rem; }
+  }
+
+  .main-nav a { font-family: var(--font-mono); }
+  .main-nav a::before { content: '> '; color: var(--accent); opacity: 0; transition: opacity 0.18s ease; }
+  .main-nav a:hover::before,
+  .main-nav a[aria-current='page']::before { opacity: 1; }
+
+  .soc {
+    display: none;
+    align-items: center;
+    gap: 0.45rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 0.36rem 0.7rem;
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+  }
+  .soc-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); animation: socPulse 1.6s ease-in-out infinite; }
+  @keyframes socPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+  @media (min-width: 980px) { .soc { display: inline-flex; } }
+</style>
+
+<script is:inline>
+  (() => {
+    const b = document.getElementById('nav-burger');
+    const n = document.getElementById('primary-nav');
+    if (!b || !n) return;
+    b.addEventListener('click', () => {
+      const open = n.classList.toggle('open');
+      b.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  })();
+</script>
