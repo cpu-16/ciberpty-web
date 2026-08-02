@@ -1,4 +1,13 @@
+@font-face {
+  font-family: 'Sora';
+  src: url('/fonts/sora-var.woff2') format('woff2-variations');
+  font-weight: 100 800;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
+  --font-display: 'Sora', 'Space Grotesk', system-ui, sans-serif;
   --font-title: 'Space Grotesk', system-ui, sans-serif;
   --font-body: 'JetBrains Mono', ui-monospace, monospace;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
