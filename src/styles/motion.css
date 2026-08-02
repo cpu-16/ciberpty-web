@@ -44,13 +44,21 @@
   pointer-events: none;
 }
 
-/* Página con hero cinematográfico: header flotante y sin efectos de fondo viejos */
+/* Página con hero cinematográfico: header fijo — transparente sobre el hero,
+   sólido con blur al hacer scroll (clase .is-scrolled puesta por JS) */
 body.is-cinematic .site-header {
-  position: absolute;
+  position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 50;
   background: transparent;
-  border-bottom: 0;
+  border-bottom: 1px solid transparent;
+  transition: background 250ms ease, border-color 250ms ease;
+}
+body.is-cinematic.is-scrolled .site-header {
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom-color: var(--line);
 }
 body.is-cinematic #matrix-canvas,
 body.is-cinematic .bg-aurora,
@@ -67,3 +75,14 @@ body.is-cinematic .site-header .soc,
 body.is-cinematic .site-header .theme-text,
 body.is-cinematic .site-header .lang-toggle { color: rgba(230, 237, 243, 0.85); }
 body.is-cinematic .site-header .nav-burger span { background: #e6edf3; }
+
+/* Al scrollear, el header vuelve a los colores del tema (funciona en claro y oscuro) */
+body.is-cinematic.is-scrolled .site-header { color: var(--text); }
+body.is-cinematic.is-scrolled .site-header .bl-name { color: var(--text); }
+body.is-cinematic.is-scrolled .site-header .main-nav a { color: var(--muted); }
+body.is-cinematic.is-scrolled .site-header .main-nav a:hover,
+body.is-cinematic.is-scrolled .site-header .main-nav a[aria-current='page'] { color: var(--text); }
+body.is-cinematic.is-scrolled .site-header .soc,
+body.is-cinematic.is-scrolled .site-header .theme-text,
+body.is-cinematic.is-scrolled .site-header .lang-toggle { color: var(--muted); }
+body.is-cinematic.is-scrolled .site-header .nav-burger span { background: var(--text); }
