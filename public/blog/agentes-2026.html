@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Qué cambió en los agentes personales de IA en 2026: memoria persistente, uso de herramientas y voz. Qué pedirle a uno y qué exigir en privacidad.">
+<title>Agentes personales de IA en 2026 · CiberPTY</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Sora:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#050608;--bg-soft:#0a0d12;--panel:#0c1117;--line:#1c2532;--panel-line:#1a2230;--text:#e6edf3;--muted:#7d8a9a;--dim:#4a5568;--accent:#00ff9c;--crit:#ff4d6d;--info:#4cc9ff;--mono:'JetBrains Mono',ui-monospace,monospace;--display:'Sora',system-ui,sans-serif;--serif:'Instrument Serif',Georgia,serif;}
+  *{box-sizing:border-box}html,body{margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:var(--mono);line-height:1.65;
+    background-image:linear-gradient(rgba(0,255,156,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,156,0.04) 1px,transparent 1px);
+    background-size:64px 64px;}
+  .vignette{position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 50%,transparent 40%,rgba(0,0,0,0.5) 100%);z-index:0}
+  .container{width:min(820px,92vw);margin-inline:auto;position:relative;z-index:1}
+  .header{padding:1.5rem 0;border-bottom:1px solid var(--line);margin-bottom:3rem;backdrop-filter:blur(12px);background:color-mix(in srgb,var(--bg) 70%,transparent);position:sticky;top:0;z-index:10}
+  .header-inner{display:flex;align-items:center;justify-content:space-between;width:min(820px,92vw);margin-inline:auto}
+  .brand{font-family:var(--display);font-weight:700;letter-spacing:-.02em;font-size:1rem;text-decoration:none;color:var(--text)}
+  .brand-suffix{color:var(--accent);font-family:var(--mono);font-weight:500;font-size:.7rem;margin-left:.3rem}
+  .back{font-family:var(--mono);font-size:.78rem;color:var(--muted);text-decoration:none}.back:hover{color:var(--accent)}
+  article{padding-bottom:5rem}
+  .meta{display:flex;gap:.6rem;align-items:center;font-family:var(--mono);font-size:.7rem;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:1.5rem}
+  .cat{color:var(--accent);border:1px solid var(--accent);padding:2px 6px;border-radius:2px}
+  h1{font-family:var(--display);font-size:clamp(2rem,5vw,3.4rem);line-height:1.05;letter-spacing:-.025em;font-weight:600;margin:0 0 1rem}
+  h1 em{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--accent)}
+  .lede{font-family:var(--display);font-size:1.2rem;line-height:1.5;color:var(--muted);margin-bottom:2rem;max-width:60ch}
+  .cover{border:1px solid var(--panel-line);border-radius:8px;overflow:hidden;margin:0 0 2.5rem}
+  .cover img{display:block;width:100%;height:auto}
+  h2{font-family:var(--display);font-size:1.5rem;letter-spacing:-.015em;margin:2.5rem 0 .8rem}
+  h3{font-family:var(--display);font-size:1.15rem;margin:1.8rem 0 .5rem;color:var(--accent)}
+  p{font-family:var(--mono);font-size:.92rem;color:var(--text);margin:0 0 1rem;max-width:64ch}
+  p.dim{color:var(--muted)}
+  ul{padding-left:1.2rem;margin:0 0 1rem}
+  li{font-family:var(--mono);font-size:.9rem;color:var(--muted);margin:.3rem 0}
+  code{color:var(--accent);font-family:var(--mono);font-size:.85em;background:rgba(0,255,156,.06);padding:1px 5px;border-radius:3px;border:1px solid rgba(0,255,156,.15)}
+  blockquote{border-left:2px solid var(--accent);padding:.4rem 0 .4rem 1.2rem;margin:1.5rem 0;font-family:var(--serif);font-style:italic;font-size:1.1rem}
+  .callout{border:1px solid var(--panel-line);background:var(--panel);border-radius:6px;padding:1rem 1.2rem;margin:1.5rem 0}
+  .callout strong{color:var(--accent);text-transform:uppercase;letter-spacing:.08em;font-size:.7rem;display:block;margin-bottom:.4rem}
+  hr{border:none;border-top:1px dashed var(--line);margin:3rem 0 2rem}
+  .footer{font-family:var(--mono);font-size:.75rem;color:var(--dim);padding:2rem 0;border-top:1px solid var(--line)}
+  .footer a{color:var(--muted);text-decoration:none}.footer a:hover{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="vignette"></div>
+<header class="header">
+  <div class="header-inner">
+    <a href="/es/" class="brand">CiberPTY<span class="brand-suffix">/insights</span></a>
+    <a href="/es/blog" class="back">← Volver al sitio</a>
+  </div>
+</header>
+<div class="container">
+<article>
+  <div class="meta"><span class="cat">AGENTES IA</span><span>2026.07.28</span><span>·</span><span>9 min de lectura</span></div>
+  <h1>Agentes personales de IA en 2026: del chatbot al <em>compañero que ejecuta</em></h1>
+  <p class="lede">Durante años "hablar con una IA" significó recibir texto bonito y quedarse ahí. En 2026 la conversación cambió: los agentes personales recuerdan, usan herramientas y terminan tareas. Esta es una guía honesta de qué esperar de uno — y qué exigirle antes de confiarle tu día.</p>
+
+  <div class="cover"><img src="/img/blog/agentes-2026.webp" alt="Ilustración: persona junto a un orbe de IA que conecta calendario, mensajes y notas"></div>
+
+  <h2>Qué cambió (y qué no)</h2>
+  <p>Tres capacidades maduraron lo suficiente como para que un agente personal deje de ser un juguete:</p>
+  <ul>
+    <li><strong>Memoria persistente.</strong> Ya no le repites tu contexto cada vez. Un buen agente recuerda tus nombres, tus horarios, tus preferencias y tus pendientes entre conversaciones.</li>
+    <li><strong>Uso de herramientas.</strong> Puede tocar tu calendario, tus recordatorios, tus notas y tus documentos — no solo describir cómo lo harías tú.</li>
+    <li><strong>Voz de ida y vuelta.</strong> Le mandas una nota de voz desde el carro y entiende, ejecuta y te contesta. La fricción de "abrir la app" desapareció: vive en el chat que ya usas.</li>
+  </ul>
+  <p class="dim">Lo que NO cambió: un agente sigue siendo software. Se equivoca, y un buen proveedor lo asume — por eso las acciones sensibles deben pasar por tu confirmación, no ejecutarse a ciegas.</p>
+
+  <h2>La diferencia real con un chatbot genérico</h2>
+  <p>Un chatbot genérico sabe de todo y de nadie. Un agente personal sabe de <em>ti</em>:</p>
+  <ul>
+    <li>Sabe que "Marta" es tu clienta y no una persona nueva cada vez.</li>
+    <li>Sabe que los viernes cierras temprano y no te agenda nada a las 5.</li>
+    <li>Sabe cómo redactas tus correos, porque aprendió de los que ya le pediste.</li>
+  </ul>
+  <blockquote>La métrica que importa no es "qué tan inteligente es", sino cuántas veces al día te ahorra abrir otra app.</blockquote>
+
+  <h2>Qué pedirle desde el día uno</h2>
+  <p>Si vas a probar un agente personal, no empieces por lo exótico. Empieza por lo que se te escapa:</p>
+  <ul>
+    <li><code>¿Qué tengo para hoy?</code> — el resumen de la mañana, la prueba de fuego de la memoria.</li>
+    <li><code>Recuérdame X el viernes</code> — recordatorios que sí llegan al canal donde estás.</li>
+    <li><code>Resúmeme este PDF y sácame las fechas</code> — documentos de entrada, acción de salida.</li>
+    <li><code>Redáctame la respuesta para el cliente</code> — borradores con tu tono, no el de la máquina.</li>
+  </ul>
+
+  <h2>Privacidad: lo que deberías exigir antes de contratar uno</h2>
+  <p>Aquí es donde se separan los proveedores serios de los improvisados. Preguntas concretas:</p>
+  <ul>
+    <li><strong>¿Dónde vive mi agente?</strong> La respuesta correcta es un espacio aislado por cliente — no una cuenta compartida donde tus datos se mezclan con los de otros.</li>
+    <li><strong>¿Quién puede leer mis conversaciones?</strong> Debe existir una respuesta clara, corta y verificable.</li>
+    <li><strong>¿Qué pasa si me voy?</strong> Tu memoria y tus datos deben poder borrarse por completo, y te lo deben poder demostrar.</li>
+    <li><strong>¿Qué sale hacia los modelos?</strong> Los datos sensibles se pueden redactar o minimizar antes de enviar contexto a un LLM — pídelo.</li>
+  </ul>
+  <div class="callout"><strong>Regla práctica</strong>Si el proveedor no puede explicarte en dos frases dónde viven tus datos y quién los ve, no le entregues tu agenda.</div>
+
+  <h2>Cómo probarlo en una semana</h2>
+  <p>No necesitas un proyecto de tres meses. Una prueba honesta cabe en siete días:</p>
+  <ul>
+    <li><strong>Día 1-2:</strong> dale tu rutina — horarios, nombres frecuentes, 3 pendientes reales.</li>
+    <li><strong>Día 3-4:</strong> úsalo solo para recordatorios y el resumen de la mañana.</li>
+    <li><strong>Día 5-6:</strong> súmale documentos: un PDF, una nota de voz, un borrador de correo.</li>
+    <li><strong>Día 7:</strong> pregúntate una sola cosa: ¿abriste menos apps esta semana?</li>
+  </ul>
+  <p>Si la respuesta es sí, el agente se paga solo en tiempo. Si es no, el problema puede ser la configuración — o el proveedor.</p>
+
+  <hr>
+  <p class="dim">En CiberPTY armamos agentes personales que viven en su propio espacio privado por cliente, con memoria propia y canal por Telegram. Si quieres probar cómo se siente uno configurado para ti:</p>
+  <p><a href="/es/contacto" style="color:var(--accent);text-decoration:none">→ Hablemos</a></p>
+</article>
+<footer class="footer">
+  <span>© 2026 CiberPTY · Panamá</span> · <a href="/es/blog">Más artículos</a>
+</footer>
+</div>
+</body>
+</html>
