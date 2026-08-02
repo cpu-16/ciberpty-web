@@ -2,14 +2,21 @@ export const homeEn = {
   title: 'CiberPTY | AI agents, cybersecurity and automation',
   description:
     'Your personal AI agent that organizes your day, replies and remembers. Plus cybersecurity and automation services. Try it today.',
-  hero: {
-    kicker: 'CiberPTY',
-    titleA: 'Your personal',
-    titleB: 'AI agent',
-    lead: 'An AI that talks with you, organizes your day, replies and remembers what matters. And when your operation needs it, cybersecurity and automation too.',
-    ctaPrimary: 'See AI Assistants',
-    ctaSecondary: 'Message me on WhatsApp',
-    chips: ['Chat · Voice · Text', 'With memory', 'Available 24/7']
+  heroCinematic: {
+    eyebrow: 'CIBERPTY — PANAMA',
+    title: 'Your personal',
+    accent: 'AI',
+    titleEnd: 'agent',
+    subtitle: 'It chats. It organizes. It remembers.',
+    desc: 'An AI that talks with you by chat or voice, organizes your day and remembers what matters. And if your operation needs it: cybersecurity and automation.',
+    ctaPrimary: 'Message me on WhatsApp',
+    ctaSecondary: 'See AI Assistants',
+    trustLine: 'Made in Panama · Private data · Available 24/7',
+    card: {
+      tag: '[ 2026 ]',
+      title: 'Agents with memory',
+      desc: 'Your assistant runs in its own private space, with the tools you use.'
+    }
   },
   demo: {
     kicker: 'This is how it feels',

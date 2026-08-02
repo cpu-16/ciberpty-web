@@ -1,0 +1,166 @@
+---
+import { SITE, pagePath, type Locale } from '../../utils/site';
+
+interface Props {
+  content: any; // homeEs.heroCinematic | homeEn.heroCinematic
+  locale: Locale;
+}
+
+const { content: c, locale } = Astro.props;
+---
+
+<section class="cine-hero">
+  <div class="cine-media" aria-hidden="true">
+    <video id="cine-video" muted loop playsinline preload="none" poster="/media/hero-poster.jpg"></video>
+    <div class="cine-shade"></div>
+  </div>
+
+  <aside class="glass-card cine-card anim-fade-up" style="animation-delay:.9s">
+    <p class="cine-card-tag">{c.card.tag}</p>
+    <p class="cine-card-title">{c.card.title}</p>
+    <p class="cine-card-desc">{c.card.desc}</p>
+  </aside>
+
+  <div class="cine-content">
+    <p class="cine-eyebrow anim-fade-up" style="animation-delay:.2s">{c.eyebrow}</p>
+    <h1 class="cine-title anim-fade-up" style="animation-delay:.35s">
+      {c.title} <span class="cine-accent">{c.accent}</span>{c.titleEnd && ` ${c.titleEnd}`}<span class="cine-accent">.</span>
+    </h1>
+    <p class="cine-sub anim-fade-up" style="animation-delay:.5s">{c.subtitle}</p>
+    <p class="cine-desc anim-fade-up" style="animation-delay:.6s">{c.desc}</p>
+    <div class="cine-ctas anim-fade-up" style="animation-delay:.75s">
+      <a class="cine-btn cine-btn-primary" href={SITE.whatsapp} target="_blank" rel="noreferrer">{c.ctaPrimary}</a>
+      <a class="cine-btn cine-btn-light" href={pagePath('assistants', locale)}>{c.ctaSecondary}</a>
+    </div>
+    <p class="cine-trust anim-fade-up" style="animation-delay:.9s">{c.trustLine}</p>
+  </div>
+</section>
+
+<script is:inline>
+  // carga el video solo si no es móvil ni reduced-motion; si no, queda el poster
+  (() => {
+    const v = document.getElementById('cine-video');
+    if (!v) return;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const small = window.matchMedia('(max-width: 640px)').matches;
+    if (reduce || small) return;
+    [
+      { src: '/media/hero-loop.webm', type: 'video/webm' },
+      { src: '/media/hero-loop.mp4', type: 'video/mp4' }
+    ].forEach(({ src, type }) => {
+      const s = document.createElement('source');
+      s.src = src;
+      s.type = type;
+      v.appendChild(s);
+    });
+    v.load();
+    v.play().catch(() => {});
+  })();
+</script>
+
+<style>
+  /* El hero es oscuro en ambos temas: colores fijos, no tokens del tema */
+  .cine-hero {
+    --cine-accent: #00ff9c;
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+    background: var(--hero-bg);
+  }
+  .cine-media,
+  .cine-media video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .cine-media { background: url('/media/hero-poster.jpg') center / cover; }
+  .cine-media video { opacity: 0.6; }
+  .cine-shade {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(90deg, var(--hero-bg) 0%, transparent 55%),
+      linear-gradient(0deg, var(--hero-bg) 0%, transparent 45%);
+  }
+
+  .cine-content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 1100px;
+    margin-inline: auto;
+    padding: 8rem 1.5rem 3rem;
+  }
+  .cine-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--cine-accent);
+    margin: 0 0 0.6rem;
+  }
+  .cine-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: -0.05em;
+    line-height: 1.05;
+    font-size: clamp(3rem, 8vw, 6rem);
+    color: #f2f7f5;
+    margin: 0 0 0.5rem;
+  }
+  .cine-accent { color: var(--cine-accent); }
+  .cine-sub {
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: clamp(1.125rem, 2.5vw, 1.875rem);
+    color: rgba(230, 237, 243, 0.8);
+    margin: 0 0 0.6rem;
+  }
+  .cine-desc {
+    font-weight: 300;
+    font-size: clamp(0.875rem, 1.5vw, 1.1rem);
+    color: #7d8a9a;
+    max-width: 34rem;
+    margin: 0 0 1.5rem;
+  }
+  .cine-ctas { display: flex; flex-wrap: wrap; gap: 0.8rem; }
+  .cine-btn {
+    padding: 0.85rem 1.7rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    transition: filter 0.2s ease, transform 0.1s ease;
+  }
+  .cine-btn:active { transform: scale(0.97); }
+  .cine-btn-primary { background: var(--cine-accent); color: #050608; }
+  .cine-btn-primary:hover { filter: brightness(1.1); }
+  .cine-btn-light { background: #ffffff; color: #050608; }
+  .cine-btn-light:hover { filter: brightness(0.9); }
+  .cine-trust {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: rgba(125, 138, 154, 0.7);
+    margin: 1.2rem 0 0;
+  }
+
+  .cine-card {
+    position: absolute;
+    z-index: 2;
+    top: 22%;
+    right: 8%;
+    width: 220px;
+    padding: 1.1rem;
+    display: none;
+  }
+  .cine-card-tag { font-family: var(--font-mono); font-size: 0.75rem; color: var(--cine-accent); margin: 0 0 0.4rem; }
+  .cine-card-title { font-family: var(--font-display); font-weight: 600; font-size: 1.05rem; color: #f2f7f5; margin: 0 0 0.3rem; }
+  .cine-card-desc { font-size: 0.72rem; color: rgba(230, 237, 243, 0.65); margin: 0; }
+  @media (min-width: 900px) { .cine-card { display: block; } }
+</style>
