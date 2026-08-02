@@ -80,3 +80,35 @@ Estructura tipo Sentinel AI + detalles de CodeNest:
 - **Peso del video:** mitigado con presupuesto de peso, webm+mp4, poster y variante móvil.
 - **Legibilidad sobre video:** mitigado con overlay/gradientes y opacidad ~60%.
 - **Tema claro:** el hero cinematográfico es intrínsecamente oscuro; en tema claro el hero permanece oscuro (como hacen las referencias) y el resto de la página respeta el toggle.
+
+---
+
+## Addendum Fase 2 (2026-08-02, tarde) — diferenciación por página
+
+Gilberto aprobó la Fase 1 y pidió que las demás páginas no compartan el mismo molde
+("se nota que es un sitio hecho por IA"), que el contenido no se repita entre páginas,
+y sumar imágenes/contenido 2026 generado con Codex (`codex exec`, verificado funcionando).
+
+**Diagnóstico de repetición:** (1) esqueleto idéntico en todas las páginas
+(kicker → título con span → lead → chips → grids de cards → mismo CTA box);
+(2) las 4 features y los 3 pasos de Asistentes repiten casi textual los de la home;
+(3) cero imágenes; (4) Sora solo en la home.
+
+**Principio:** un solo sistema (Sora display + JetBrains Mono + verde único + fade-up),
+pero cada página con firma propia de layout, motion y contenido:
+
+- **Global:** `--font-title` pasa a Sora (retipografía todo el sitio); el CTA final deja
+  de ser el mismo box clonado — cada página cierra distinto.
+- **Asistentes ("el producto, humano"):** se eliminan features/useCases duplicados de la
+  home y entra **"Un día con tu agente"** (timeline horaria realista). Firma motion:
+  **spotlight-reveal** que sigue el cursor (adaptación del efecto más popular de la
+  galería de referencia). Ilustración orb generada con Codex.
+- **Ciberseguridad ("sala de operaciones"):** conserva globo de amenazas y terminal
+  (ya son su identidad); se suma barra de status tipo ticker y acentos dot-matrix estilo
+  Sentinel. Copy 2026 (SOC asistido por agentes, Zero Trust) sin inventar métricas.
+- **Contacto (editorial mínimo):** tipografía gigante, glass cards, indicador de
+  disponibilidad. Página corta a propósito.
+- **Blog (editorial):** covers generadas con Codex por artículo, layout con destacado
+  asimétrico, y un artículo nuevo 2026 sobre agentes personales de IA.
+
+Restricciones sin cambio: sin precios, sin backend, es/en en paridad, sin libs npm nuevas.
