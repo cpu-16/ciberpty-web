@@ -1,7 +1,7 @@
 ---
 import { SITE, pagePath, type Locale, type PageKey } from '../../utils/site';
 import { ICONS } from '../../utils/icons';
-import BootTerminal from '../BootTerminal.astro';
+import CinematicHero from './CinematicHero.astro';
 import ChatDemo from '../ChatDemo.astro';
 
 interface Props {
@@ -12,23 +12,7 @@ interface Props {
 const { content, locale } = Astro.props;
 ---
 
-<section class="page-hero container home-hero">
-  <div data-reveal>
-    <p class="kicker">{content.hero.kicker}</p>
-    <h1 class="page-title">{content.hero.titleA} <span>{content.hero.titleB}</span></h1>
-    <p class="lead">{content.hero.lead}</p>
-    <div class="pill-row">
-      {content.hero.chips.map((c: string) => <span class="pill">{c}</span>)}
-    </div>
-    <div class="hero-cta">
-      <a class="btn btn-primary" href={pagePath('assistants', locale)}>{content.hero.ctaPrimary}</a>
-      <a class="btn btn-secondary" href={SITE.whatsapp} target="_blank" rel="noreferrer">{content.hero.ctaSecondary}</a>
-    </div>
-  </div>
-  <div class="home-visual" data-reveal>
-    <BootTerminal locale={locale} />
-  </div>
-</section>
+<CinematicHero content={content.heroCinematic} locale={locale} />
 
 <section class="container section demo-split">
   <div class="demo-copy" data-reveal>
@@ -111,13 +95,6 @@ const { content, locale } = Astro.props;
 </section>
 
 <style>
-  .home-hero { display: grid; grid-template-columns: 1fr; gap: 1.6rem; align-items: center; }
-  .home-hero .page-title :global(span) { white-space: nowrap; }
-  .home-visual { display: grid; place-items: center; }
-  @media (min-width: 840px) {
-    .home-hero { grid-template-columns: 1.05fr 0.95fr; gap: 2.6rem; }
-  }
-
   /* Demo del agente */
   .demo-split { display: grid; grid-template-columns: 1fr; gap: 1.8rem; align-items: center; }
   .demo-title { font-size: clamp(1.7rem, 3.4vw, 2.6rem); }

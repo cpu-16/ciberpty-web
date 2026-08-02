@@ -2,14 +2,21 @@ export const homeEs = {
   title: 'CiberPTY | Agentes de IA, ciberseguridad y automatización',
   description:
     'Tu agente personal de IA que organiza tu día, responde y recuerda. Y servicios de ciberseguridad y automatización. Pruébalo hoy.',
-  hero: {
-    kicker: 'CiberPTY',
-    titleA: 'Tu agente personal',
-    titleB: 'de IA',
-    lead: 'Una IA que conversa contigo, organiza tu día, responde y recuerda lo que importa. Y si tu operación lo necesita, también ciberseguridad y automatización.',
-    ctaPrimary: 'Ver Asistentes de IA',
-    ctaSecondary: 'Escríbeme por WhatsApp',
-    chips: ['Chat · Voz · Texto', 'Con memoria', 'Disponible 24/7']
+  heroCinematic: {
+    eyebrow: 'CIBERPTY — PANAMÁ',
+    title: 'Tu agente personal de',
+    accent: 'IA',
+    titleEnd: '',
+    subtitle: 'Conversa. Organiza. Recuerda.',
+    desc: 'Una IA que habla contigo por chat o voz, organiza tu día y recuerda lo que importa. Y si tu operación lo necesita: ciberseguridad y automatización.',
+    ctaPrimary: 'Escríbeme por WhatsApp',
+    ctaSecondary: 'Ver Asistentes de IA',
+    trustLine: 'Hecho en Panamá · Datos privados · Disponible 24/7',
+    card: {
+      tag: '[ 2026 ]',
+      title: 'Agentes con memoria',
+      desc: 'Tu asistente corre en su propio espacio privado, con lo que tú usas.'
+    }
   },
   demo: {
     kicker: 'Así se siente',
