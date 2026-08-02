@@ -48,6 +48,17 @@ const svc: Record<string, string> = {
   </div>
 </section>
 
+<!-- TICKER DE OPERACIONES (firma de esta página) -->
+<div class="cy-ticker" aria-hidden="true">
+  <div class="cy-ticker-track">
+    {[0, 1].map(() => (
+      <span class="cy-ticker-seg">
+        {content.hero.ticker.map((t: string) => <span class="cy-tick">▸ {t}</span>)}
+      </span>
+    ))}
+  </div>
+</div>
+
 <!-- SERVICES -->
 <section class="container section">
   <h2 data-reveal>{content.services.title}</h2>
@@ -102,11 +113,12 @@ const svc: Record<string, string> = {
   </div>
 </section>
 
-<!-- CTA -->
+<!-- CTA estilo consola (cierre propio de esta página) -->
 <section class="container section">
-  <div class="card cta-box" data-reveal>
+  <div class="card cy-cta" data-reveal>
+    <p class="cy-cta-prompt">{content.hero.termTitle} <span class="cy-cta-cmd">./diagnostico --start</span></p>
     <h2>{content.cta.title}</h2>
-    <p>{content.cta.lead}</p>
+    <p class="cy-cta-lead">{content.cta.lead}</p>
     <a class="btn btn-primary" href={SITE.whatsapp} target="_blank" rel="noreferrer">{content.cta.button}</a>
     <p class="cta-contact">{SITE.whatsappLabel} · {SITE.email}</p>
   </div>
@@ -122,6 +134,59 @@ const svc: Record<string, string> = {
 
   .cy-hero-side { display: grid; gap: 1rem; }
   .term, .fw { font-family: var(--font-mono); }
+  /* scanline sweep sobre la consola: sensación de monitor CRT de sala de ops */
+  .term { position: relative; overflow: hidden; }
+  .term::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 0%, color-mix(in srgb, var(--accent) 7%, transparent) 50%, transparent 100%);
+    background-size: 100% 220%;
+    animation: cyScan 5s linear infinite;
+    pointer-events: none;
+  }
+  @keyframes cyScan {
+    0% { background-position: 0 -120%; }
+    100% { background-position: 0 120%; }
+  }
+
+  /* ticker de operaciones */
+  .cy-ticker {
+    overflow: hidden;
+    border-block: 1px solid var(--line);
+    margin-top: clamp(1.6rem, 4vw, 2.6rem);
+    background: color-mix(in srgb, var(--panel) 60%, transparent);
+  }
+  .cy-ticker-track { display: flex; width: max-content; animation: cyTicker 28s linear infinite; }
+  .cy-ticker-seg { display: flex; }
+  .cy-tick {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    color: var(--muted);
+    padding: 0.55rem 1.4rem;
+    white-space: nowrap;
+  }
+  .cy-tick::first-letter { color: var(--accent); }
+  @keyframes cyTicker {
+    to { transform: translateX(-50%); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cy-ticker-track { animation: none; }
+    .term::after { animation: none; display: none; }
+  }
+
+  /* CTA consola */
+  .cy-cta {
+    border-left: 3px solid var(--accent);
+    padding: clamp(1.4rem, 4vw, 2.2rem);
+  }
+  .cy-cta-prompt { font-family: var(--font-mono); font-size: 0.8rem; color: var(--muted); margin: 0 0 0.8rem; }
+  .cy-cta-cmd { color: var(--accent); }
+  .cy-cta h2 { margin-bottom: 0.4rem; }
+  .cy-cta-lead { color: var(--muted); max-width: 60ch; }
+  .cy-cta .btn { margin-top: 0.6rem; }
+  .cta-contact { margin-top: 0.9rem; font-family: var(--font-mono); font-size: 0.82rem; }
   .term-head, .fw-head { display: flex; justify-content: space-between; align-items: center; font-size: 0.76rem; color: var(--muted); }
   .term-status { color: var(--accent); }
   .term-line { margin-top: 0.6rem; min-height: 1.4rem; color: var(--accent-2); font-size: 0.9rem; word-break: break-word; }

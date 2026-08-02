@@ -1,6 +1,5 @@
 ---
 import { SITE, type Locale } from '../../utils/site';
-import { ICONS as icons } from '../../utils/icons';
 import StackWindow from '../StackWindow.astro';
 
 interface Props {
@@ -31,17 +30,22 @@ const { content, locale } = Astro.props;
   </div>
 </section>
 
-<!-- FEATURES -->
+<!-- UN DÍA CON TU AGENTE -->
 <section class="container section">
-  <h2 data-reveal>{content.features.title}</h2>
-  <div class="a-feature-grid">
-    {content.features.items.map((it: any, i: number) => (
-      <article class="card a-feature" data-reveal style={`--d:${i * 70}ms`}>
-        <span class={`a-ico ${i % 2 === 1 ? 'a-ico-red' : ''}`} set:html={icons[it.icon]} />
-        <h3>{it.title}</h3>
-        <p>{it.desc}</p>
-      </article>
-    ))}
+  <h2 data-reveal>{content.day.title}</h2>
+  <p class="a-day-lead" data-reveal>{content.day.lead}</p>
+  <div class="a-day">
+    <div class="a-day-visual" data-reveal>
+      <img src="/img/orb-agent.webp" alt="" width="720" height="480" loading="lazy" />
+    </div>
+    <ol class="a-timeline">
+      {content.day.items.map((it: any) => (
+        <li class={`a-tl-item ${it.who === 'tú' || it.who === 'you' ? 'is-user' : ''}`} data-reveal>
+          <span class="a-tl-time">{it.time}</span>
+          <p class="a-tl-text">{it.voice && <span class="a-tl-voice">🎙</span>}{it.text}</p>
+        </li>
+      ))}
+    </ol>
   </div>
 </section>
 
@@ -59,14 +63,6 @@ const { content, locale } = Astro.props;
   </div>
 </section>
 
-<!-- USE CASES -->
-<section class="container section">
-  <h2 data-reveal>{content.useCases.title}</h2>
-  <ul class="a-cases" data-reveal>
-    {content.useCases.items.map((u: string) => <li>{u}</li>)}
-  </ul>
-</section>
-
 <!-- FAQ -->
 <section class="container section">
   <h2 data-reveal>{content.faq.title}</h2>
@@ -80,15 +76,34 @@ const { content, locale } = Astro.props;
   </div>
 </section>
 
-<!-- CTA -->
-<section class="container section">
-  <div class="card a-cta border-beam" data-reveal>
+<!-- CTA: banda spotlight-reveal (firma de esta página) -->
+<section class="a-spot" id="a-spot" data-reveal>
+  <div class="a-spot-hidden" aria-hidden="true"></div>
+  <div class="a-spot-content">
     <h2>{content.cta.title}</h2>
     <p>{content.cta.lead}</p>
     <a class="btn btn-primary" href={SITE.whatsapp} target="_blank" rel="noreferrer">{content.cta.button}</a>
     <p class="a-cta-contact">{SITE.whatsappLabel} · {SITE.email}</p>
   </div>
 </section>
+
+<script is:inline>
+  // spotlight-reveal: el cursor descubre la capa "viva" del agente
+  (() => {
+    const band = document.getElementById('a-spot');
+    if (!band) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!window.matchMedia('(pointer: fine)').matches) {
+      band.classList.add('is-touch'); // en táctil el spotlight orbita solo
+      return;
+    }
+    band.addEventListener('pointermove', (e) => {
+      const r = band.getBoundingClientRect();
+      band.style.setProperty('--sx', e.clientX - r.left + 'px');
+      band.style.setProperty('--sy', e.clientY - r.top + 'px');
+    });
+  })();
+</script>
 
 <style>
   /* local red accent for the mascot/brand pairing */
@@ -131,15 +146,50 @@ const { content, locale } = Astro.props;
   .a-hero > * { min-width: 0; }
   .a-hero-visual { position: relative; display: grid; place-items: center; padding: 0.5rem 0; }
 
-  /* FEATURES */
-  .a-feature-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; margin-top: 1.2rem; }
-  .a-feature { transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease; transition-delay: var(--d, 0ms); }
-  .a-feature:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--accent) 45%, var(--card-border)); box-shadow: 0 16px 34px color-mix(in srgb, var(--accent) 14%, transparent); }
-  .a-ico { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 13px; color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); margin-bottom: 0.7rem; }
-  .a-ico-red { color: #ff7a70; background: color-mix(in srgb, #e23b2e 14%, transparent); }
-  .a-ico :global(svg) { width: 24px; height: 24px; }
-  .a-feature h3 { margin-bottom: 0.4rem; }
-  .a-feature p { color: var(--muted); margin: 0; }
+  /* UN DÍA CON TU AGENTE */
+  .a-day-lead { color: var(--muted); max-width: 52ch; margin: 0.4rem 0 0; }
+  .a-day { display: grid; grid-template-columns: 1fr; gap: 1.6rem; margin-top: 1.6rem; align-items: start; }
+  .a-day-visual img {
+    width: 100%;
+    height: auto;
+    border-radius: 16px;
+    border: 1px solid var(--card-border);
+    display: block;
+  }
+  .a-timeline { list-style: none; margin: 0; padding: 0 0 0 1.1rem; position: relative; display: grid; gap: 0.9rem; }
+  .a-timeline::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.5rem;
+    bottom: 0.5rem;
+    width: 1px;
+    background: linear-gradient(180deg, var(--accent), transparent 90%);
+  }
+  .a-tl-item {
+    position: relative;
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 0.8rem 1rem;
+    background: color-mix(in srgb, var(--panel) 85%, transparent);
+  }
+  .a-tl-item::before {
+    content: '';
+    position: absolute;
+    left: -1.35rem;
+    top: 1.1rem;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+  }
+  .a-tl-item.is-user { border-left: 2px solid var(--accent); }
+  .a-tl-item.is-user::before { background: var(--text); box-shadow: none; }
+  .a-tl-time { font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent); letter-spacing: 0.08em; }
+  .a-tl-text { margin: 0.25rem 0 0; color: var(--text); font-size: 0.92rem; }
+  .a-tl-item.is-user .a-tl-text { color: var(--muted); font-style: italic; }
+  .a-tl-voice { margin-right: 0.4rem; }
 
   /* STEPS */
   .a-steps { display: grid; grid-template-columns: 1fr; gap: 1rem; margin-top: 1.2rem; }
@@ -147,25 +197,6 @@ const { content, locale } = Astro.props;
   .a-step-n { font-family: var(--font-mono); font-size: 1.3rem; color: var(--accent); }
   .a-step h3 { margin: 0.4rem 0; }
   .a-step p { color: var(--muted); margin: 0; }
-
-  /* USE CASES */
-  .a-cases { list-style: none; padding: 0; margin: 1.2rem 0 0; display: grid; grid-template-columns: 1fr; gap: 0.6rem; }
-  .a-cases li {
-    border: 1px solid var(--line);
-    border-left: 3px solid var(--accent);
-    border-radius: 10px;
-    padding: 0.75rem 0.9rem;
-    background: color-mix(in srgb, var(--panel) 80%, transparent);
-    color: var(--text);
-    transition: transform 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
-  }
-  .a-cases li::before { content: '> '; font-family: var(--font-mono); color: var(--accent); }
-  .a-cases li:hover {
-    transform: translateX(3px);
-    border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
-    border-left-color: var(--accent);
-    box-shadow: 0 10px 24px color-mix(in srgb, var(--accent) 10%, transparent);
-  }
 
   /* FAQ */
   .a-faq { display: grid; gap: 0.7rem; margin-top: 1.2rem; interpolate-size: allow-keywords; }
@@ -194,17 +225,45 @@ const { content, locale } = Astro.props;
     .a-faq-item summary::after { transition: none; }
   }
 
-  /* CTA */
-  .a-cta { text-align: center; padding: clamp(1.6rem, 5vw, 2.6rem); background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 12%, var(--panel)), var(--panel)); }
-  .a-cta p { color: var(--muted); }
-  .a-cta .btn { margin-top: 0.6rem; }
-  .a-cta-contact { margin-top: 0.9rem; font-family: var(--font-mono); font-size: 0.82rem; }
-
+  /* CTA spotlight-reveal: banda oscura; el cursor revela la capa "viva" */
+  @property --sx { syntax: '<length-percentage>'; inherits: false; initial-value: 50%; }
+  @property --sy { syntax: '<length-percentage>'; inherits: false; initial-value: 50%; }
+  .a-spot {
+    --sx: 50%;
+    --sy: 50%;
+    position: relative;
+    overflow: hidden;
+    margin-top: clamp(2rem, 6vw, 4rem);
+    padding: clamp(3rem, 8vw, 5.5rem) 1.5rem;
+    background: #070b0a;
+    text-align: center;
+  }
+  .a-spot-hidden {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle 220px at var(--sx) var(--sy), rgba(0, 255, 156, 0.22), transparent 70%),
+      repeating-linear-gradient(0deg, transparent 0 23px, rgba(0, 255, 156, 0.14) 23px 24px),
+      repeating-linear-gradient(90deg, transparent 0 23px, rgba(0, 255, 156, 0.14) 23px 24px);
+    -webkit-mask: radial-gradient(circle 220px at var(--sx) var(--sy), #000 30%, transparent 75%);
+    mask: radial-gradient(circle 220px at var(--sx) var(--sy), #000 30%, transparent 75%);
+    pointer-events: none;
+  }
+  .a-spot.is-touch .a-spot-hidden { animation: spotOrbit 9s ease-in-out infinite alternate; }
+  @keyframes spotOrbit {
+    0% { --sx: 20%; --sy: 30%; }
+    100% { --sx: 80%; --sy: 70%; }
+  }
+  .a-spot-content { position: relative; z-index: 1; }
+  .a-spot h2 { color: #f2f7f5; }
+  .a-spot p { color: #7d8a9a; }
+  .a-spot .btn { margin-top: 0.6rem; }
+  .a-cta-contact { margin-top: 0.9rem; font-family: var(--font-mono); font-size: 0.82rem; color: #7d8a9a; }
 
   @media (min-width: 840px) {
-    .a-feature-grid { grid-template-columns: repeat(2, 1fr); }
     .a-steps { grid-template-columns: repeat(3, 1fr); }
-    .a-cases { grid-template-columns: repeat(2, 1fr); }
+    .a-day { grid-template-columns: 0.9fr 1.1fr; gap: 2.4rem; }
+    .a-day-visual { position: sticky; top: 5.5rem; }
   }
   @media (min-width: 980px) {
     .a-hero { grid-template-columns: 1.02fr 0.98fr; gap: 2.6rem; }

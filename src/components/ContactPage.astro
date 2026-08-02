@@ -28,6 +28,7 @@ const t =
           { icon: MAIL_ICON, k: 'Email', v: SITE.email, hint: 'Para propuestas y detalles', href: `mailto:${SITE.email}` },
           { icon: GH_ICON, k: 'GitHub', v: 'github.com/cpu-16', hint: 'Proyectos y código', href: SITE.github }
         ],
+        status: 'Disponible — respondo el mismo día',
         meta: `Gilberto Ramos · ${SITE.location.es}`
       }
     : {
@@ -41,14 +42,15 @@ const t =
           { icon: MAIL_ICON, k: 'Email', v: SITE.email, hint: 'For proposals and details', href: `mailto:${SITE.email}` },
           { icon: GH_ICON, k: 'GitHub', v: 'github.com/cpu-16', hint: 'Projects and code', href: SITE.github }
         ],
+        status: 'Available — I reply the same day',
         meta: `Gilberto Ramos · ${SITE.location.en}`
       };
 ---
 
 <section class="page-hero container">
   <div data-reveal>
-    <p class="kicker">{t.kicker}</p>
-    <h1 class="page-title">{t.title}</h1>
+    <p class="c-status"><span class="c-status-dot" aria-hidden="true"></span>{t.status}</p>
+    <h1 class="page-title c-big">{t.title}<span class="c-dot-accent">.</span></h1>
     <p class="lead">{t.lead}</p>
     <div class="hero-cta">
       <a class="btn btn-primary" href={SITE.whatsapp} target="_blank" rel="noreferrer">{t.waBtn}</a>
@@ -75,8 +77,37 @@ const t =
 </section>
 
 <style>
+  /* Contacto = editorial mínimo: tipografía gigante y una sola idea */
+  .c-big { font-size: clamp(3.2rem, 11vw, 6.8rem); letter-spacing: -0.04em; line-height: 0.98; }
+  .c-dot-accent { color: var(--accent); }
+  .c-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 0.35rem 0.8rem;
+    margin: 0 0 1.1rem;
+  }
+  .c-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+    animation: cPulse 1.8s ease-in-out infinite;
+  }
+  @keyframes cPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+  @media (prefers-reduced-motion: reduce) { .c-status-dot { animation: none; } }
+
   .c-grid { display: grid; gap: 1rem; grid-template-columns: 1fr; margin-top: 0.4rem; }
-  .c-card { display: flex; flex-direction: column; gap: 0.15rem; }
+  .c-card { display: flex; flex-direction: column; gap: 0.15rem; padding: 1.4rem; transition: transform 200ms ease, border-color 200ms ease; }
+  .c-card:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--accent) 45%, var(--card-border)); }
   .c-ico {
     display: grid;
     place-items: center;
