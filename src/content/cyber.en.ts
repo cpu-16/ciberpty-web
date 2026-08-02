@@ -6,28 +6,29 @@ export const cyberEn = {
     kicker: 'Cybersecurity & Automation',
     titleA: 'Active defense for',
     titleB: 'critical infrastructure',
-    lead: 'Blue Team and Red Team operations with live telemetry, AI-driven automation and resilient architecture on Linux, Docker and Proxmox. Measurable attack surface reduction.',
+    lead: 'Blue Team and Red Team operations, an AI-agent-assisted SOC and Zero Trust architecture on Linux, Docker and Proxmox. Defense that learns, evidence at every phase.',
     cta: 'Request assessment',
     stats: [
-      { num: '99.98%', label: 'SOC uptime' },
-      { num: '< 4 min', label: 'Avg MTTD' },
-      { num: '24/7', label: 'Coverage' }
+      { num: '24/7', label: 'Coverage' },
+      { num: 'Zero Trust', label: 'Architecture' },
+      { num: 'AI agents', label: 'Assisted SOC' }
     ],
     termTitle: 'soc-console@ciberpty:~$',
     termLines: [
       'Blue Team active | Coordinated response',
       'Ethical Red Team | Control validation',
-      'Digital forensics | Evidence preservation',
-      'Applied AI | Secure automation'
-    ]
+      'Agent-assisted SOC | Automated triage',
+      'Digital forensics | Evidence preservation'
+    ],
+    ticker: ['ZERO TRUST', 'WAZUH SIEM', 'BLUE TEAM', 'ETHICAL RED TEAM', 'DIGITAL FORENSICS', 'SOC + AI AGENTS', 'LINUX HARDENING', 'VERIFIED BACKUPS']
   },
   firewall: {
-    head: 'firewall.status',
-    live: 'LIVE',
+    head: 'posture.stack',
+    live: 'ACTIVE',
     readouts: [
-      { label: 'Threats blocked', value: '14,237', ok: true },
-      { label: 'Latency', value: '12.4ms', ok: false },
-      { label: 'Posture', value: 'STRONG', ok: true }
+      { label: 'SIEM', value: 'Wazuh', ok: true },
+      { label: 'Access', value: 'Zero Trust', ok: true },
+      { label: 'Backups', value: 'Verified', ok: true }
     ]
   },
   services: {
@@ -37,14 +38,14 @@ export const cyberEn = {
       { num: 'SVC.02', icon: 'crosshair', title: 'Red Team Assessments', desc: 'Ethical offensive simulations to validate defenses and prioritize remediation with measurable impact.', stack: ['Recon', 'Exploitation', 'Reporting'] },
       { num: 'SVC.03', icon: 'fingerprint', title: 'Digital Forensics', desc: 'Evidence analysis, timeline reconstruction and incident support with full chain of custody.', stack: ['Volatility', 'Autopsy', 'Timeline'] },
       { num: 'SVC.04', icon: 'gavel', title: 'Cyber Legal', desc: 'Coordination with legal counsel: technical alignment, evidence handling and formal reporting.', stack: ['Compliance', 'Governance', 'Reporting'] },
-      { num: 'SVC.05', icon: 'cpu', title: 'AI Automation', desc: 'Secure workflows with n8n and LLMs for SOC and IT. Triage, alert enrichment and orchestration.', stack: ['n8n', 'LLMs', 'Workflows'] },
+      { num: 'SVC.05', icon: 'cpu', title: 'AI Agent Automation', desc: 'Secure workflows with agents and LLMs for SOC and IT: alert triage, enrichment and orchestration with a human in command.', stack: ['Agents', 'LLMs', 'n8n'] },
       { num: 'SVC.06', icon: 'server', title: 'Secure Infrastructure', desc: 'Architecture and operation on Linux, Docker and Proxmox with segmentation, hardening and verified backups.', stack: ['Linux', 'Docker', 'Proxmox'] }
     ]
   },
   telemetry: {
     title: 'Live visibility across the global perimeter',
     mapTitle: 'GLOBAL THREAT MAP',
-    legend: 'NODES · 14 · ACTIVE',
+    legend: 'SIMULATION · LIVE',
     meters: [
       { label: 'EPS', val: '12,840', pct: 88 },
       { label: 'CPU', val: '34%', pct: 34 },
