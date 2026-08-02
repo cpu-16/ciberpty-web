@@ -55,3 +55,15 @@ body.is-cinematic .site-header {
 body.is-cinematic #matrix-canvas,
 body.is-cinematic .bg-aurora,
 body.is-cinematic .scanlines { display: none; }
+
+/* El header flotante siempre está sobre el hero oscuro: colores claros fijos,
+   sin importar el tema (en tema claro los tokens serían texto oscuro ilegible) */
+body.is-cinematic .site-header { color: #e6edf3; }
+body.is-cinematic .site-header .bl-name { color: #f2f7f5; }
+body.is-cinematic .site-header .main-nav a { color: rgba(230, 237, 243, 0.72); }
+body.is-cinematic .site-header .main-nav a:hover,
+body.is-cinematic .site-header .main-nav a[aria-current='page'] { color: #ffffff; }
+body.is-cinematic .site-header .soc,
+body.is-cinematic .site-header .theme-text,
+body.is-cinematic .site-header .lang-toggle { color: rgba(230, 237, 243, 0.85); }
+body.is-cinematic .site-header .nav-burger span { background: #e6edf3; }
