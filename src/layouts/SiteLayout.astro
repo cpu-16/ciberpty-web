@@ -56,6 +56,14 @@ const { locale, pageKey, title, description, cinematic = false } = Astro.props;
     <SiteFooter locale={locale} />
 
     <script is:inline>
+      // header cinematográfico: sólido al hacer scroll
+      (() => {
+        if (!document.body.classList.contains('is-cinematic')) return;
+        const onScroll = () => document.body.classList.toggle('is-scrolled', window.scrollY > 40);
+        onScroll();
+        window.addEventListener('scroll', onScroll, { passive: true });
+      })();
+
       // reveal on scroll
       (() => {
         document.documentElement.classList.add('js-motion');
