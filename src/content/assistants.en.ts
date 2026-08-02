@@ -17,30 +17,24 @@ export const assistantsEn = {
       'What are my to-dos for today?'
     ]
   },
-  features: {
-    title: 'What it does for you',
+  day: {
+    title: 'A day with your agent',
+    lead: "It's not another app to open: it's someone you text. This is what a normal day looks like.",
     items: [
-      { icon: 'clock', title: 'Organizes your day', desc: 'To-dos, reminders and priorities in one place, always at hand.' },
-      { icon: 'chat', title: 'Replies and solves', desc: 'Answers and helps you by chat whenever you want, without app-hopping.' },
-      { icon: 'spark', title: 'Learns from you', desc: 'It has memory: keeps your context and adapts to how you work.' },
-      { icon: 'mic', title: 'Voice or text, 24/7', desc: 'Talk or type to it anytime; always available.' }
+      { time: '07:00', who: 'agent', text: 'Good morning 👋 You have 2 meetings and 3 to-dos today. Most urgent: send Marta the quote before noon.' },
+      { time: '09:30', who: 'you', text: 'Forwarding you this PDF — summarize it and pull out the key dates.' },
+      { time: '12:15', who: 'you', voice: true, text: 'Voice note while driving: "book lunch with Luis on Thursday".' },
+      { time: '15:00', who: 'agent', text: 'Reminder: your 3:30 call. I left the draft reply for the client in the chat.' },
+      { time: '19:40', who: 'you', text: 'What was left pending today?' },
+      { time: '23:00', who: 'agent', text: "While you sleep, it forgets nothing: tomorrow it's waiting with your day already sorted." }
     ]
   },
   how: {
-    title: 'How it works',
+    title: 'How we start',
     steps: [
-      { n: '01', title: 'Message me', desc: 'Tell me what you need and what you want your assistant for.' },
-      { n: '02', title: 'I set it up for you', desc: 'I prepare your agent in its own private space, with what you use.' },
-      { n: '03', title: 'You start using it', desc: 'Chat by text or voice. We fine-tune as we go.' }
-    ]
-  },
-  useCases: {
-    title: 'Ways to use it',
-    items: [
-      'Everyday life: calendar, reminders and notes.',
-      'Your work: summaries, drafts and quick replies.',
-      'Your business: first response and lead follow-up.',
-      'Your studies: organize material and review.'
+      { n: '01', title: 'Tell me your routine', desc: 'A short conversation: what you do, what slips away, what eats your time.' },
+      { n: '02', title: 'I hand it to you ready', desc: 'Your agent set up on Telegram, with its own memory, in its own private space.' },
+      { n: '03', title: 'We tune it the first week', desc: 'You teach it your names, your schedule, the way you ask for things.' }
     ]
   },
   faq: {

@@ -17,30 +17,24 @@ export const assistantsEs = {
       '¿Cuáles son mis pendientes de hoy?'
     ]
   },
-  features: {
-    title: 'Lo que hace por ti',
+  day: {
+    title: 'Un día con tu agente',
+    lead: 'No es una app más que abrir: es alguien a quien le escribes. Así se ve un día normal.',
     items: [
-      { icon: 'clock', title: 'Organiza tu día', desc: 'Pendientes, recordatorios y prioridades en un solo lugar, siempre a la mano.' },
-      { icon: 'chat', title: 'Responde y resuelve', desc: 'Te contesta y te ayuda por chat cuando quieras, sin saltar entre apps.' },
-      { icon: 'spark', title: 'Aprende de ti', desc: 'Tiene memoria: recuerda tu contexto y se adapta a tu forma de trabajar.' },
-      { icon: 'mic', title: 'Voz o texto, 24/7', desc: 'Háblale o escríbele a cualquier hora; siempre disponible.' }
+      { time: '07:00', who: 'agente', text: 'Buenos días 👋 Hoy tienes 2 reuniones y 3 pendientes. El más urgente: enviar la cotización a Marta antes de mediodía.' },
+      { time: '09:30', who: 'tú', text: 'Te reenvío este PDF, resúmemelo y sácame las fechas importantes.' },
+      { time: '12:15', who: 'tú', voice: true, text: 'Nota de voz mientras manejas: "agéndame almuerzo con Luis el jueves".' },
+      { time: '15:00', who: 'agente', text: 'Te recuerdo la llamada de las 15:30. Ya te dejé el borrador de respuesta para el cliente en el chat.' },
+      { time: '19:40', who: 'tú', text: '¿Qué quedó pendiente de hoy?' },
+      { time: '23:00', who: 'agente', text: 'Mientras duermes, no olvida nada: mañana te espera con el día ya ordenado.' }
     ]
   },
   how: {
-    title: 'Cómo funciona',
+    title: 'Cómo empezamos',
     steps: [
-      { n: '01', title: 'Escríbeme', desc: 'Me cuentas qué necesitas y para qué quieres tu asistente.' },
-      { n: '02', title: 'Lo configuro a tu medida', desc: 'Preparo tu agente en su propio espacio privado, con lo que tú usas.' },
-      { n: '03', title: 'Empiezas a usarlo', desc: 'Conversas por chat, voz o texto. Lo ajustamos sobre la marcha.' }
-    ]
-  },
-  useCases: {
-    title: 'Ideas para usarlo',
-    items: [
-      'Tu día a día: agenda, recordatorios y notas.',
-      'Tu trabajo: resúmenes, borradores y respuestas rápidas.',
-      'Tu negocio: atención inicial y seguimiento a interesados.',
-      'Tu estudio: organizar material y repasar.'
+      { n: '01', title: 'Me cuentas tu rutina', desc: 'Una conversación corta: qué haces, qué se te escapa, qué te quita tiempo.' },
+      { n: '02', title: 'Te lo entrego listo', desc: 'Tu agente configurado en Telegram, con memoria propia y en su espacio privado.' },
+      { n: '03', title: 'Lo afinamos la primera semana', desc: 'Le enseñas tus nombres, tus horarios, tu forma de pedir las cosas.' }
     ]
   },
   faq: {
