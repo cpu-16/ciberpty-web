@@ -3,6 +3,7 @@ import '../styles/global.css';
 import '../styles/theme.css';
 import '../styles/cyber.css';
 import '../styles/site.css';
+import '../styles/motion.css';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import { type Locale, type PageKey } from '../utils/site';
@@ -12,9 +13,10 @@ interface Props {
   pageKey: PageKey;
   title: string;
   description: string;
+  cinematic?: boolean;
 }
 
-const { locale, pageKey, title, description } = Astro.props;
+const { locale, pageKey, title, description, cinematic = false } = Astro.props;
 ---
 
 <!doctype html>
@@ -39,7 +41,7 @@ const { locale, pageKey, title, description } = Astro.props;
       })();
     </script>
   </head>
-  <body>
+  <body class:list={[{ 'is-cinematic': cinematic }]}>
     <canvas id="matrix-canvas" aria-hidden="true"></canvas>
     <div class="bg-aurora" aria-hidden="true"></div>
     <div class="scanlines" aria-hidden="true"></div>
@@ -95,6 +97,7 @@ const { locale, pageKey, title, description } = Astro.props;
       (() => {
         const canvas = document.getElementById('matrix-canvas');
         if (!canvas) return;
+        if (document.body.classList.contains('is-cinematic')) return;
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
         const ctx = canvas.getContext('2d');
         let w, h, cols, drops;
