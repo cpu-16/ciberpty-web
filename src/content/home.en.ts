@@ -40,7 +40,7 @@ export const homeEn = {
     n50: {
       when: 'Build in a day, August 19, 2026',
       title: 'Nivel 50, the Social Security hackathon',
-      desc: 'One day to solve real problems for Panama’s Social Security Fund (CSS). We brought two projects and both made the podium.',
+      desc: 'One day to solve real problems for Panama’s Social Security Fund (CSS). Teaming up with Agustín Sánchez, we brought two projects and both made the podium.',
       items: [
         {
           slug: 'cupocascada',

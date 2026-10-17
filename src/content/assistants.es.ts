@@ -26,7 +26,7 @@ export const assistantsEs = {
       { time: '12:15', who: 'tú', voice: true, text: 'Nota de voz mientras manejas: "agéndame almuerzo con Luis el jueves".' },
       { time: '15:00', who: 'agente', text: 'Te recuerdo la llamada de las 15:30. Ya te dejé el borrador de respuesta para el cliente en el chat.' },
       { time: '19:40', who: 'tú', text: '¿Qué quedó pendiente de hoy?' },
-      { time: '23:00', who: 'agente', text: 'Mientras duermes, no olvida nada: mañana te espera con el día ya ordenado.' }
+      { time: '23:00', who: 'agente', text: 'Mañana tienes dos reuniones y el almuerzo con Luis ya quedó en tu agenda del jueves. Descansa.' }
     ]
   },
   how: {

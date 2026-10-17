@@ -40,7 +40,7 @@ export const homeEs = {
     n50: {
       when: 'Construye en un día, 19 de agosto de 2026',
       title: 'Nivel 50, el hackathon de la CSS',
-      desc: 'Un día para resolver problemas reales de la Caja de Seguro Social. Llevamos dos proyectos y los dos subieron al podio.',
+      desc: 'Un día para resolver problemas reales de la Caja de Seguro Social. Fuimos en equipo con Agustín Sánchez, llevamos dos proyectos y los dos subieron al podio.',
       items: [
         {
           slug: 'cupocascada',
