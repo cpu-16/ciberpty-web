@@ -86,10 +86,6 @@
   margin-top: 1.4rem;
 }
 
-.btn:hover {
-  transform: translateY(-1px);
-}
-
 /* ===== Reveal on scroll ===== */
 .js-motion [data-reveal] {
   opacity: 0;

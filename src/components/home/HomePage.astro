@@ -1,9 +1,6 @@
 ---
-import { SITE, pagePath, type Locale, type PageKey } from '../../utils/site';
-import { ICONS } from '../../utils/icons';
-import CinematicHero from './CinematicHero.astro';
-import ChatDemo from '../ChatDemo.astro';
-import AdwenLogo from './AdwenLogo.astro';
+import { SITE, pagePath, type Locale } from '../../utils/site';
+import HomeHero from './HomeHero.astro';
 import traza from '../../content/traza-bcip.json';
 
 interface Props {
@@ -12,7 +9,7 @@ interface Props {
 }
 
 const { content, locale } = Astro.props;
-const tb = content.tiembla;
+const w = content.work;
 
 // Traza de un sismógrafo (envolvente min/max, como la da tiembla.ciberpty.com/api/traza) → `points`
 // de una polilínea en un viewBox de 1000×100. asinh comprime los picos para que una réplica
@@ -36,292 +33,225 @@ function trazaPuntos(min: number[], max: number[]): string {
 }
 ---
 
-<CinematicHero content={content.heroCinematic} locale={locale} />
+<HomeHero content={content.hero} locale={locale} />
 
-<section class="container section demo-split">
-  <div class="demo-copy" data-reveal>
-    <p class="kicker">{content.demo.kicker}</p>
-    <h2 class="demo-title">{content.demo.title} <span>{content.demo.titleSpan}</span></h2>
-    <p class="lead">{content.demo.lead}</p>
-  </div>
-  <ChatDemo header={content.demo.header} status={content.demo.status} messages={content.demo.messages} />
-</section>
+<section class="trabajo" aria-labelledby="trabajo-title">
+  <div class="container">
+    <h2 id="trabajo-title" class="trabajo-title">{w.title}</h2>
 
-<section class="container section">
-  <h2 data-reveal>{content.highlights.title}</h2>
-  <div class="bento">
-    {content.highlights.items.map((it: any) => (
-      <article class={`card tile bento-item ${it.featured ? 'featured' : ''}`} data-reveal>
-        <div class="bento-top">
-          <span class="ico" set:html={ICONS[it.icon]} />
-          <span class="badge-num">{it.num}</span>
-        </div>
-        <h3>{it.title}</h3>
-        <p>{it.desc}</p>
-        <p class="bento-example">{it.example}</p>
-      </article>
-    ))}
-  </div>
-</section>
-
-<section class="container section">
-  <h2 data-reveal>{content.how.title}</h2>
-  <div class="steps how-steps">
-    {content.how.steps.map((s: any, i: number) => (
-      <div class="card step" data-reveal>
-        <span class="num">0{i + 1}</span>
-        <h3>{s.title}</h3>
-        <p>{s.desc}</p>
+    <article class="caso caso-tiembla">
+      <div class="tiembla-tel">
+        <video data-loop muted loop playsinline preload="none" poster="/trabajo/tiembla.jpg" width="540" height="1170" aria-label={w.tiembla.videoAlt}>
+          <source src="/trabajo/tiembla.mp4" type="video/mp4" />
+        </video>
       </div>
-    ))}
-  </div>
-</section>
-
-<section class="container section">
-  <h2 data-reveal>{content.arms.title}</h2>
-  <div class="split arms-split">
-    {content.arms.items.map((a: any) => (
-      <a class="card arm" href={pagePath(a.key as PageKey, locale)} data-reveal>
-        <div class="arm-head">
-          <span class={`ico ${a.key === 'cyber' ? 'red' : ''}`} set:html={ICONS[a.icon]} />
-          <span class="arm-tag">{a.tag}</span>
-        </div>
-        <h3>{a.title}</h3>
-        <p>{a.desc}</p>
-        <span class="more">{a.more} →</span>
-      </a>
-    ))}
-  </div>
-</section>
-
-<section class="container section">
-  <h2 class="visually-hidden">{content.trust.title}</h2>
-  <div class="trust-strip" data-reveal>
-    {content.trust.items.map((t: any) => (
-      <div class="trust-item">
-        <span class="trust-ico" set:html={ICONS[t.icon]} />
-        <div>
-          <h3>{t.title}</h3>
-          <p>{t.desc}</p>
-        </div>
-      </div>
-    ))}
-  </div>
-</section>
-
-<section class="container section">
-  <article class="sismo" aria-labelledby="tiembla-title">
-    <div class="sismo-head">
-      <div>
-        <p class="kicker">{tb.kicker}</p>
-        <h2 id="tiembla-title">Tiembla</h2>
-        <p class="sismo-frase">{tb.frase}</p>
-      </div>
-      <p class="sismo-desc">{tb.desc}</p>
-    </div>
-    <figure class="sismo-traza" data-sismo>
-      <div class="sismo-lienzo">
-        <svg viewBox="0 0 1000 100" preserveAspectRatio="none" aria-hidden="true">
+      <div class="caso-texto">
+        <p class="tiembla-ticket">{w.tiembla.ticket}</p>
+        <h3>Tiembla</h3>
+        <svg class="tiembla-traza" viewBox="0 0 1000 100" preserveAspectRatio="none" aria-hidden="true">
           <polyline points={trazaPuntos(traza.min, traza.max)} />
         </svg>
-        <span class="sismo-pluma" aria-hidden="true"></span>
+        <p>{w.tiembla.desc}</p>
+        <p class="caso-nota">{w.tiembla.note}</p>
+        <a class="caso-link" href="https://tiembla.ciberpty.com" target="_blank" rel="noopener">{w.tiembla.cta} <span aria-hidden="true">↗</span></a>
       </div>
-      <figcaption>{tb.traza}</figcaption>
-    </figure>
-    <div class="sismo-pie">
-      <a class="sismo-btn" href="https://tiembla.ciberpty.com" target="_blank" rel="noopener">{tb.cta}</a>
-      <span class="sismo-url">
-        <svg viewBox="0 0 30 20" width="21" height="14" aria-hidden="true"><rect width="30" height="20" fill="#fff"/><rect x="15" width="15" height="10" fill="#da121a"/><rect y="10" width="15" height="10" fill="#072357"/><polygon fill="#072357" points="7.50,2.40 8.12,4.15 9.97,4.20 8.50,5.32 9.03,7.10 7.50,6.05 5.97,7.10 6.50,5.32 5.03,4.20 6.88,4.15"/><polygon fill="#da121a" points="22.50,12.40 23.12,14.15 24.97,14.20 23.50,15.32 24.03,17.10 22.50,16.05 20.97,17.10 21.50,15.32 20.03,14.20 21.88,14.15"/></svg>
-        tiembla.ciberpty.com
-      </span>
+    </article>
+
+    <article class="caso caso-tvn">
+      <div class="caso-texto">
+        <p class="caso-premio">{w.tvn.award}</p>
+        <h3>AgenteTVN</h3>
+        <p>{w.tvn.desc}</p>
+        <p class="caso-nota">{w.tvn.credit} <a href="https://adwentech.com" target="_blank" rel="noopener">AdwenTech</a>.</p>
+      </div>
+      <div class="caso-pantalla">
+        <video data-loop muted loop playsinline preload="none" poster="/trabajo/agentetvn.jpg" width="960" height="540" aria-label={w.tvn.videoAlt}>
+          <source src="/trabajo/agentetvn.mp4" type="video/mp4" />
+        </video>
+      </div>
+    </article>
+
+    <article class="caso caso-n50">
+      <div class="n50-cabeza">
+        <p class="caso-premio">{w.n50.when}</p>
+        <h3>{w.n50.title}</h3>
+        <p>{w.n50.desc}</p>
+      </div>
+      {w.n50.items.map((it: any) => (
+        <figure class="n50-item">
+          <div class="caso-pantalla">
+            <video data-loop muted loop playsinline preload="none" poster={`/trabajo/${it.slug}.jpg`} width="960" height="600" aria-label={it.videoAlt}>
+              <source src={`/trabajo/${it.slug}.mp4`} type="video/mp4" />
+            </video>
+          </div>
+          <figcaption>
+            <span class="n50-nombre">{it.name}</span>
+            <span class="caso-premio">{it.award}</span>
+            <span class="n50-desc">{it.desc}</span>
+            <a class="caso-link" href={`https://${it.slug}.ciberpty.com`} target="_blank" rel="noopener">{it.cta} <span aria-hidden="true">↗</span></a>
+          </figcaption>
+        </figure>
+      ))}
+    </article>
+  </div>
+</section>
+
+<section class="ciber" aria-labelledby="ciber-title">
+  <div class="container ciber-grid">
+    <h2 id="ciber-title">{content.cyber.title}</h2>
+    <div>
+      <p>{content.cyber.desc}</p>
+      <a class="caso-link" href={pagePath('cyber', locale)}>{content.cyber.cta}</a>
     </div>
-  </article>
+  </div>
+</section>
+
+<section class="cierre" aria-labelledby="cierre-title">
+  <div class="container">
+    <h2 id="cierre-title">{content.close.title}</h2>
+    <p>{content.close.desc}</p>
+    <div class="cierre-ctas">
+      <a class="cierre-btn" href={SITE.whatsapp} target="_blank" rel="noreferrer">{content.close.cta}</a>
+      <a class="caso-link" href={`mailto:${SITE.email}`}>{SITE.email}</a>
+    </div>
+  </div>
 </section>
 
 <script>
-  // Una sola animación: la traza se dibuja una vez, al entrar en pantalla.
-  const fig = document.querySelector('[data-sismo]');
-  if (fig) {
-    if (!('IntersectionObserver' in window)) fig.classList.add('is-drawn');
-    else new IntersectionObserver(([e], o) => {
-      if (e.isIntersecting) { o.disconnect(); fig.classList.add('is-drawn'); }
-    }, { threshold: 0.4 }).observe(fig);
+  // Los videos de «Trabajo» corren solo mientras se ven. Con movimiento reducido no arrancan solos:
+  // quedan con su póster y controles para darle play a mano.
+  const videos = document.querySelectorAll<HTMLVideoElement>('video[data-loop]');
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) {
+    videos.forEach((v) => (v.controls = true));
+  } else {
+    const obs = new IntersectionObserver(
+      (entries) => entries.forEach((e) => {
+        const v = e.target as HTMLVideoElement;
+        if (e.isIntersecting) v.play().catch(() => (v.controls = true));
+        else v.pause();
+      }),
+      { threshold: 0.35 }
+    );
+    videos.forEach((v) => obs.observe(v));
   }
+
+  const traza = document.querySelector('.tiembla-traza');
+  if (traza && 'IntersectionObserver' in window) {
+    new IntersectionObserver(([e], o) => {
+      if (e.isIntersecting) { o.disconnect(); traza.classList.add('is-drawn'); }
+    }, { threshold: 0.6 }).observe(traza.parentElement!); // la traza recortada tiene área 0: se observa su texto
+  } else traza?.classList.add('is-drawn');
 </script>
 
-<section class="container section">
-  <a class="card collab" href="https://adwentech.com" target="_blank" rel="noopener" data-reveal>
-    <div class="collab-copy">
-      <p class="kicker">{content.collab.kicker}</p>
-      <h2>{content.collab.title}</h2>
-      <p>{content.collab.desc}</p>
-      <span class="more">{content.collab.more} →</span>
-    </div>
-    <div class="collab-logo"><AdwenLogo /></div>
-  </a>
-</section>
-
-<section class="container section">
-  <div class="card cta-box border-beam" data-reveal>
-    <h2>{content.cta.title}</h2>
-    <p>{content.cta.lead}</p>
-    <a class="btn btn-primary" href={SITE.whatsapp} target="_blank" rel="noreferrer">{content.cta.button}</a>
-    <p class="cta-contact">{SITE.whatsappLabel} · {SITE.email}</p>
-  </div>
-</section>
-
 <style>
-  /* Demo del agente */
-  .demo-split { display: grid; grid-template-columns: 1fr; gap: 1.8rem; align-items: center; }
-  .demo-title { font-size: clamp(1.7rem, 3.4vw, 2.6rem); }
-  .demo-title span { color: var(--accent); font-family: var(--font-serif); font-style: italic; font-weight: 400; }
-  @media (min-width: 840px) {
-    .demo-split { grid-template-columns: 0.9fr 1.1fr; gap: 3rem; }
+  .trabajo { padding: clamp(4.5rem, 10vw, 8rem) 0 clamp(3rem, 6vw, 5rem); }
+  .trabajo-title {
+    font-size: clamp(2rem, 4.2vw, 3.4rem);
+    letter-spacing: -0.035em;
+    max-width: 24ch;
+    text-wrap: balance;
+    margin: 0 0 clamp(2.5rem, 6vw, 4.5rem);
   }
+  .caso { display: grid; gap: clamp(1.8rem, 4vw, 3.5rem); align-items: center; margin-bottom: clamp(4rem, 7vw, 6rem); }
+  .caso:last-child { margin-bottom: 0; }
+  .caso h3 { font-size: clamp(1.9rem, 3.4vw, 2.8rem); letter-spacing: -0.035em; margin: 0.4rem 0 1rem; text-wrap: balance; }
+  .caso-texto p, .n50-cabeza p { color: var(--muted); line-height: 1.65; max-width: 46ch; margin: 0 0 1rem; }
+  .caso-texto .caso-nota { font-size: 0.9rem; }
+  .caso-nota a { color: var(--text); text-underline-offset: 0.25em; }
+  .caso-premio { font-family: var(--font-mono); font-size: 0.82rem; color: var(--accent); margin: 0; }
+  .caso-link {
+    display: inline-block;
+    margin-top: 0.4rem;
+    color: var(--text);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--text) 30%, transparent);
+    text-underline-offset: 0.3em;
+    transition: text-decoration-color 0.2s ease;
+  }
+  .caso-link:hover { text-decoration-color: currentColor; }
+  .caso video { display: block; width: 100%; height: auto; background: #0d1312; }
+  .caso-pantalla { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
 
-  /* Bento: los destacados ocupan 2 columnas en diagonal */
-  .bento { display: grid; gap: 1rem; grid-template-columns: 1fr; margin-top: 1.2rem; }
-  .bento-top { display: flex; align-items: flex-start; justify-content: space-between; }
-  .bento-item h3 { margin: 0.2rem 0 0.45rem; }
-  .bento-item p { color: var(--muted); margin: 0; }
-  .bento-example {
-    margin-top: 0.8rem !important;
-    font-family: var(--font-mono);
-    font-size: 0.76rem;
-    color: var(--accent) !important;
-    opacity: 0.85;
-  }
-  .bento-item.featured { background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 7%, var(--panel)), var(--panel)); }
-  @media (min-width: 840px) {
-    .bento { grid-template-columns: repeat(3, 1fr); }
-    .bento-item.featured { grid-column: span 2; }
-  }
-
-  /* Cómo empieza: pasos con conector */
-  .how-steps .step { position: relative; }
-  @media (min-width: 840px) {
-    .how-steps .step:not(:last-child)::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      right: -1rem;
-      width: 1rem;
-      height: 1px;
-      background: linear-gradient(90deg, var(--accent), transparent);
-    }
-  }
-
-  /* Dos formas: split asimétrico, producto con más peso */
-  .arm-head { display: flex; align-items: center; justify-content: space-between; }
-  .arm-head .ico { margin-bottom: 0.3rem; }
-  @media (min-width: 840px) {
-    .arms-split { grid-template-columns: 1.22fr 1fr; }
-  }
-
-  /* Franja de confianza */
-  .trust-strip {
-    display: grid;
-    gap: 1.1rem;
-    grid-template-columns: 1fr;
-    margin-top: 1.2rem;
-    padding: clamp(1.2rem, 3vw, 1.8rem);
-    border-block: 1px solid var(--line);
-  }
-  .trust-item { display: flex; gap: 0.75rem; align-items: flex-start; }
-  .trust-ico { color: var(--accent); flex: 0 0 auto; display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--line)); border-radius: 9px; }
-  .trust-ico :global(svg) { width: 19px; height: 19px; }
-  .trust-item h3 { font-size: 0.95rem; margin: 0 0 0.2rem; }
-  .trust-item p { color: var(--muted); font-size: 0.85rem; margin: 0; }
-  @media (min-width: 640px) { .trust-strip { grid-template-columns: repeat(2, 1fr); } }
-  @media (min-width: 980px) { .trust-strip { grid-template-columns: repeat(4, 1fr); } }
-
-  /* Tiembla: tira de papel de sismógrafo, igual en tema claro y oscuro */
-  .sismo {
-    --papel: #f2f4f1; --tinta: #1b1f1f; --reja: #dde2dd; --rojo: #d42a20; --nota: #5b6461;
-    --pad: clamp(1.4rem, 4vw, 2.8rem);
-    display: grid;
-    gap: clamp(1.4rem, 3vw, 2.2rem);
-    padding: var(--pad);
+  /* Tiembla: su propio papel, su traza y su etiqueta amarilla, dentro de la página */
+  .caso-tiembla {
+    --papel: #f2f4f1; --tinta-t: #1b1f1f; --rojo: #d42a20;
+    padding: clamp(1.6rem, 4vw, 3.2rem);
     border: 1px solid var(--line);
-    border-radius: 14px;
-    color: var(--tinta);
-    background: linear-gradient(90deg, var(--reja) 1px, transparent 1px) 0 0 / 96px 100%, var(--papel);
+    border-radius: 20px;
+    color: var(--tinta-t);
+    background: linear-gradient(90deg, #dde2dd 1px, transparent 1px) 0 0 / 96px 100%, var(--papel);
   }
-  .sismo .kicker { color: var(--rojo); }
-  .sismo-head { display: grid; gap: 1.1rem; }
-  .sismo h2 { font-size: clamp(3rem, 8vw, 6rem); font-weight: 800; letter-spacing: -0.045em; line-height: 0.9; margin: 0.35rem 0 0.8rem; }
-  .sismo-frase { margin: 0; max-width: 28ch; font-family: var(--font-serif); font-style: italic; font-size: clamp(1.3rem, 2.4vw, 1.75rem); line-height: 1.25; }
-  .sismo-desc { margin: 0; max-width: 54ch; color: #3d4542; font-size: 0.92rem; line-height: 1.7; }
-  @media (min-width: 840px) { .sismo-head { grid-template-columns: 1.1fr 1fr; gap: 3rem; align-items: end; } }
+  .caso-tiembla .caso-texto p { color: #3d4542; }
+  .caso-tiembla .caso-link { color: var(--tinta-t); }
+  .tiembla-tel {
+    order: 1;
+    justify-self: center;
+    width: min(100%, 11rem);
+    padding: 8px;
+    border-radius: 34px;
+    background: var(--tinta-t);
+    box-shadow: 0 30px 60px -30px rgb(27 31 31 / 0.55);
+  }
+  .tiembla-tel video { border-radius: 26px; aspect-ratio: 540 / 1170; object-fit: cover; }
+  .tiembla-ticket {
+    display: inline-block;
+    margin: 0;
+    padding: 0.3rem 0.7rem;
+    border: 2px solid var(--tinta-t);
+    border-radius: 8px;
+    background: #ffc20e;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.85rem;
+  }
+  .tiembla-traza { display: block; width: 100%; max-width: 30rem; height: 44px; margin: 0 0 1.2rem; }
+  /* La traza se dibuja una vez, al entrar en pantalla */
+  :global(.js-motion) .tiembla-traza { clip-path: inset(0 100% 0 0); }
+  :global(.js-motion) .tiembla-traza.is-drawn { clip-path: inset(0 0 0 0); transition: clip-path 1.4s cubic-bezier(0.3, 0.1, 0.2, 1) 0.2s; }
+  @media (prefers-reduced-motion: reduce) { :global(.js-motion) .tiembla-traza { clip-path: none; } }
+  .tiembla-traza polyline { fill: none; stroke: var(--tinta-t); stroke-width: 1; vector-effect: non-scaling-stroke; }
 
-  .sismo-traza { margin: 0; }
-  .sismo-lienzo { position: relative; }
-  .sismo-lienzo svg { display: block; width: 100%; height: clamp(90px, 13vw, 160px); overflow: visible; }
-  .sismo-lienzo polyline { fill: none; stroke: var(--tinta); stroke-width: 1; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
-  .sismo-pluma { position: absolute; inset: 0; pointer-events: none; }
-  .sismo-pluma::after {
-    content: '';
-    position: absolute;
-    right: 0;
-    top: 50%;
-    width: 11px;
-    height: 11px;
-    border-radius: 50%;
-    background: var(--rojo);
-    transform: translate(50%, -50%);
-  }
-  .sismo-traza figcaption { margin-top: 0.7rem; color: var(--nota); font-family: var(--font-mono); font-size: 0.72rem; }
-  /* La transición vive solo en .is-drawn: si estuviera en el estado base, al cargar la página el punto
-     arrancaría una transición hacia -100 % y Chrome acortaría la de vuelta (se desfasa de la traza). */
-  :global(.js-motion) .sismo-traza svg { clip-path: inset(0 0 0 0); }
-  .sismo-traza.is-drawn svg { transition: clip-path 2.4s cubic-bezier(0.3, 0.1, 0.2, 1); }
-  .sismo-traza.is-drawn .sismo-pluma { transition: transform 2.4s cubic-bezier(0.3, 0.1, 0.2, 1); }
-  :global(.js-motion) .sismo-traza:not(.is-drawn) svg { clip-path: inset(0 100% 0 0); }
-  :global(.js-motion) .sismo-traza:not(.is-drawn) .sismo-pluma { transform: translateX(-100%); }
-  .sismo-traza.is-drawn .sismo-pluma::after { animation: latido 1.8s ease-out 2.4s infinite; }
-  @keyframes latido {
-    0% { box-shadow: 0 0 0 0 rgb(212 42 32 / 0.45); }
-    70%, 100% { box-shadow: 0 0 0 12px rgb(212 42 32 / 0); }
+  .n50-cabeza { margin-bottom: 0.5rem; }
+  .n50-item { margin: 0; }
+  .n50-item figcaption { display: grid; gap: 0.3rem; margin-top: 1rem; }
+  .n50-nombre { font-family: var(--font-display); font-weight: 700; font-size: 1.3rem; letter-spacing: -0.02em; }
+  .n50-desc { color: var(--muted); line-height: 1.6; max-width: 44ch; }
+
+  @media (min-width: 52em) {
+    .caso-tiembla { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: clamp(2rem, 6vw, 5rem); }
+    .tiembla-tel { order: 0; width: min(100%, 15.5rem); }
+    .caso-tvn { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.4fr); }
+    .caso-n50 { grid-template-columns: 1fr 1fr; align-items: start; column-gap: clamp(1.5rem, 3vw, 2.5rem); }
+    .n50-cabeza { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.4fr); column-gap: clamp(1.8rem, 4vw, 3.5rem); align-items: end; }
+    .n50-cabeza p:last-child { margin-bottom: 0.6rem; }
+    .n50-cabeza > .caso-premio, .n50-cabeza > h3 { grid-column: 1; }
+    .n50-cabeza > p:last-child { grid-column: 2; grid-row: 1 / span 2; }
   }
 
-  .sismo-pie { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.5rem; }
-  .sismo-btn {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.8rem 1.3rem;
+  /* Ciberseguridad: la segunda línea, en una franja oscura y sobria */
+  .ciber { background: var(--hero-bg); color: #eef3f1; padding: clamp(3.5rem, 8vw, 6rem) 0; border-block: 1px solid rgb(255 255 255 / 0.08); }
+  .ciber-grid { display: grid; gap: 1.2rem 3rem; align-items: start; }
+  .ciber h2 { color: #fff; font-size: clamp(1.7rem, 3.2vw, 2.6rem); letter-spacing: -0.03em; max-width: 18ch; margin: 0; }
+  .ciber p { color: rgb(238 243 241 / 0.72); line-height: 1.65; max-width: 48ch; margin: 0 0 1rem; }
+  .ciber .caso-link { color: #fff; }
+  @media (min-width: 52em) { .ciber-grid { grid-template-columns: 1fr 1fr; } }
+
+  /* Cierre: una persona, dos formas de escribirle */
+  .cierre { padding: clamp(4.5rem, 10vw, 8rem) 0; }
+  .cierre h2 { font-size: clamp(2rem, 4.2vw, 3.4rem); letter-spacing: -0.035em; margin: 0 0 1rem; text-wrap: balance; }
+  .cierre p { color: var(--muted); line-height: 1.65; max-width: 46ch; margin: 0 0 2rem; font-size: 1.05rem; }
+  .cierre-ctas { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.6rem; }
+  .cierre-btn {
+    padding: 0.9rem 1.5rem;
     border-radius: 999px;
-    background: var(--tinta);
-    color: var(--papel);
+    background: var(--accent);
+    color: var(--bg);
     font-family: var(--font-display);
     font-weight: 600;
-    text-decoration: none;
-    transition: background-color 0.2s ease, transform 0.15s ease;
+    transition: transform 0.15s ease, filter 0.2s ease;
   }
-  .sismo-btn:hover { background: var(--rojo); }
-  .sismo-btn:active { transform: scale(0.97); }
-  .sismo-btn:focus-visible { outline: 2px solid var(--rojo); outline-offset: 3px; }
-  .sismo-url { display: inline-flex; align-items: center; gap: 0.55rem; color: var(--nota); font-family: var(--font-mono); font-size: 0.8rem; }
-  .sismo-url svg { border: 1px solid var(--reja); }
-  @media (prefers-reduced-motion: reduce) {
-    .sismo-traza.is-drawn svg, .sismo-traza.is-drawn .sismo-pluma { transition: none; }
-    .sismo-traza.is-drawn .sismo-pluma::after { animation: none; }
-  }
-
-  /* Colaboración con AdwenTech */
-  .collab { display: grid; gap: 1.6rem; align-items: center; color: inherit; text-decoration: none; }
-  .collab h2 { font-size: clamp(1.5rem, 3vw, 2.2rem); margin: 0.2rem 0 0.6rem; }
-  .collab p:not(.kicker) { color: var(--muted); margin: 0 0 0.9rem; max-width: 56ch; }
-  .collab-logo { color: var(--text); justify-self: center; width: min(100%, 340px); }
-  .collab-logo :global(.adwen-logo) { display: block; width: 100%; height: auto; }
-  :global([data-theme='light']) .collab-logo { color: #041e3a; }
-  @media (min-width: 840px) { .collab { grid-template-columns: 1.3fr 1fr; gap: 3rem; } }
-
-  .visually-hidden {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
-  }
+  .cierre-btn:hover { filter: brightness(1.08); }
+  .cierre-btn:active { transform: scale(0.97); }
+  .caso-link:focus-visible, .cierre-btn:focus-visible, .caso-nota a:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
 </style>
