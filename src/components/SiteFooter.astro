@@ -11,8 +11,8 @@ const nav = NAV[locale];
 const year = new Date().getFullYear();
 const t =
   locale === 'es'
-    ? { tagline: 'Agentes de IA, ciberseguridad y automatización.', rights: 'Todos los derechos reservados', write: 'Escríbeme', partner: 'En colaboración con' }
-    : { tagline: 'AI agents, cybersecurity and automation.', rights: 'All rights reserved', write: 'Write me', partner: 'In collaboration with' };
+    ? { tagline: 'Agentes de IA, ciberseguridad y automatización.', rights: 'Todos los derechos reservados', write: 'Escríbeme por WhatsApp', partner: 'En colaboración con' }
+    : { tagline: 'AI agents, cybersecurity and automation.', rights: 'All rights reserved', write: 'Message me on WhatsApp', partner: 'In collaboration with' };
 ---
 
 <footer class="site-footer">
@@ -29,7 +29,7 @@ const t =
       {nav.map((item) => <a href={pagePath(item.key, locale)}>{item.label}</a>)}
     </nav>
     <div class="footer-contact">
-      <a class="btn btn-primary" href={SITE.whatsapp} target="_blank" rel="noreferrer">{t.write} · WhatsApp</a>
+      <a class="btn btn-primary" href={SITE.whatsapp} target="_blank" rel="noreferrer">{t.write}</a>
       <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
     </div>
   </div>

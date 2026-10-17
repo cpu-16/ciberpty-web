@@ -42,12 +42,17 @@ const { locale, pageKey, title, description, cinematic = false } = Astro.props;
     </script>
   </head>
   <body class:list={[{ 'is-cinematic': cinematic }]}>
-    <canvas id="matrix-canvas" aria-hidden="true"></canvas>
-    <div class="bg-aurora" aria-hidden="true"></div>
-    <div class="scanlines" aria-hidden="true"></div>
-    <div class="vignette" aria-hidden="true"></div>
-    <div class="ch-ring" id="ch-ring" aria-hidden="true"></div>
-    <div class="ch-dot" id="ch-dot" aria-hidden="true"></div>
+    {pageKey === 'cyber' && (
+      <Fragment>
+        {/* El ambiente de SOC (matrix, scanlines, mira) es de Ciberseguridad; el resto del sitio va limpio. */}
+        <canvas id="matrix-canvas" aria-hidden="true"></canvas>
+        <div class="bg-aurora" aria-hidden="true"></div>
+        <div class="scanlines" aria-hidden="true"></div>
+        <div class="vignette" aria-hidden="true"></div>
+        <div class="ch-ring" id="ch-ring" aria-hidden="true"></div>
+        <div class="ch-dot" id="ch-dot" aria-hidden="true"></div>
+      </Fragment>
+    )}
 
     <SiteHeader locale={locale} pageKey={pageKey} />
     <main>

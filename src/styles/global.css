@@ -9,7 +9,7 @@
 :root {
   --font-display: 'Sora', 'Space Grotesk', system-ui, sans-serif;
   --font-title: 'Sora', 'Space Grotesk', system-ui, sans-serif;
-  --font-body: 'JetBrains Mono', ui-monospace, monospace;
+  --font-body: 'Sora', 'Space Grotesk', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
   --font-serif: 'Instrument Serif', Georgia, serif;
   --radius: 8px;
@@ -59,50 +59,30 @@ ul { margin: 0; padding-left: 1.2rem; }
 
 .card { border-radius: var(--radius); padding: clamp(1rem, 3vw, 1.7rem); box-shadow: var(--shadow-soft); }
 
+/* Un solo botón en todo el sitio: el del hero (píldora, Sora, sin brillo). */
 .btn {
-  position: relative;
-  overflow: hidden;
-  border-radius: 4px;
-  padding: 0.8rem 1.25rem;
-  font-weight: 500;
+  border-radius: 999px;
+  padding: 0.85rem 1.4rem;
+  font-weight: 600;
   border: 1px solid var(--line);
-  font-family: var(--font-mono);
-  font-size: 0.82rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   background: transparent;
   color: var(--text);
+  transition: transform 0.15s ease, filter 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
 }
+.btn:active { transform: scale(0.97); }
+.btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
 
 .btn-primary {
   background: var(--accent);
   color: var(--btn-primary-text);
   border-color: var(--accent);
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 30%, transparent), 0 8px 24px color-mix(in srgb, var(--accent) 25%, transparent);
 }
-
-.btn-primary::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: -80%;
-  width: 55%;
-  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-  transform: skewX(-20deg);
-  pointer-events: none;
-}
-
-.btn-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 40%, transparent), 0 12px 32px color-mix(in srgb, var(--accent) 35%, transparent);
-}
-
-.btn-primary:hover::after { animation: btnSheen 0.65s ease; }
-@keyframes btnSheen { to { left: 130%; } }
+.btn-primary:hover { filter: brightness(1.08); }
 
 .btn-secondary { background: transparent; border-color: var(--line); }
 .btn-secondary:hover { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, transparent); }
@@ -110,4 +90,14 @@ ul { margin: 0; padding-left: 1.2rem; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* Texto solo para lectores de pantalla */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }

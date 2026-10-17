@@ -1,114 +1,74 @@
 export const homeEn = {
-  title: 'CiberPTY | AI agents, cybersecurity and automation',
+  title: 'CiberPTY | AI assistants and cybersecurity in Panama',
   description:
-    'Your personal AI agent that organizes your day, replies and remembers. Plus cybersecurity and automation services. Try it today.',
-  heroCinematic: {
-    eyebrow: 'CIBERPTY — PANAMA',
-    title: 'Your personal',
-    accent: 'AI',
-    titleEnd: 'agent',
-    subtitle: 'It chats. It organizes. It remembers.',
-    desc: 'An AI that talks with you by chat or voice, organizes your day and remembers what matters. And if your operation needs it: cybersecurity and automation.',
+    'Your AI assistant on Telegram: send a voice note and your to-dos get done. Live projects like Tiembla and AgenteTVN, and cybersecurity for your operation.',
+  hero: {
+    title: 'Send a voice note. Your assistant takes it from there.',
+    lead: 'Your AI assistant on Telegram organizes to-dos, drafts replies and remembers what you tell it. I set it up with you, around your day and your business.',
     ctaPrimary: 'Message me on WhatsApp',
-    ctaSecondary: 'See AI Assistants',
-    trustLine: 'Made in Panama · Private data · Available 24/7',
-    card: {
-      tag: '[ 2026 ]',
-      title: 'Agents with memory',
-      desc: 'Your assistant runs in its own private space, with the tools you use.'
+    ctaSecondary: 'How it works',
+    chat: {
+      label: 'Sample conversation with the assistant',
+      name: 'Your assistant',
+      status: 'online',
+      voiceLength: '0:12',
+      voiceAlt: 'Voice note: remind me to pay the power bill on Friday, book the supplier meeting on Tuesday and reply to Marta about the quote.',
+      reply: 'Done. Here is what came out of your note:',
+      done: [
+        'I’ll remind you Friday at 8:00 a.m. to pay the power bill.',
+        'Booked the supplier meeting for Tuesday at 10:00 a.m.',
+        'Your reply to Marta with the quote is ready.'
+      ],
+      time: '7:42 a.m.'
     }
   },
-  demo: {
-    kicker: 'This is how it feels',
-    title: 'Talk to it like',
-    titleSpan: 'a person',
-    lead: 'No new apps, no manuals: you write or talk, it gets things done.',
-    header: 'CiberPTY Assistant',
-    status: 'online',
-    messages: [
-      { from: 'user', text: 'Remind me to pay the power bill on Friday and tell me what I have pending today.' },
-      { from: 'agent', text: 'Done — reminder set for Friday 8:00 a.m. 📌 Today you have 3 tasks: send Marta the quote, call the supplier and finish the report.' },
-      { from: 'user', voice: true, duration: '0:07' },
-      { from: 'agent', text: 'Got it 👌 I scheduled Tuesday’s meeting at 10:00 and saved the address you mentioned.' }
-    ]
+  work: {
+    title: 'Work you can open today',
+    tiembla: {
+      ticket: 'Earthquake, October 9',
+      desc: 'Online the day after the magnitude 7.7 earthquake in Azuero, Panama: live aftershocks, the official odds of another strong quake, damage by community and where to bring aid. Every figure cites its source.',
+      note: 'The aftershock map passed 83 thousand views on Instagram.',
+      cta: 'Open Tiembla (in Spanish)',
+      videoAlt: 'A walk through Tiembla on a phone'
+    },
+    tvn: {
+      award: '1st place, hackIAthon 2026',
+      desc: 'An editorial copilot for TVN Media. It ranks the news by priority, assembles the evidence and a draft, and abstains when it cannot find a source to back it up.',
+      credit: 'Built together with',
+      videoAlt: 'AgenteTVN ranking news, showing evidence and abstaining without a source'
+    },
+    n50: {
+      when: 'Build in a day, August 19, 2026',
+      title: 'Nivel 50, the Social Security hackathon',
+      desc: 'One day to solve real problems for Panama’s Social Security Fund (CSS). We brought two projects and both made the podium.',
+      items: [
+        {
+          slug: 'cupocascada',
+          name: 'Cupo Cascada',
+          award: 'Grand Prize',
+          desc: 'Recovers lost appointment slots and reassigns them with a public priority formula.',
+          cta: 'See the demo',
+          videoAlt: 'Cupo Cascada demo'
+        },
+        {
+          slug: 'cuotasclaras',
+          name: 'Cuotas Claras',
+          award: '3rd place',
+          desc: 'Reviews contribution history and separates what can be claimed, citing the article of law.',
+          cta: 'See the demo',
+          videoAlt: 'Cuotas Claras demo'
+        }
+      ]
+    }
   },
-  highlights: {
-    title: 'What it does for you',
-    items: [
-      {
-        icon: 'clock',
-        num: 'AGT.01',
-        title: 'Organizes your day',
-        desc: 'To-dos, reminders and priorities at hand — nothing slips through.',
-        example: '“what’s on for today?”',
-        featured: true
-      },
-      { icon: 'chat', num: 'AGT.02', title: 'Replies and solves', desc: 'Helps you by chat anytime: questions, drafts, quick math.', example: '“draft that email for me”' },
-      { icon: 'spark', num: 'AGT.03', title: 'Learns from you', desc: 'Memory and context: it remembers your names, dates and preferences.', example: '“the usual way I ask”' },
-      {
-        icon: 'mic',
-        num: 'AGT.04',
-        title: 'Voice or text, 24/7',
-        desc: 'Send it a voice note at midnight; it replies just as well.',
-        example: '🎙 voice note → done',
-        featured: true
-      }
-    ]
+  cyber: {
+    title: 'I also take care of your operation’s security.',
+    desc: 'I review your infrastructure, respond to incidents and watch what can’t go down. And I automate what your team still does by hand.',
+    cta: 'See Cybersecurity'
   },
-  how: {
-    title: 'How it starts',
-    steps: [
-      { title: 'Message me', desc: 'Tell me what you need and what for.' },
-      { title: 'I set it up for you', desc: 'Your agent in its own private space, with the tools you use.' },
-      { title: 'You start using it', desc: 'Chat, voice or text. We fine-tune it as you go.' }
-    ]
-  },
-  arms: {
-    title: 'Two ways to work with you',
-    items: [
-      {
-        key: 'assistants',
-        icon: 'bot',
-        tag: 'Product',
-        title: 'AI Assistants',
-        desc: 'Your personal agent by chat, voice or text. Organizes, replies and remembers.',
-        more: 'Explore Assistants'
-      },
-      {
-        key: 'cyber',
-        icon: 'shield',
-        tag: 'Services',
-        title: 'Cybersecurity & Automation',
-        desc: 'Blue Team, Red Team, forensics, infrastructure and AI automation.',
-        more: 'See Cybersecurity'
-      }
-    ]
-  },
-  trust: {
-    title: 'No fine print',
-    items: [
-      { icon: 'pin', title: 'Made in Panama', desc: 'Direct support, in your language and your timezone.' },
-      { icon: 'lock', title: 'Your data stays private', desc: 'Your agent runs in its own space; nothing is shared.' },
-      { icon: 'bolt', title: 'Ready in days', desc: 'No endless projects: you try it the same week.' },
-      { icon: 'layers', title: 'State-of-the-art tech', desc: 'The same AI models the big players use.' }
-    ]
-  },
-  tiembla: {
-    kicker: '[ 2026 ] For Panama',
-    frase: 'When the ground shook, we put what people needed to know in one place.',
-    desc: 'On October 9, a magnitude 7.7 earthquake struck Azuero, Panama. The next day we launched Tiembla: live aftershocks, the official odds of another strong quake, damage by community and where to bring aid. Every figure cites its source, free and from your phone.',
-    traza: 'Barro Colorado seismograph (CU.BCIP), October 17, 2026, 6:56 to 7:56 a.m. Panama time.',
-    cta: 'Open Tiembla (in Spanish)'
-  },
-  collab: {
-    kicker: '[ 2026 ] In collaboration',
-    title: '1st place at the hackIAthon, with AdwenTech',
-    desc: 'Together with AdwenTech, we built AgenteTVN, an editorial copilot for the TVN Media challenge, and won first place at the hackIAthon (4th edition, October 2026).',
-    more: 'Visit AdwenTech'
-  },
-  cta: {
-    title: 'Try your personal agent',
-    lead: 'Tell me what you need and we build it. Plans tailored to you.',
-    button: 'Message me on WhatsApp'
+  close: {
+    title: 'You talk to me directly.',
+    desc: 'I’m Gilberto Ramos. I set up your assistant, we fine-tune it together during the first week, and I’m around whenever you need me.',
+    cta: 'Message me on WhatsApp'
   }
 };

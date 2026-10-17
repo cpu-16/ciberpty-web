@@ -153,7 +153,7 @@ html[data-theme='light'] .vignette { background: radial-gradient(ellipse at 50% 
 
 .ch-ring, .ch-dot { display: none; }
 @media (pointer: fine) and (min-width: 801px) {
-  body { cursor: none; }
+  body:has(.ch-ring) { cursor: none; }
   .ch-ring { display: block; position: fixed; top: 0; left: 0; width: 34px; height: 34px; border: 1px solid var(--accent); border-radius: 50%; transform: translate(-50%, -50%); pointer-events: none; z-index: 9999; box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 40%, transparent); transition: width .18s ease, height .18s ease, background .18s ease; }
   .ch-dot { display: block; position: fixed; top: 0; left: 0; width: 4px; height: 4px; background: var(--accent); border-radius: 50%; transform: translate(-50%, -50%); pointer-events: none; z-index: 9999; box-shadow: 0 0 8px var(--accent); }
   body.is-hovering .ch-ring { width: 54px; height: 54px; background: color-mix(in srgb, var(--accent) 8%, transparent); }
