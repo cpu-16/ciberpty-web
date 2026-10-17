@@ -111,3 +111,9 @@
     transition: none;
   }
 }
+
+/* En celulares angostos (o con letra grande) el botón de tema queda solo con su punto: así cabe el menú */
+@media (max-width: 30em) {
+  .theme-text { display: none; }
+  .theme-toggle { padding: 0.45rem 0.6rem; }
+}
