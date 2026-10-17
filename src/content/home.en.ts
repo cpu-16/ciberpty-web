@@ -93,6 +93,19 @@ export const homeEn = {
       { icon: 'layers', title: 'State-of-the-art tech', desc: 'The same AI models the big players use.' }
     ]
   },
+  tiembla: {
+    kicker: '[ 2026 ] For Panama',
+    frase: 'When the ground shook, we put what people needed to know in one place.',
+    desc: 'On October 9, a magnitude 7.7 earthquake struck Azuero, Panama. The next day we launched Tiembla: live aftershocks, the official odds of another strong quake, damage by community and where to bring aid. Every figure cites its source, free and from your phone.',
+    traza: 'Barro Colorado seismograph (CU.BCIP), October 17, 2026, 6:56 to 7:56 a.m. Panama time.',
+    cta: 'Open Tiembla (in Spanish)'
+  },
+  collab: {
+    kicker: '[ 2026 ] In collaboration',
+    title: '1st place at the hackIAthon, with AdwenTech',
+    desc: 'Together with AdwenTech, we built AgenteTVN, an editorial copilot for the TVN Media challenge, and won first place at the hackIAthon (4th edition, October 2026).',
+    more: 'Visit AdwenTech'
+  },
   cta: {
     title: 'Try your personal agent',
     lead: 'Tell me what you need and we build it. Plans tailored to you.',
