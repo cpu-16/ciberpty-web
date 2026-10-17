@@ -26,7 +26,7 @@ export const assistantsEn = {
       { time: '12:15', who: 'you', voice: true, text: 'Voice note while driving: "book lunch with Luis on Thursday".' },
       { time: '15:00', who: 'agent', text: 'Reminder: your 3:30 call. I left the draft reply for the client in the chat.' },
       { time: '19:40', who: 'you', text: 'What was left pending today?' },
-      { time: '23:00', who: 'agent', text: "While you sleep, it forgets nothing: tomorrow it's waiting with your day already sorted." }
+      { time: '23:00', who: 'agent', text: 'You have two meetings tomorrow, and lunch with Luis is on your calendar for Thursday. Get some rest.' }
     ]
   },
   how: {
