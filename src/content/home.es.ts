@@ -2,11 +2,25 @@ export const homeEs = {
   title: 'CiberPTY | Asistentes de IA y ciberseguridad en Panamá',
   description:
     'Tu asistente de IA en Telegram: le mandas una nota de voz y deja hechos tus pendientes. Proyectos en línea como Tiembla y AgenteTVN, y ciberseguridad para tu operación.',
-  hero: {
+  heroCinematic: {
+    eyebrow: 'CIBERPTY — PANAMÁ',
+    title: 'Tu agente personal de',
+    accent: 'IA',
+    titleEnd: '',
+    subtitle: 'Conversa. Organiza. Recuerda.',
+    desc: 'Una IA que habla contigo por chat o voz, organiza tu día y recuerda lo que importa. Y si tu operación lo necesita: ciberseguridad y automatización.',
+    ctaPrimary: 'Escríbeme por WhatsApp',
+    ctaSecondary: 'Ver Asistentes de IA',
+    trustLine: 'Hecho en Panamá · Datos privados · Disponible 24/7',
+    card: {
+      tag: '[ 2026 ]',
+      title: 'Agentes con memoria',
+      desc: 'Tu asistente corre en su propio espacio privado, con lo que tú usas.'
+    }
+  },
+  voz: {
     title: 'Mándale una nota de voz. Tu asistente se encarga del resto.',
     lead: 'Tu asistente de IA en Telegram organiza pendientes, prepara respuestas y recuerda lo que le cuentas. Lo configuro contigo, para tu día y tu negocio.',
-    ctaPrimary: 'Escríbeme por WhatsApp',
-    ctaSecondary: 'Cómo funciona',
     chat: {
       label: 'Ejemplo de conversación con el asistente',
       name: 'Tu asistente',
