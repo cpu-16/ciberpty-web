@@ -93,6 +93,19 @@ export const homeEs = {
       { icon: 'layers', title: 'Tecnología de punta', desc: 'Los mismos modelos de IA que usan las grandes empresas.' }
     ]
   },
+  tiembla: {
+    kicker: '[ 2026 ] Por Panamá',
+    frase: 'Cuando la tierra se movió, juntamos en un solo lugar lo que había que saber.',
+    desc: 'El 9 de octubre un terremoto de magnitud 7.7 sacudió Azuero. Al día siguiente pusimos en línea Tiembla: réplicas en vivo, la probabilidad oficial de otro sismo fuerte, daños por comunidad y dónde llevar ayuda. Cada dato con su fuente, gratis y desde el celular.',
+    traza: 'Sismógrafo de Barro Colorado (CU.BCIP), 17 de octubre de 2026, de 6:56 a 7:56 a. m.',
+    cta: 'Abrir Tiembla'
+  },
+  collab: {
+    kicker: '[ 2026 ] En colaboración',
+    title: '1.er lugar en el hackIAthon, con AdwenTech',
+    desc: 'Junto a AdwenTech construimos AgenteTVN, un copiloto editorial para el reto de TVN Media, y ganamos el primer lugar del hackIAthon (4.ª edición, octubre de 2026).',
+    more: 'Conocer AdwenTech'
+  },
   cta: {
     title: 'Prueba tu agente personal',
     lead: 'Cuéntame qué necesitas y lo armamos. Planes a tu medida.',

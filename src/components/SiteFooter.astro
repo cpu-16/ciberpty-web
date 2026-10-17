@@ -1,5 +1,6 @@
 ---
 import { NAV, SITE, pagePath, type Locale } from '../utils/site';
+import AdwenLogo from './home/AdwenLogo.astro';
 
 interface Props {
   locale: Locale;
@@ -10,8 +11,8 @@ const nav = NAV[locale];
 const year = new Date().getFullYear();
 const t =
   locale === 'es'
-    ? { tagline: 'Agentes de IA, ciberseguridad y automatización.', rights: 'Todos los derechos reservados', write: 'Escríbeme' }
-    : { tagline: 'AI agents, cybersecurity and automation.', rights: 'All rights reserved', write: 'Write me' };
+    ? { tagline: 'Agentes de IA, ciberseguridad y automatización.', rights: 'Todos los derechos reservados', write: 'Escríbeme', partner: 'En colaboración con' }
+    : { tagline: 'AI agents, cybersecurity and automation.', rights: 'All rights reserved', write: 'Write me', partner: 'In collaboration with' };
 ---
 
 <footer class="site-footer">
@@ -19,6 +20,10 @@ const t =
     <div>
       <a href={pagePath('home', locale)} class="brand">{SITE.brand}</a>
       <p class="footer-tagline">{t.tagline}</p>
+      <a class="footer-partner" href="https://adwentech.com" target="_blank" rel="noopener">
+        <span>{t.partner}</span>
+        <AdwenLogo />
+      </a>
     </div>
     <nav class="footer-nav" aria-label="Footer">
       {nav.map((item) => <a href={pagePath(item.key, locale)}>{item.label}</a>)}
@@ -43,6 +48,10 @@ const t =
   }
   .footer-grid { display: grid; gap: 1.5rem; grid-template-columns: 1fr; }
   .footer-tagline { color: var(--muted); margin-top: 0.6rem; max-width: 34ch; }
+  .footer-partner { display: inline-flex; flex-direction: column; gap: 0.55rem; margin-top: 1.3rem; color: var(--text); }
+  .footer-partner span { color: var(--muted); font-family: var(--font-mono); font-size: 0.74rem; }
+  .footer-partner :global(.adwen-logo) { display: block; width: 180px; height: auto; transition: opacity 0.18s ease; }
+  .footer-partner:hover :global(.adwen-logo) { opacity: 0.8; }
   .footer-nav { display: flex; flex-wrap: wrap; gap: 0.9rem; }
   .footer-nav a { color: var(--muted); font-family: var(--font-mono); font-size: 0.88rem; }
   .footer-nav a:hover { color: var(--text); }

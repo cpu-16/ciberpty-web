@@ -1,6 +1,7 @@
 ---
 import ThemeToggle from './ThemeToggle.astro';
 import BrandLogo from './BrandLogo.astro';
+import AdwenLogo from './home/AdwenLogo.astro';
 import { NAV, LABELS, SITE, pagePath, altPath, type Locale, type PageKey } from '../utils/site';
 
 interface Props {
@@ -14,7 +15,8 @@ const labels = LABELS[locale];
 const brandHref = pagePath('home', locale);
 const langHref = altPath(pageKey, locale);
 const nextLang = locale === 'es' ? 'EN' : 'ES';
-const soc = locale === 'es' ? 'SOC ACTIVO' : 'SOC ONLINE';
+const partner = locale === 'es' ? 'En colaboración con AdwenTech' : 'In collaboration with AdwenTech';
+const withWord = locale === 'es' ? 'con' : 'with';
 ---
 
 <header class="site-header">
@@ -28,7 +30,7 @@ const soc = locale === 'es' ? 'SOC ACTIVO' : 'SOC ONLINE';
     </nav>
 
     <div class="actions">
-      <span class="soc" aria-hidden="true"><span class="soc-dot"></span>{soc}</span>
+      <a class="partner" href="https://adwentech.com" target="_blank" rel="noopener" aria-label={partner}><span aria-hidden="true">{withWord}</span><AdwenLogo compact /></a>
       <a class="lang-toggle" href={langHref} aria-label={labels.language}>{nextLang}</a>
       <ThemeToggle label={labels.theme} dark={labels.dark} light={labels.light} />
       <button class="nav-burger" id="nav-burger" aria-label="Menu" aria-expanded="false" aria-controls="primary-nav">
@@ -65,10 +67,10 @@ const soc = locale === 'es' ? 'SOC ACTIVO' : 'SOC ONLINE';
   .nav-burger[aria-expanded='true'] span:nth-child(2) { opacity: 0; }
   .nav-burger[aria-expanded='true'] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-  @media (min-width: 840px) {
+  @media (min-width: 52.5em) {
     .nav-burger { display: none; }
   }
-  @media (max-width: 839px) {
+  @media (max-width: 52.49em) {
     .main-nav {
       display: none;
       position: absolute;
@@ -89,22 +91,34 @@ const soc = locale === 'es' ? 'SOC ACTIVO' : 'SOC ONLINE';
   .main-nav a:hover::before,
   .main-nav a[aria-current='page']::before { opacity: 1; }
 
-  .soc {
+  /* Breakpoints en em: respetan la fuente por defecto del navegador (con 20px el menú se partía).
+     Nada se parte en dos líneas, y en desktop el «>» cuelga a la izquierda sin ocupar espacio. */
+  .brand { flex-shrink: 0; white-space: nowrap; }
+  .main-nav a { white-space: nowrap; }
+  @media (min-width: 52.5em) {
+    .main-nav { gap: 1.4rem; }
+    .main-nav a { position: relative; }
+    .main-nav a::before { content: '>'; position: absolute; right: calc(100% + 0.45em); }
+  }
+
+  /* ponytail: oculto en celular como lo estaba «SOC activo»; ahí el logo sale en el footer */
+  .partner {
     display: none;
     align-items: center;
-    gap: 0.45rem;
+    gap: 0.5rem;
     border: 1px solid var(--line);
     border-radius: 999px;
-    padding: 0.36rem 0.7rem;
+    padding: 0.5rem 0.85rem;
     font-family: var(--font-mono);
-    font-size: 0.66rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--muted);
+    font-size: 0.72rem;
+    color: var(--text);
+    transition: transform 0.18s ease, border-color 0.18s ease;
   }
-  .soc-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); animation: socPulse 1.6s ease-in-out infinite; }
-  @keyframes socPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
-  @media (min-width: 980px) { .soc { display: inline-flex; } }
+  .partner:hover { transform: translateY(-1px); border-color: color-mix(in srgb, #e08a3c 70%, var(--line)); }
+  .partner > span { opacity: 0.7; }
+  .partner :global(.adwen-logo) { display: block; height: 0.9375rem; width: auto; }
+  /* 65em = 1040px con fuente de 16px, 1300px con 20px: antes no cabe junto al menú */
+  @media (min-width: 65em) { .partner { display: inline-flex; } }
 </style>
 
 <script is:inline>

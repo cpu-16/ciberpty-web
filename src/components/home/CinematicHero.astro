@@ -37,13 +37,12 @@ const { content: c, locale } = Astro.props;
 </section>
 
 <script is:inline>
-  // carga el video solo si no es móvil ni reduced-motion; si no, queda el poster
+  // carga el video salvo reduced-motion; con reduced-motion queda el poster
   (() => {
     const v = document.getElementById('cine-video');
     if (!v) return;
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const small = window.matchMedia('(max-width: 640px)').matches;
-    if (reduce || small) return;
+    if (reduce) return;
     [
       { src: '/media/hero-loop.webm', type: 'video/webm' },
       { src: '/media/hero-loop.mp4', type: 'video/mp4' }
