@@ -1,6 +1,7 @@
 ---
 import { SITE, pagePath, type Locale } from '../../utils/site';
-import HomeHero from './HomeHero.astro';
+import CinematicHero from './CinematicHero.astro';
+import NotaDeVoz from './NotaDeVoz.astro';
 import traza from '../../content/traza-bcip.json';
 
 interface Props {
@@ -33,7 +34,8 @@ function trazaPuntos(min: number[], max: number[]): string {
 }
 ---
 
-<HomeHero content={content.hero} locale={locale} />
+<CinematicHero content={content.heroCinematic} locale={locale} />
+<NotaDeVoz content={content.voz} />
 
 <section class="trabajo" aria-labelledby="trabajo-title">
   <div class="container">

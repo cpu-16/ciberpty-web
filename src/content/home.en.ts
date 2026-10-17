@@ -2,11 +2,25 @@ export const homeEn = {
   title: 'CiberPTY | AI assistants and cybersecurity in Panama',
   description:
     'Your AI assistant on Telegram: send a voice note and your to-dos get done. Live projects like Tiembla and AgenteTVN, and cybersecurity for your operation.',
-  hero: {
+  heroCinematic: {
+    eyebrow: 'CIBERPTY — PANAMA',
+    title: 'Your personal',
+    accent: 'AI',
+    titleEnd: 'agent',
+    subtitle: 'It chats. It organizes. It remembers.',
+    desc: 'An AI that talks with you by chat or voice, organizes your day and remembers what matters. And if your operation needs it: cybersecurity and automation.',
+    ctaPrimary: 'Message me on WhatsApp',
+    ctaSecondary: 'See AI Assistants',
+    trustLine: 'Made in Panama · Private data · Available 24/7',
+    card: {
+      tag: '[ 2026 ]',
+      title: 'Agents with memory',
+      desc: 'Your assistant runs in its own private space, with the tools you use.'
+    }
+  },
+  voz: {
     title: 'Send a voice note. Your assistant takes it from there.',
     lead: 'Your AI assistant on Telegram organizes to-dos, drafts replies and remembers what you tell it. I set it up with you, around your day and your business.',
-    ctaPrimary: 'Message me on WhatsApp',
-    ctaSecondary: 'How it works',
     chat: {
       label: 'Sample conversation with the assistant',
       name: 'Your assistant',
