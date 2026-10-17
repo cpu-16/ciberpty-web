@@ -39,8 +39,8 @@ export const homeEn = {
   work: {
     title: 'Work you can open today',
     tiembla: {
-      ticket: 'Earthquake, October 9',
-      desc: 'Online the day after the magnitude 7.7 earthquake in Azuero, Panama: live aftershocks, the official odds of another strong quake, damage by community and where to bring aid. Every figure cites its source.',
+      ticket: 'A relief initiative for Panama',
+      desc: 'When a magnitude 7.7 earthquake shook Azuero, Panama, on October 9, we put Tiembla online the next day to help: live aftershocks, the official odds of another strong quake, damage by community and where to bring aid. Free, with the source of every figure.',
       note: 'The aftershock map passed 83 thousand views on Instagram.',
       cta: 'Open Tiembla (in Spanish)',
       videoAlt: 'A walk through Tiembla on a phone'

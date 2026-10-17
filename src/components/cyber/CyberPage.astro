@@ -213,13 +213,13 @@ const svc: Record<string, string> = {
   .meter-bar { height: 8px; border-radius: 999px; background: color-mix(in srgb, var(--accent) 12%, transparent); overflow: hidden; }
   .meter-bar span { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-3)); border-radius: 999px; }
 
-  .cy-tools { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.8rem; margin-top: 1.2rem; }
+  .cy-tools { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.8rem; margin-top: 1.2rem; }
   .cy-tool { display: flex; align-items: center; gap: 0.7rem; border: 1px solid var(--line); border-radius: 8px; padding: 0.7rem 0.9rem; background: color-mix(in srgb, var(--panel) 80%, transparent); }
   .cy-tool img { width: 26px; height: 26px; }
-  .cy-tool span { font-family: var(--font-mono); font-size: 0.85rem; }
+  .cy-tool span { font-family: var(--font-mono); font-size: 0.85rem; min-width: 0; overflow-wrap: anywhere; }
 
   @media (min-width: 840px) {
-    .cy-tools { grid-template-columns: repeat(4, 1fr); }
+    .cy-tools { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   }
   @media (min-width: 980px) {
     .cy-hero { grid-template-columns: 1.1fr 0.9fr; gap: 2.6rem; }

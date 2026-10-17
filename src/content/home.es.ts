@@ -39,8 +39,8 @@ export const homeEs = {
   work: {
     title: 'Trabajo que puedes abrir hoy',
     tiembla: {
-      ticket: 'Terremoto, 9 de octubre',
-      desc: 'En línea al día siguiente del terremoto de magnitud 7.7 en Azuero: réplicas en vivo, la probabilidad oficial de otro sismo fuerte, daños por comunidad y dónde llevar ayuda. Cada dato con su fuente.',
+      ticket: 'Iniciativa de ayuda por Panamá',
+      desc: 'Cuando el terremoto de magnitud 7.7 sacudió Azuero el 9 de octubre, al día siguiente pusimos Tiembla en línea para ayudar: réplicas en vivo, la probabilidad oficial de otro sismo fuerte, daños por comunidad y dónde llevar ayuda. Gratis y con la fuente de cada dato.',
       note: 'El mapa de réplicas pasó las 83 mil vistas en Instagram.',
       cta: 'Abrir Tiembla',
       videoAlt: 'Recorrido por Tiembla en un celular'

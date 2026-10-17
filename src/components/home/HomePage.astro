@@ -48,7 +48,7 @@ function trazaPuntos(min: number[], max: number[]): string {
         </video>
       </div>
       <div class="caso-texto">
-        <p class="tiembla-ticket">{w.tiembla.ticket}</p>
+        <p class="tiembla-ticket"><svg viewBox="0 0 30 20" width="21" height="14" aria-hidden="true"><rect width="30" height="20" fill="#fff"/><rect x="15" width="15" height="10" fill="#da121a"/><rect y="10" width="15" height="10" fill="#072357"/><polygon fill="#072357" points="7.50,2.40 8.12,4.15 9.97,4.20 8.50,5.32 9.03,7.10 7.50,6.05 5.97,7.10 6.50,5.32 5.03,4.20 6.88,4.15"/><polygon fill="#da121a" points="22.50,12.40 23.12,14.15 24.97,14.20 23.50,15.32 24.03,17.10 22.50,16.05 20.97,17.10 21.50,15.32 20.03,14.20 21.88,14.15"/></svg> {w.tiembla.ticket}</p>
         <h3>Tiembla</h3>
         <svg class="tiembla-traza" viewBox="0 0 1000 100" preserveAspectRatio="none" aria-hidden="true">
           <polyline points={trazaPuntos(traza.min, traza.max)} />
@@ -178,7 +178,7 @@ function trazaPuntos(min: number[], max: number[]): string {
   /* Tiembla: su propio papel, su traza y su etiqueta amarilla, dentro de la página */
   .caso-tiembla {
     --papel: #f2f4f1; --tinta-t: #1b1f1f; --rojo: #d42a20;
-    padding: clamp(1.6rem, 4vw, 3.2rem);
+    padding: clamp(1.4rem, 3vw, 2.2rem) clamp(1.4rem, 4vw, 3rem);
     border: 1px solid var(--line);
     border-radius: 20px;
     color: var(--tinta-t);
@@ -189,15 +189,18 @@ function trazaPuntos(min: number[], max: number[]): string {
   .tiembla-tel {
     order: 1;
     justify-self: center;
-    width: min(100%, 11rem);
-    padding: 8px;
-    border-radius: 34px;
+    width: min(100%, 7.5rem);
+    padding: 5px;
+    border-radius: 28px;
     background: var(--tinta-t);
     box-shadow: 0 30px 60px -30px rgb(27 31 31 / 0.55);
   }
-  .tiembla-tel video { border-radius: 26px; aspect-ratio: 540 / 1168; object-fit: cover; }
+  .tiembla-tel video { border-radius: 22px; aspect-ratio: 540 / 1168; object-fit: cover; }
+  .tiembla-ticket svg { flex: none; border: 1px solid rgb(27 31 31 / 0.25); border-radius: 2px; }
   .tiembla-ticket {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
     margin: 0;
     padding: 0.3rem 0.7rem;
     border: 2px solid var(--tinta-t);
@@ -207,7 +210,7 @@ function trazaPuntos(min: number[], max: number[]): string {
     font-weight: 700;
     font-size: 0.85rem;
   }
-  .tiembla-traza { display: block; width: 100%; max-width: 30rem; height: 44px; margin: 0 0 1.2rem; }
+  .tiembla-traza { display: block; width: 100%; max-width: 26rem; height: 36px; margin: 0 0 1rem; }
   /* La traza se dibuja una vez, al entrar en pantalla */
   :global(.js-motion) .tiembla-traza { clip-path: inset(0 100% 0 0); }
   :global(.js-motion) .tiembla-traza.is-drawn { clip-path: inset(0 0 0 0); transition: clip-path 1.4s cubic-bezier(0.3, 0.1, 0.2, 1) 0.2s; }
@@ -221,8 +224,8 @@ function trazaPuntos(min: number[], max: number[]): string {
   .n50-desc { color: var(--muted); line-height: 1.6; max-width: 44ch; }
 
   @media (min-width: 52em) {
-    .caso-tiembla { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: clamp(2rem, 6vw, 5rem); }
-    .tiembla-tel { order: 0; width: min(100%, 15.5rem); }
+    .caso-tiembla { grid-template-columns: auto minmax(0, 1fr); gap: clamp(2rem, 5vw, 4rem); }
+    .tiembla-tel { order: 0; width: 11rem; }
     .caso-tvn { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.4fr); }
     .caso-n50 { grid-template-columns: 1fr 1fr; align-items: start; column-gap: clamp(1.5rem, 3vw, 2.5rem); }
     .n50-cabeza { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.4fr); column-gap: clamp(1.8rem, 4vw, 3.5rem); align-items: end; }

@@ -60,9 +60,6 @@ body.is-cinematic.is-scrolled .site-header {
   -webkit-backdrop-filter: blur(12px);
   border-bottom-color: var(--line);
 }
-body.is-cinematic #matrix-canvas,
-body.is-cinematic .bg-aurora,
-body.is-cinematic .scanlines { display: none; }
 
 /* El header flotante siempre está sobre el hero oscuro: colores claros fijos,
    sin importar el tema (en tema claro los tokens serían texto oscuro ilegible) */
